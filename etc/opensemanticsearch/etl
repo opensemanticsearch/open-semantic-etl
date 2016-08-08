@@ -1,0 +1,93 @@
+# -*- coding: utf-8 -*-
+
+# Config for connector
+
+
+# print debug messages
+#config['verbose'] = True
+
+
+# Index/storage
+
+#
+# Solr uri and port
+#
+
+config['export'] = 'export_solr'
+
+# Solr server
+config['solr'] = 'http://localhost:8983/solr/'
+
+# Solr core
+config['index'] = 'core1'
+
+
+#
+# Elastic Search
+#
+
+#config['export'] = 'export_elasticsearch'
+
+# Index
+#config['index'] = 'opensemanticsearch'
+
+
+#
+# Tika for text and metadata extraction
+#
+
+# Tika server
+# default: http://localhost:9998
+
+#config['tika_server'] = 'http://localhost:9998'
+
+
+#
+# RDF Metadata
+#
+
+# add RDF Metadata Plugin
+config['plugins'].append('enhance_rdf')
+
+
+#
+# Config for OCR (automatic textrecognition)
+#
+
+# Do OCR for images embedded in PDF documents (i.e. designed images or scanned or photographed documents)
+config['plugins'].append('enhance_pdf_ocr')
+
+# additionally descew before OCR (deskewing of low quality scans)
+# needs more CPU time, so OCR needs more than double time but sometimes you get more / better results
+#config['plugins'].append('enhance_ocr_descew')
+
+#OCR language
+
+#If other than english you have to install package tesseract-XXX (tesseract language support) for your language
+#and set ocr_lang to this value (be careful, the tesseract package for english is "eng" (not "en") german is named "deu", not "de"!)
+
+# set OCR language to English/default
+config['ocr_lang'] = 'eng'
+
+# set OCR language to German/Deutsch
+#config['ocr_lang'] = 'deu'
+
+# set multiple OCR languages
+#config['ocr_lang'] = 'eng+deu'
+
+
+#
+# Config for Named Entities Recognition (NER)
+#
+
+# Enable NER Plugin
+#config['plugins'].append('enhance_ner_stanford')
+
+# Machine learning classifier (for which language and with how many classes, which need more computing time)
+#config['stanford_ner_classifier'] = '/usr/share/java/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz'
+
+# If JAR not in standard path
+#config['stanford_ner_path_to_jar'] = "/usr/share/java/stanford-ner/stanford-ner.jar"
+
+# Java Options like RAM settings
+#config['stanford_ner_java_options'] = '-mx1000m -cp /usr/share/java/stanford-ner/lib/slf4j-api.jar:/usr/share/java/stanford-ner/lib/slf4j-simple.jar'

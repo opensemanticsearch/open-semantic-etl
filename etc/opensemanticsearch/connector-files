@@ -1,0 +1,43 @@
+# -*- coding: utf-8 -*-
+
+# Config for opensemanticsearch-index-file
+
+
+# print Debug output
+#config['verbose'] = True
+
+
+# Index files again even if indexed before and modification time of file unchanged
+#config['force'] = True
+
+
+#
+# Mapping filename to URI
+#
+
+# if the users have other path (mountpoint with other path then the servers full path)
+# or protocoll (http:// instead of file://)
+# you can map the servers path to the users path
+
+# default: user can access the file system, so /fullpath/filename will be mapped to file:///fullpath/filename
+config['mappings'] = { "/": "file:///" }
+
+
+# If documents access not via filesystem but via website (http)
+# your files in /var/www/documents/ should be mapped to http://www.opensemanticsearch.org/documents/
+#config['mappings'] = { "/var/www/documents/": "http://www.opensemanticsearch.org/documents/" }
+
+
+#
+# UI Path navigator: Strip parts of path facet
+#
+
+# The path facet is the sidebar component to navigate (sub)paths.
+# If all your different directories are in one path like /documents
+# or even worse the main content dirs are subdirs like /mnt/fileserver/onesubdir and /mnt/fileserver/othersubdirectory
+# you might want that the user can select or navigate the subdirectories directly (which from the content perspective are main dirs)
+# instead of forcing the user first navigate to ./mnt, then to ./fileserver and so on...
+
+# this option wont change the uri (which is the base of this option and can be mapped and stripped above),
+# it will only change/strip/shorten the path facet in the interactive navigation of the user interface
+#config['facet_path_strip_prefix'] = [ "file:///home/", "file://" ]

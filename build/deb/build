@@ -1,0 +1,44 @@
+#/bin/sh
+
+VERSION=`date +%y.%m.%d`
+PACKAGE=open-semantic-etl_${VERSION}.deb
+DEBIAN_VERSION=stable
+BUILDDIR=/tmp/open-semantic-etl-$$.deb
+
+
+#
+# Build standard package (preconfigured for Solr)
+#
+
+echo "Building ${PACKAGE} in temp directory ${BUILDDIR}"
+
+# since this script is in build/deb, the basedir with sources, configs and files is two directories up
+BASEDIR=`dirname "$0"`
+BASEDIR="${BASEDIR}/../../"
+
+mkdir ${BUILDDIR}
+cp -a ${BASEDIR}/build/deb/${DEBIAN_VERSION}/* ${BUILDDIR}/
+cp -a ${BASEDIR}/etc ${BUILDDIR}/
+cp -a ${BASEDIR}/src/* ${BUILDDIR}/usr/lib/python2.7/
+
+# Build standard package (preconfigured for Solr)
+dpkg -b ${BUILDDIR} ${PACKAGE}
+
+
+#
+# Build alternate package (preconfigured for Elasticsearch)
+#
+
+# change config file and set export plugin to Elasticsearch
+PACKAGE=open-semantic-etl-elasticsearch_${VERSION}.deb
+
+echo "Building ${PACKAGE} in temp directory ${BUILDDIR}"
+
+# change option "config['export']" in ${BUILDDIR}/etc/opensemanticsearch/etl from "solr" to "elasticsearch" by commenting / uncommenting
+
+sed -r -e "s/(config\['export'\] = 'export_solr')/#\1/g" -e "s/(config\['index'\] = 'core1')/#\1/g" -e "s/(#)(config\['export'\] = 'export_elasticsearch')/\2/"  -e "s/(#)(config\['index'\] = 'opensemanticsearch')/\2/" -i ${BUILDDIR}/etc/opensemanticsearch/etl
+
+# todo: delete dependency on pysolr
+
+# Build the alternate package
+dpkg -b ${BUILDDIR} ${PACKAGE}

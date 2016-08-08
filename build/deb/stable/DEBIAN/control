@@ -1,0 +1,16 @@
+Package: open-semantic-etl
+Version: 16.08.08
+Section: misc
+Priority: optional
+Architecture: all
+Depends: tika-server(>=0), python-pycurl(>=0), python-rdflib(>=0), file(>=0), python-requests(>=0), python-pysolr(>=0), python-dateutil(>=0), python-lxml(>=0), python-feedparser(>=0), poppler-utils (>= 0), pst-utils(>=0)
+Recommends: tesseract-ocr (>= 0), scantailor (>= 0)
+Suggests: tesseract-ocr-deu (>= 0)
+Installed-Size: 100
+Maintainer: Markus Mandalka <debian@mandalka.name>
+Homepage: http://www.opensemanticsearch.org/
+Description: Crawler to index files and directories with solr
+ Index your files to solr.
+ If tesseract-ocr installed there will be character recognition on images.
+ Hint: install ocr language files like tesseract-ocr-deu for german texts.
+ If poppler-utils installed there will be ocr for images inside pdf, too.

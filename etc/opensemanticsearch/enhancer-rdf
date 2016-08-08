@@ -1,0 +1,34 @@
+# -*- coding: utf-8 -*-
+
+# Config for RDF metadata server
+
+# uri of the meta data server (RDF)
+# if set to False dont use additional metadata from server (like tags or annotations)
+#
+# Templates:
+# [uri] for URL of annotated page
+# [uri_md5] for MD5 Sum of the URL
+
+config['metaserver'] = False
+
+# Use Drupal as meta server
+#config['metaserver'] = [ 'http://localhost/drupal/rdf?uri=[uri]' ]
+
+# Use Semantic Mediawiki as meta server
+#config['metaserver'] = [ 'http://localhost/mediawiki/index.php/Special:ExportRDF?xmlmime=rdf&page=[uri_md5]' ]
+
+# Use tagger app as meta server
+config['metaserver'] = [ 'http://localhost/search-apps/annotate/rdf?uri=[uri]' ]
+
+# mapping of the metadata server RDF properties to facets / columns
+config['property2facet'] = {
+ 'http://purl.org/dc/terms/Tags': 'tag_ss',
+ 'http://purl.org/dc/terms/location': 'location_ss',
+ 'http://purl.org/dc/terms/organisation': 'organization_ss',
+ 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3ATag': 'tag_ss',
+ 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3APerson': 'person_ss',
+ 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3ALocation': 'location_ss',
+ 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3AOrganization': 'organization_ss',
+ 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3ANotes': 'notes_t',
+ 'http://semantic-mediawiki.org/swivt/1.0#specialProperty_dat': 'meta_date_dts'
+}
