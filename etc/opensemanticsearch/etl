@@ -43,11 +43,11 @@ config['index'] = 'core1'
 
 
 #
-# RDF Metadata
+# RDF metadata/annotations from metadata server
 #
 
 # add RDF Metadata Plugin
-config['plugins'].append('enhance_rdf')
+config['plugins'].append('enhance_rdf_annotations_by_http_request')
 
 
 #
