@@ -31,6 +31,10 @@ class export_solr(object):
 		if 'index' in parameters:
 			self.core = parameters['index']
 
+		add = False
+		if 'add' in parameters:
+			add = parameters['add']
+
 		if not 'id' in data:
 			data['id'] = parameters['id']
 
@@ -38,7 +42,7 @@ class export_solr(object):
 		
 		# do not post, if only id (which will contain no add or set commands for fields and will be seen as overwrite for whole document)
 		if len(data) > 1:
-			self.update(data=data)
+			self.update(data=data, add=add)
 	
 		return parameters, data
 
@@ -54,7 +58,9 @@ class export_solr(object):
 				update_fields['id'] = data['id']
 			else:
 				update_fields[fieldname] = {}
+
 				if add:
+					# add value to existent values of the field
 					update_fields[fieldname]['add'] = data[fieldname]
 				else:	
 					# if document there with values for this fields, the existing values will be overwritten with new values
