@@ -17,23 +17,52 @@ class enhance_rdf(object):
 
 			values = []
 
+			# append RDFS.label
+
 			# get all labels for this obj
 			for label in self.graph.objects(subject=obj, predicate=rdflib.RDFS.label):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print "Appending label: {}".format(label)
-			# todo: append SKOS labels
+					print "Appending RDFS.label: {}".format(label.encode('UTF-8'))
 
-			#if no label use uri instead
+			#
+			# append SKOS labels
+			#
+			
+			# append SKOS prefLabel
+			skos = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
+			for label in self.graph.objects(subject=obj, predicate=skos['prefLabel']):
+				values.append( label.encode('UTF-8') )
+
+				if self.verbose:
+					print "Appending SKOS.prefLabel: {}".format(label.encode('UTF-8'))
+
+			# append SKOS altLabels
+			for label in self.graph.objects(subject=obj, predicate=skos['altLabel']):
+				values.append( label.encode('UTF-8') )
+
+				if self.verbose:
+					print "Appending SKOS.altLabel: {}".format(label.encode('UTF-8'))
+
+			# append SKOS hiddenLabels
+			for label in self.graph.objects(subject=obj, predicate=skos['hiddenLabel']):
+				values.append( label.encode('UTF-8') )
+
+				if self.verbose:
+					print "Appending SKOS.hiddenLabel: {}".format(label.encode('UTF-8'))
+
+
+			#if no label use URI instead
 			if len(values) == 0:
 			
 				if self.verbose:
 					print "No label, using URI instead: {}".format(obj)
 				values = obj
 
-			# maybe later, because if not in file but available:
-			# get label from external graph or triplestore
+			# (maybe) todo:
+			# because if not in file but available:
+			# get label from external graph(s) or triplestore
 
 		else:
 			
@@ -116,7 +145,7 @@ class enhance_rdf(object):
 				part_data['property_ss'] = pred
 
 
-				# todo set parameter to add instead of update for multiple triples/values for/with same property 
+				# todo: set parameter to add instead of update for multiple triples/values for/with same property 
 	
 				etl = ETL()
 	
