@@ -49,11 +49,11 @@ def getmeta_modified(metaservers, docid, verbose=False):
 			moddate = str( obj )
 		
 		if verbose:
-			print "Extracted modification date: {}".format(moddate)
+			print ( "Extracted modification date: {}".format(moddate) )
 			
 		if verbose:
 			if not moddate:
-				print "No modification date for metadata"
+				print ( "No modification date for metadata" )
 
 
 	except BaseException as e:
@@ -94,7 +94,7 @@ def getmeta_rdf_from_server(metaserver, data, property2facet, docid, verbose=Fal
 		# if this predicat is configured as facet, add literal with pred as facetname and object as value
 		try:
 			if verbose:
-				print 'Checking Facet {}'.format(facet)
+				print ( 'Checking Facet {}'.format(facet) )
 
 			facetRef = URIRef(facet)
 

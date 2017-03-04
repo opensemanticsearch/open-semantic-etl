@@ -117,7 +117,7 @@ class Connector_Web(Connector_File):
 				print ( "Exception while reading last-modified from content: {}".format(e) )
 	
 		if self.verbose:
-			print "Extracted modification time: {}".format(mtime)
+			print ( "Extracted modification time: {}".format(mtime) )
 	
 	
 		return mtime
@@ -147,7 +147,7 @@ class Connector_Web(Connector_File):
 			# Download to tempfile
 			#
 			if self.verbose:
-				print "Downloading {}".format(uri)
+				print ("Downloading {}".format(uri))
 	
 			tmpfile = tempfile.NamedTemporaryFile( prefix="opensemanticetl-index-web-", delete = False )
 
@@ -161,7 +161,7 @@ class Connector_Web(Connector_File):
 			tmpfile.close()
 
 			if self.verbose:
-				print "Download done"
+				print ("Download done")
 
 
 			parameters['filename'] = tempfilename

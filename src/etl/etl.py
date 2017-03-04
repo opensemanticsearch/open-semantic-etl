@@ -274,7 +274,7 @@ class ETL(object):
 
 	def commit(self):
 		if self.verbose:
-			print "Commiting cached or open transactions to index"
+			print ("Commiting cached or open transactions to index")
 		self.exporter.commit()
 	
 

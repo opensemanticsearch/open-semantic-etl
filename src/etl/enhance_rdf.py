@@ -24,7 +24,7 @@ class enhance_rdf(object):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print "Appending RDFS.label: {}".format(label.encode('UTF-8'))
+					print ( "Appending RDFS.label: {}".format(label.encode('UTF-8')) )
 
 			#
 			# append SKOS labels
@@ -36,28 +36,28 @@ class enhance_rdf(object):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print "Appending SKOS.prefLabel: {}".format(label.encode('UTF-8'))
+					print ( "Appending SKOS.prefLabel: {}".format(label.encode('UTF-8')) )
 
 			# append SKOS altLabels
 			for label in self.graph.objects(subject=obj, predicate=skos['altLabel']):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print "Appending SKOS.altLabel: {}".format(label.encode('UTF-8'))
+					print ( "Appending SKOS.altLabel: {}".format(label.encode('UTF-8')) )
 
 			# append SKOS hiddenLabels
 			for label in self.graph.objects(subject=obj, predicate=skos['hiddenLabel']):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print "Appending SKOS.hiddenLabel: {}".format(label.encode('UTF-8'))
+					print ( "Appending SKOS.hiddenLabel: {}".format(label.encode('UTF-8')) )
 
 
 			#if no label use URI instead
 			if len(values) == 0:
 			
 				if self.verbose:
-					print "No label, using URI instead: {}".format(obj)
+					print ( "No label, using URI instead: {}".format(obj) )
 				values = obj
 
 			# (maybe) todo:
@@ -67,8 +67,8 @@ class enhance_rdf(object):
 		else:
 			
 			if self.verbose:
-				print "Data type of value (RDF object): {}".format(type(obj))
-				print "Using its value {}".format(obj)
+				print ( "Data type of value (RDF object): {}".format(type(obj)) )
+				print ( "Using its value {}".format(obj) )
 			
 			values = obj
 
@@ -115,7 +115,7 @@ class enhance_rdf(object):
 				part_parameters['id'] = subj
 
 				if self.verbose:
-					print "ID (RDF subject): {}".format(subj)
+					print ( "ID (RDF subject): {}".format(subj) )
 
 				#
 				# Predicate/property to facet/field
@@ -126,8 +126,7 @@ class enhance_rdf(object):
 				facet = rdf_property + '_ss'
 	
 				if self.verbose:
-					print "Facet: {}".format(facet)
-	
+					print ( "Facet: {}".format(facet) )
 				#
 				# object to facet/field value
 				#

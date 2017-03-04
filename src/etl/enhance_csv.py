@@ -106,7 +106,7 @@ class enhance_csv(object):
 				csvfile = codecs.open(self.filename, "rb")
 		
 				if self.verbose:
-					print "Starting dialect guessing"
+					print ("Starting dialect guessing")
 		
 				# sniff dialect in first 32 MB
 				sniffsize = 33554432
@@ -162,7 +162,7 @@ class enhance_csv(object):
 				try:
 					col = col.decode(self.encoding)
 				except:
-					print "Exception while decoding title column"
+					print ("Exception while decoding title column")
 					col = 'Column {}'.format(colnumber)
 	
 			self.titles.append(col)
@@ -366,8 +366,8 @@ class enhance_csv(object):
 		#
 	
 		if self.verbose:
-			print "Rows: " + str(rownumber)
-			print "Cols: " + str(count_columns)
+			print ( "Rows: " + str(rownumber) )
+			print ( "Cols: " + str(count_columns) )
 		
 		return rownumber
 

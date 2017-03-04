@@ -118,7 +118,7 @@ class Connector_RSS(Connector_Web):
 				doindex = False;
 		
 				if self.verbose:
-					print "Not indexing unchanged article {}".format ( unicode(docid) )
+					print ( "Not indexing unchanged article {}".format ( unicode(docid) ) )
 	
 	
 			# Download and Index the new or updated uri

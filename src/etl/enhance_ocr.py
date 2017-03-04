@@ -28,15 +28,15 @@ def image2text(filename, lang='eng', verbose=False, cache=None):
 	if cache and os.path.isfile(ocr_temp_filename + '.txt'):
 
 		if verbose:
-			print 'Found in OCR cache, so reading OCR results for {} from {}'.format(filename, ocr_temp_filename)
+			print ( 'Found in OCR cache, so reading OCR results for {} from {}'.format(filename, ocr_temp_filename) )
 
 	# not in cache, so call Tesseract OCR
 	else:
 		if verbose:
 			if cache:
-				print 'Not in OCR cache, starting OCR for {}'.format(filename)
+				print ( 'Not in OCR cache, starting OCR for {}'.format(filename) )
 			else:
-				print 'Starting OCR for {}'.format(filename)
+				print ( 'Starting OCR for {}'.format(filename) )
 
 	
 		# start external OCR Program

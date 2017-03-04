@@ -27,7 +27,7 @@ connector = Connector_File()
 
 @app.task
 def index_file(filename):
-	print filename
+	print (filename)
 	connector.index(filename=filename)
 		
 

@@ -178,10 +178,10 @@ class export_solr(object):
 			solrparameters["fq"] = 'NOT (' + query_marked_before + ')'
 	
 		if self.verbose:
-			print "Solr query:"
-			print query
-			print "Solr parameters:"
-			print solrparameters
+			print ("Solr query:")
+			print (query)
+			print ("Solr parameters:")
+			print (solrparameters)
 	
 		results = solr.search(query, **solrparameters)
 		
@@ -189,7 +189,7 @@ class export_solr(object):
 			docid = result['id']
 	
 			if self.verbose:
-				print "Tagging {}".format(docid)
+				print ( "Tagging {}".format(docid) )
 			
 			self.tag( docid=docid, field=field, value=value, data=data)
 			

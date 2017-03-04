@@ -26,7 +26,7 @@ class Connector_File(ETL):
 			import multiprocessing
 			self.threads_max = multiprocessing.cpu_count()
 			if self.verbose:
-				print "Setting threads to count of CPUs: " + str(self.threads_max)
+				print ( "Setting threads to count of CPUs: " + str(self.threads_max) )
 
 		self.e_job_done = threading.Event()
 

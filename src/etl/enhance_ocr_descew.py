@@ -19,7 +19,7 @@ def optimized_image2text(filename, lang='eng', verbose=False):
 	
 
 	if verbose:
-		print ("Optimizing image {}".format(filename) )
+		print ( "Optimizing image {}".format(filename) )
 	
 	# start external OCR Program
 	result = subprocess.call(['scantailor-cli', filename, ocr_temp_dirname])

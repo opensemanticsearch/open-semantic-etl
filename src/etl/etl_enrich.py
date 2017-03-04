@@ -51,7 +51,7 @@ class ETL_Enrich(ETL):
 			import multiprocessing
 			self.threads_max = multiprocessing.cpu_count()
 			if self.verbose:
-				print "Setting threads to count of CPUs: " + str(self.threads_max)
+				print ( "Setting threads to count of CPUs: " + str(self.threads_max) )
 
 		self.rows_per_step = 100
 		if self.rows_per_step < self.threads_max * 2:
@@ -134,8 +134,8 @@ class ETL_Enrich(ETL):
 			parameters['verbose'] = self.verbose
 	
 			if self.verbose:
-				print "Parameters:"
-				print parameters
+				print ("Parameters:")
+				print (parameters)
 	
 			# set markers that enriched by this plugins
 			data={}
@@ -184,7 +184,7 @@ class ETL_Enrich(ETL):
 				query = getattr(objectreference, 'query', query)
 			
 			if self.verbose:
-				print "Data enrichment query: {}".format(query)
+				print ( "Data enrichment query: {}".format(query) )
 			
 			# enrich
 			self.enrich_query(query)
@@ -240,8 +240,8 @@ class ETL_Enrich(ETL):
 
 
 		if self.verbose:
-			print "Enrichment of matches the following query:"
-			print query
+			print ("Enrichment of matches the following query:")
+			print (query)
 
 
 
@@ -341,7 +341,7 @@ class ETL_Enrich(ETL):
 
 
 		#if self.verbose:
-		print "Enriched {} documents".format(counter)
+		print ( "Enriched {} documents".format(counter) )
 		
 
 # todo: export to Solr by update
