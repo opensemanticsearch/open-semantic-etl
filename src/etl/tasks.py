@@ -6,21 +6,18 @@
 #
 
 
-import os
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opensemanticsearch.settings')
-
-
+from celery import Celery
 
 from etl_file import Connector_File
 
-from celery import Celery
 
 
 
-app = Celery('tasks',
-	broker='django://')
+app = Celery('tasks')
 
+app.conf.task_serializer = 'json'
+
+app.conf.accept_content=['json']
 
 connector = Connector_File()
 
