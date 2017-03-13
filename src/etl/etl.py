@@ -64,6 +64,7 @@ class ETL(object):
 		# if another exporter
 		self.init_exporter()
 
+
 	def is_plugin_blacklisted_for_contenttype(self, plugin, parameters, data):
 
 		blacklisted = False

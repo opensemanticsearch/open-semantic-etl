@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import sys
 import importlib
 
 from etl import ETL
@@ -48,12 +47,14 @@ class Delete(ETL):
 		
 
 	def delete(self, uri):
-	
+
+		if self.verbose:
+			print "Deleting from index {}".format(uri)
 		# read on what DB or search server software our index is
 		export = self.config['export']
 	
 		# call delete function of the configured exporter
-		module = importlib.import_module('etl.' + export)
+		module = importlib.import_module(export)
 		objectreference = getattr(module, export)
 		connector = objectreference()
 	

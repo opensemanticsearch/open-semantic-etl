@@ -8,7 +8,6 @@ import threading
 from etl import ETL
 
 
-
 class Connector_File(ETL):
 	
 	def __init__(self, verbose=False, quiet=True):
@@ -30,6 +29,7 @@ class Connector_File(ETL):
 
 		self.e_job_done = threading.Event()
 
+
 	def set_configdefaults(self):
 		#
 		# Standard config
@@ -43,10 +43,9 @@ class Connector_File(ETL):
 				
 		self.config['force'] = False
 
-		# filename to uri mapping
-		self.config['uri_prefix_strip'] = None;
-		self.config['uri_prefix'] = 'file://'
-		
+		# filename to URI mapping
+		self.config['mappings'] = { "/": "file:///" }
+
 		self.config['facet_path_strip_prefix'] = [ "file://" ]
 		
 		self.config['plugins'] = [
@@ -72,7 +71,6 @@ class Connector_File(ETL):
 		self.config['whitelist_regex'] = ["/etc/opensemanticsearch/blacklist/whitelist-url-regex"]
 	
 
-
 	def read_configfiles(self):
 		#
 		# include configs
@@ -88,7 +86,6 @@ class Connector_File(ETL):
 		self.read_configfile ('/etc/opensemanticsearch/etl')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 		self.read_configfile ('/etc/opensemanticsearch/connector-files')
-		
 
 
 	# clean filename (convert filename given as URI to filesystem)
@@ -100,7 +97,6 @@ class Connector_File(ETL):
 			filename = filename.replace("file://", '', 1)
 
 		return filename
-
 
 
 	# index directory or file
@@ -132,9 +128,8 @@ class Connector_File(ETL):
 	
 		return result
 
-
 	
-	# walk trough all sub directories and call indexfile on each file
+	# walk trough all sub directories and call index_file for each file
 	def index_dir (self, rootDir, followlinks=False):
 		
 		for dirName, subdirList, fileList in os.walk(rootDir, followlinks=followlinks):
@@ -178,7 +173,6 @@ class Connector_File(ETL):
 					except:
 						sys.stderr.write( "Exception while processing a file and exception while printing error message (maybe problem with encoding of filename on console or converting the exception to string?)\n" )
 
-
 	
 	# Index a file
 	def index_file(self, filename):
@@ -220,7 +214,7 @@ if __name__ == "__main__":
 	#get uri or filename from args
 
 	parser = OptionParser("etl-file [options] filename")
-	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=None, help="Dont print status (filenames) while indexing")
+	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=None, help="Don\'t print status (filenames) while indexing")
 	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=None, help="Print debug messages")
 	parser.add_option("-f", "--force", dest="force", action="store_true", default=None, help="Force (re)indexing, even if no changes")
 	parser.add_option("-c", "--config", dest="config", default=False, help="Config file")
