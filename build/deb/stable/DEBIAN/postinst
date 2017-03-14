@@ -1,2 +1,3 @@
 #!/bin/sh
+insserv opensemanticsearch
 insserv opensemanticsearch-filemonitoring
