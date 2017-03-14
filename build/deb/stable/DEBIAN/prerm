@@ -1,0 +1,7 @@
+#!/bin/sh
+
+service opensemanticsearch-filemonitoring stop
+
+service opensemanticsearch stop
+
+exit 0
