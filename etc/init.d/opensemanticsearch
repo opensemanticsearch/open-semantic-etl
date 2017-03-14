@@ -12,7 +12,7 @@
 start () {
     echo -n "Starting opensemanticsearch daemon..."
 
-    daemon --respawn --command "/usr/bin/etl_tasks" --name=opensemanticsearch --verbose
+    daemon --user=opensemanticetl --command "/usr/bin/etl_tasks" --name=opensemanticsearch --verbose
     RETVAL=$?
     if [ $RETVAL = 0 ]
     then

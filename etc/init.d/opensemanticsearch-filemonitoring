@@ -10,9 +10,9 @@
 ### END INIT INFO
   
 start () {
-    echo -n "Starting opensemanticsearch_filemonitoring daemon..."
+    echo -n "Starting opensemanticsearch-filemonitoring daemon..."
 
-    daemon --respawn --command "/usr/bin/opensemanticsearch-filemonitoring --fromfile /etc/opensemanticsearch/filemonitoring/files" --name=opensemanticsearch-filemonitoring --verbose
+    daemon --user=opensemanticetl --command "/usr/bin/opensemanticsearch-filemonitoring --fromfile /etc/opensemanticsearch/filemonitoring/files" --name=opensemanticsearch-filemonitoring --verbose
     RETVAL=$?
     if [ $RETVAL = 0 ]
     then

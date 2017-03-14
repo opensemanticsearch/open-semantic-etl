@@ -1,5 +1,7 @@
 #!/bin/sh
 
+adduser --system --disabled-password opensemanticetl
+
 # start on boot
 update-rc.d opensemanticsearch defaults
 update-rc.d opensemanticsearch-filemonitoring defaults
