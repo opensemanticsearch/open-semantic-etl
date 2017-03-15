@@ -30,7 +30,7 @@ etl_rss = Connector_RSS()
 # Delete document with URI from index
 #
 
-@app.task
+@app.task(name='etl.delete')
 def delete(uri):
 	etl_delete.delete(uri=uri)
 
@@ -39,7 +39,7 @@ def delete(uri):
 # Index a file
 #
 
-@app.task
+@app.task(name='etl.index_file')
 def index_file(filename, wait=0):
 
 	if wait:
@@ -52,7 +52,7 @@ def index_file(filename, wait=0):
 # Index a webpage
 #
 
-@app.task
+@app.task(name='etl.index_web')
 def index_web(uri, wait=0):
 
 	if wait:
@@ -67,7 +67,7 @@ def index_web(uri, wait=0):
 # Index RSS Feed
 #
 
-@app.task
+@app.task(name='etl.index_rss')
 def index_rss(uri, wait=0):
 
 	if wait:
@@ -83,7 +83,7 @@ def index_rss(uri, wait=0):
 # Enrich with / run plugins
 #
 
-@app.task
+@app.task(name='etl.enrich')
 def enrich(plugins, uri, wait=0):
 	
 	if wait:
