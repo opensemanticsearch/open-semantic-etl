@@ -142,7 +142,7 @@ def getmeta_rdf_from_server(metaserver, data, property2facet, docid, verbose=Fal
 
 # Get tagging and annotation from metadata server
 
-class enhance_rdf(object):
+class enhance_rdf_annotations_by_http_request(object):
 
 	def process (self, parameters={}, data={} ):
 		
