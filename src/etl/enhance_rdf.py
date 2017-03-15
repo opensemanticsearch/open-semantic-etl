@@ -4,10 +4,15 @@ import rdflib
 from etl import ETL
 
 
-# import RDF graph file granular, not only as a whole single file:
+# Import RDF graph file granular, not only as a whole single file:
 # for every entity (subject) own document with properties (predicates) as facets and its objects as values
 
 class enhance_rdf(object):
+	
+	def __init__(self, verbose=False):
+
+		self.verbose = verbose
+
 	
 	# since we want full text search we want not to use ID/URI but all labels for indexing
 	def get_labels_from_rdfobject(self, obj):
@@ -24,7 +29,7 @@ class enhance_rdf(object):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print ( "Appending RDFS.label: {}".format(label.encode('UTF-8')) )
+					print ( "Appending RDFS:label: {}".format(label.encode('UTF-8')) )
 
 			#
 			# append SKOS labels
@@ -36,21 +41,21 @@ class enhance_rdf(object):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print ( "Appending SKOS.prefLabel: {}".format(label.encode('UTF-8')) )
+					print ( "Appending SKOS:prefLabel: {}".format(label.encode('UTF-8')) )
 
 			# append SKOS altLabels
 			for label in self.graph.objects(subject=obj, predicate=skos['altLabel']):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print ( "Appending SKOS.altLabel: {}".format(label.encode('UTF-8')) )
+					print ( "Appending SKOS:altLabel: {}".format(label.encode('UTF-8')) )
 
 			# append SKOS hiddenLabels
 			for label in self.graph.objects(subject=obj, predicate=skos['hiddenLabel']):
 				values.append( label.encode('UTF-8') )
 
 				if self.verbose:
-					print ( "Appending SKOS.hiddenLabel: {}".format(label.encode('UTF-8')) )
+					print ( "Appending SKOS:hiddenLabel: {}".format(label.encode('UTF-8')) )
 
 
 			#if no label use URI instead
@@ -147,6 +152,8 @@ class enhance_rdf(object):
 				# todo: set parameter to add instead of update for multiple triples/values for/with same property 
 	
 				etl = ETL()
+				
+				etl.verbose = self.verbose
 	
 
 				# index triple

@@ -46,8 +46,16 @@ config['index'] = 'core1'
 # RDF metadata/annotations from metadata server
 #
 
-# add RDF Metadata Plugin
+# add plugin for annotation/tagging/enrichment of documents with RDF metadata by http request
 config['plugins'].append('enhance_rdf_annotations_by_http_request')
+
+
+#
+# RDF Knowledge Graph
+#
+
+# add RDF Metadata Plugin for granular import of RDF file statements to entities of knowledge graphs
+config['plugins'].append('enhance_rdf')
 
 
 #
