@@ -23,12 +23,13 @@ class Connector_Web(Connector_File):
 
 
 	def set_configdefaults(self):
+		
 		Connector_File.set_configdefaults(self)
 
 		#
 		# Standard config
 		#
-		# Do not edit config here! Overwrite options in /etc/solr/solr-connector-files
+		# Do not edit config here! Overwrite options in /etc/opensemanticsearch/connector-web
 		#
 
 		# no filename to uri mapping
@@ -130,16 +131,13 @@ class Connector_Web(Connector_File):
 			if self.verbose:
 				parameters['verbose'] = True
 
-
 			data = {}
-	
 	
 			uri = uri.strip()
 			# if no protocol, add http://
 			if not uri.lower().startswith("http://") and not uri.lower().startswith("https://") and not uri.lower().startswith("ftp://") and not uri.lower().startswith("ftps://"):
 				uri = 'http://' + uri
-	
-	
+		
 			parameters['id'] = uri
 
 			

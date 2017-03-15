@@ -16,9 +16,9 @@ from etl_web import Connector_Web
 from etl_rss import Connector_RSS
 
 
-verbose = False
+verbose = True
 
-app = Celery('tasks')
+app = Celery('etl.tasks')
 
 etl_delete = Delete()
 etl_file = Connector_File()
@@ -121,8 +121,8 @@ if __name__ == "__main__":
 	from optparse import OptionParser 
 
 	parser = OptionParser("etl-tasks [options]")
-	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=None, help="Don\'t print status (filenames) while indexing")
-	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=None, help="Print debug messages")
+	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=False, help="Don\'t print status (filenames) while indexing")
+	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print debug messages")
 
 	(options, args) = parser.parse_args()
 

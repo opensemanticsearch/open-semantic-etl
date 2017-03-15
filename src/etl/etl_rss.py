@@ -14,13 +14,10 @@ class Connector_RSS(Connector_Web):
 
 	def __init__(self, verbose=False, quiet=True):
 
-
 		Connector_Web.__init__(self, verbose=verbose, quiet=quiet)
 
 		self.quiet = quiet
 		self.read_configfiles()
-
-
 
 
 	def read_configfiles(self):
@@ -37,7 +34,7 @@ class Connector_RSS(Connector_Web):
 		
 		
 		# linux style filenames
-		self.read_configfile ('/etc/opensemanticsearch/connector')
+		self.read_configfile ('/etc/opensemanticsearch/etl')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-ocr')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 		self.read_configfile ('/etc/opensemanticsearch/connector-web')
@@ -47,7 +44,7 @@ class Connector_RSS(Connector_Web):
 	# Import Feed
 	
 	#
-	# Import a rss feed: If article has changed or not indexed, call download_and_index_to_solr()
+	# Import a RSS feed: If article has changed or not indexed, call download_and_index_to_solr()
 	#
 	def index (self, uri):
 	
@@ -58,10 +55,7 @@ class Connector_RSS(Connector_Web):
 		for item in feed.entries:
 		
 			articleuri = item.link
-		
-			# get mapped doc id
-			docid = self.map_id(articleuri)
-			
+				
 			#get modification time from file todo: from download
 			try:
 	
@@ -88,7 +82,7 @@ class Connector_RSS(Connector_Web):
 	
 			#get modtime from solr document
 			doc_mtime = 0
-			solruri = self.config['solr'] + 'get?id=' + urllib.quote( docid ) + '&fl=file_modified_dt'
+			solruri = self.config['solr'] + self.config['index'] + '/get?id=' + urllib.quote( articleuri ) + '&fl=file_modified_dt'
 		
 			doc = json.load(urllib.urlopen(solruri))
 		
@@ -106,10 +100,10 @@ class Connector_RSS(Connector_Web):
 		
 				if doc_mtime==0:
 					if self.verbose or self.quiet==False:
-						print ("Indexing new article {}".format(docid) )
+						print ("Indexing new article {}".format(articleuri) )
 				else:
 					if self.verbose or self.quiet==False:
-						print ("Indexing modified article {}".format(docid) )
+						print ("Indexing modified article {}".format(articleuri) )
 		
 			else:
 			
@@ -118,7 +112,7 @@ class Connector_RSS(Connector_Web):
 				doindex = False;
 		
 				if self.verbose:
-					print ( "Not indexing unchanged article {}".format ( unicode(docid) ) )
+					print ( "Not indexing unchanged article {}".format(articleuri) )
 	
 	
 			# Download and Index the new or updated uri
