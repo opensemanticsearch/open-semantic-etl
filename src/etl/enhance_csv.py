@@ -28,7 +28,10 @@ class enhance_csv(object):
 
 		self.title_row = 0
 
-		self.ignore_cols=[]
+		self.cols=[]
+		self.rows=[]
+		self.cols_include = False
+		self.rows_include = False
 
 		self.sniff_dialect = True
 
@@ -48,14 +51,12 @@ class enhance_csv(object):
 		elif 'encoding_s' in data:
 			self.encoding = data['encoding_s']
 
-
 		if 'delimiter' in parameters:
 			self.delimiter = parameters['delimiter']
 
 		if 'cache' in parameters:
 			self.cache = parameters['cache']
 
-	
 		if 'title_row' in parameters:
 			self.title_row = parameters['title_row']
 	
@@ -73,8 +74,26 @@ class enhance_csv(object):
 	
 		if 'escapechar' in parameters:
 			self.escapechar = parameters['escapechar']
+
+		if 'rows' in parameters:
+			self.rows = parameters['rows']
+
+		if 'cols' in parameters:
+			self.cols = parameters['cols']
+
+		if 'rows_include' in parameters:
+			self.rows_include = parameters['rows_include']
+
+		if 'cols_include' in parameters:
+			self.cols_include = parameters['cols_include']
 	
 
+	# Todo:
+
+	#
+	# If existing CSV parameter settings in CSV manager, use them
+	# even if not importing within CSV manager
+	#
 	def add_csv_parameters_from_meta_settings(self, metaserver):
 		pass
 			# get csv settings for this file from csvmnager
@@ -214,13 +233,17 @@ class enhance_csv(object):
 	
 			colnumber += 1
 
-			ignore_column = False
-			
-			if colnumber in self.ignore_cols:
-				ignore_column = True
+			exclude_column = False
+
+			if self.cols_include:
+				if not colnumber in self.cols:
+					exclude_column = True
+			else:
+				if colnumber in self.cols:
+					exclude_column = True
 
 
-			if not ignore_column:
+			if not exclude_column:
 			
 				# if a codec is given, decode charset
 				if self.encoding:
@@ -329,8 +352,8 @@ class enhance_csv(object):
 		#
 	
 		for row in reader:
+
 			rownumber += 1
-			
 	
 			#
 			# If title row, read column titles
@@ -346,11 +369,28 @@ class enhance_csv(object):
 			# Import data row
 			#
 			if rownumber >= self.start_row:
-				
-				if self.verbose:
-					print ( "Importing row {}".format(rownumber) )
+
+
+
+				exclude_row = False
+
+				if self.rows_include:
+					if not rownumber in self.rows:
+						exclude_row = True
+				else:
+					if rownumber in self.rows:
+						exclude_row = True
+
+
+				if exclude_row:
+					if self.verbose:
+						print ( "Excluding row {}".format(rownumber) )
+				else:
+					
+					if self.verbose:
+						print ( "Importing row {}".format(rownumber) )
 	
-				count_columns = self.import_row(row, rownumber = rownumber, docid = docid)
+					count_columns = self.import_row(row, rownumber = rownumber, docid = docid)
 					
 		
 		#
