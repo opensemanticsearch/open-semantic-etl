@@ -88,14 +88,14 @@ config['ocr_lang'] = 'eng'
 # Config for Named Entities Recognition (NER)
 #
 
-# Enable NER Plugin
+# Enable Stanford NER Plugin
 #config['plugins'].append('enhance_ner_stanford')
 
-# Machine learning classifier (for which language and with how many classes, which need more computing time)
+# Stanford NER Machine learning classifier (for which language and with how many classes, which need more computing time)
 #config['stanford_ner_classifier'] = '/usr/share/java/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz'
 
-# If JAR not in standard path
+# If Stanford NER JAR not in standard path
 #config['stanford_ner_path_to_jar'] = "/usr/share/java/stanford-ner/stanford-ner.jar"
 
-# Java Options like RAM settings
+# Stanford NER Java options like RAM settings
 #config['stanford_ner_java_options'] = '-mx1000m -cp /usr/share/java/stanford-ner/lib/slf4j-api.jar:/usr/share/java/stanford-ner/lib/slf4j-simple.jar'
