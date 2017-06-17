@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import json
@@ -9,6 +9,9 @@ import urllib
 from dateutil import parser as dateparser
 
 from etl_web import Connector_Web
+
+import export_solr
+
 
 class Connector_RSS(Connector_Web):
 
@@ -50,12 +53,16 @@ class Connector_RSS(Connector_Web):
 	
 		result = True
 		# todo: result to false if getting/parsing uri failed
+
+		exporter = export_solr.export_solr()
+
 		feed = feedparser.parse(uri)
 	
 		for item in feed.entries:
 		
 			articleuri = item.link
-				
+			mtime = None
+			
 			#get modification time from file todo: from download
 			try:
 	
@@ -71,53 +78,41 @@ class Connector_RSS(Connector_Web):
 			except BaseException as e:
 				sys.stderr.write( "Exception while parsing date. Status: {}\n".format(e.message) )
 	
-			#convert mtime to solr format
-	
-			if mtime:
-				mtime_masked = mtime.strftime("%Y-%m-%dT%H:%M:%SZ")
-			else:
+			if not mtime:
 				mtime = time.localtime()
-				mtime_masked = time.strftime("%Y-%m-%dT%H:%M:%SZ", mtime)
+
+			#convert mtime to Solr format
+			mtime_masked = mtime.strftime("%Y-%m-%dT%H:%M:%SZ")
 	
-	
-			#get modtime from solr document
-			doc_mtime = 0
-			solruri = self.config['solr'] + self.config['index'] + '/get?id=' + urllib.quote( articleuri ) + '&fl=file_modified_dt'
-		
-			doc = json.load(urllib.urlopen(solruri))
-		
-			if doc['doc']:
-				doc_mtime = doc['doc']['file_modified_dt']
-		
+			#get modtime in index
+			doc_mtime = exporter.get_lastmodified(docid=articleuri)
+
 			#
 			# Is new article (not indexed so initial 0) or modified (doc_mtime <> mtime of file)?
 			#
 			
-	
-			if mtime_masked > doc_mtime:
-				# Index the article, because new or changed
-				doindex = True
-		
-				if doc_mtime==0:
-					if self.verbose or self.quiet==False:
-						print ("Indexing new article {}".format(articleuri) )
-				else:
-					if self.verbose or self.quiet==False:
-						print ("Indexing modified article {}".format(articleuri) )
-		
-			else:
-			
-				# Doc found in solr and field moddate of solr doc same as files mtime
+			if mtime_masked == doc_mtime:
+
+				# Doc found in Solr and field moddate of Solr doc same as files mtime
 				# so file was indexed as newest version before
 				doindex = False;
 		
 				if self.verbose:
 					print ( "Not indexing unchanged article {}".format(articleuri) )
-	
-	
-			# Download and Index the new or updated uri
-			if doindex:
-				
+		
+			else:
+			
+				# Index the article, because new or changed
+				doindex = True
+		
+				if doc_mtime==None:
+					if self.verbose or self.quiet==False:
+						print ("Indexing new article {}".format(articleuri) )
+				else:
+					if self.verbose or self.quiet==False:
+						print ("Indexing modified article {}".format(articleuri) )
+
+				# Download and Index the new or updated uri
 				try:
 					partresult = Connector_Web.index(self, uri=articleuri, last_modified=False)
 					if partresult == False:

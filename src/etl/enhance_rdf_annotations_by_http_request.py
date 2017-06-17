@@ -9,10 +9,10 @@ def metaserver_url(metaserver, docid):
 	
 	metaurl = metaserver
 
-	metaurl = metaurl.replace('[uri]', urllib.quote_plus(docid))
+	metaurl = metaurl.replace('[uri]', urllib.parse.quote_plus(docid))
 	
-	h = hashlib.md5(docid)
-	metaurl = metaurl.replace('[uri_md5]', urllib.quote_plus(h.hexdigest()) )
+	h = hashlib.md5(docid.encode("utf-8"))
+	metaurl = metaurl.replace('[uri_md5]', urllib.parse.quote_plus(h.hexdigest()) )
 
 	return metaurl
 
@@ -22,7 +22,7 @@ def metaserver_url(metaserver, docid):
 
 def getmeta_modified(metaservers, docid, verbose=False):
 
-	if isinstance(metaservers, basestring):
+	if isinstance(metaservers, str):
 		metaserver = metaservers
 	else:
 		for server in metaservers:
@@ -158,7 +158,7 @@ class enhance_rdf_annotations_by_http_request(object):
 		property2facet = parameters['property2facet']
 	
 		# if only one server
-		if isinstance(metaserver, basestring):
+		if isinstance(metaserver, str):
 			#get metadata
 			data = getmeta_rdf_from_server(metaserver=metaserver, data=data, property2facet=property2facet, docid=docid, verbose=verbose)
 		else:

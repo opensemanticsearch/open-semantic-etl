@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import urllib
-import urllib2
+import requests
 import json
+import urllib.request
+import urllib.parse
 
 # Export data to Solr
 class export_solr(object):
@@ -86,20 +87,14 @@ class export_solr(object):
 			print ("Sending update request to {}".format(solr_uri) )
 			print (datajson)
 
-		req = urllib2.Request(solr_uri)
-		req.add_header('Content-Type','application/json')
-
 		try:
-			response = urllib2.urlopen(req, datajson)
 
-		except urllib2.HTTPError as e:
+			requests.post(solr_uri, data=datajson, headers={'Content-Type': 'application/json'})
+
+		except BaseException as e:
 
 			import sys
-			sys.stderr.write( 'HTTP error ({}) on posting data to Solr: '.format( str( e.code ) ) )
-			sys.stderr.write( e.reason )
-			errormessage = e.read()
-			sys.stderr.write( errormessage )
-			
+			sys.stderr.write( 'Error while posting data to Solr: {}'.format(e) )
 		
 		
 	# tag a document by adding new value to field
@@ -177,7 +172,7 @@ class export_solr(object):
 	
 	
 		if query_marked_before:
-			# dont extend query but use filterquery for more performance (cache) on aliases
+			# don't extend query but use filterquery for more performance (cache) on aliases
 			solrparameters["fq"] = 'NOT (' + query_marked_before + ')'
 	
 		if self.verbose:
@@ -203,9 +198,14 @@ class export_solr(object):
 
 	def get_data(self, docid, fields):
 
-		uri = self.solr + self.core + '/get?id=' + urllib.quote( docid ) + '&fl=' + ','.join(fields)
+		uri = self.solr + self.core + '/get?id=' + urllib.parse.quote( docid ) + '&fl=' + ','.join(fields)
+
+		request = urllib.request.urlopen( uri )
+		encoding = request.info().get_content_charset('utf-8')
+		data = request.read()
+		request.close()
 	
-		solr_doc = json.load( urllib.urlopen( uri ) )
+		solr_doc = json.loads(data.decode(encoding))
 
 		data = None
 		if 'doc' in solr_doc:
@@ -217,10 +217,11 @@ class export_solr(object):
 	def commit(self):
 		
 		uri = self.solr + self.core + '/update?commit=true'
-		urllib.urlopen( uri )
+		request = urllib.request.urlopen( uri )
+		request.close()
 	
 	
-	def get_lastmodified( self, docid, parameters={} ):
+	def get_lastmodified( self, docid ):
 		#convert mtime to solr format
 		solr_doc_mtime = None
 

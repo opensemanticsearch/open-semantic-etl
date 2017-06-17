@@ -1,4 +1,4 @@
-import StringIO
+import io
 import pycurl
 import sys
 import json
@@ -55,7 +55,7 @@ class enhance_extract_text_tika_server(object):
 		# Upload file to Apache Tika uri with Curl
 		#
 		
-		tika_result_IO = StringIO.StringIO()
+		tika_result_IO = io.BytesIO()
 	
 		curl = pycurl.Curl()
 		curl.setopt(curl.POST, 1)
@@ -70,7 +70,7 @@ class enhance_extract_text_tika_server(object):
 
 		http_status = curl.getinfo(pycurl.HTTP_CODE)
 
-		tika_results = json.loads( tika_result_IO.getvalue() )
+		tika_results = json.loads( tika_result_IO.getvalue().decode('utf-8') )
 	
 		if verbose:
 			print ("CURL Status code: {}".format(http_status))

@@ -55,7 +55,7 @@ class filter_file_not_modified(object):
 
 			#get modtime from document saved in Index
 		
-			indexed_doc_mtime = exporter.get_lastmodified(docid=docid, parameters=parameters)
+			indexed_doc_mtime = exporter.get_lastmodified(docid=docid)
 			
 
 		file_mtime_masked = datetime.datetime.fromtimestamp( file_mtime ).strftime( "%Y-%m-%dT%H:%M:%SZ" )

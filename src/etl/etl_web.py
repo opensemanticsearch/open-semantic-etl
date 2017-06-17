@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import time
-import urllib2
+from email.utils import parsedate
+import urllib.request
 import os
 import tempfile
 from lxml import etree
@@ -147,16 +148,7 @@ class Connector_Web(Connector_File):
 			if self.verbose:
 				print ("Downloading {}".format(uri))
 	
-			tmpfile = tempfile.NamedTemporaryFile( prefix="opensemanticetl-index-web-", delete = False )
-
-			download = urllib2.urlopen(uri)
-			headers = download.info()
-			
-			tmpfile.write(download.read())
-	
-			tempfilename = tmpfile.name
-	
-			tmpfile.close()
+			tempfilename, headers = urllib.request.urlretrieve(uri)
 
 			if self.verbose:
 				print ("Download done")
@@ -173,13 +165,44 @@ class Connector_Web(Connector_File):
 			# get meta "last-modified" from content
 			mtime = self.read_mtime_from_html(tempfilename)
 	
-			# use http status modification time
+			# use HTTP status modification time
 			if not mtime:
-				mtime =	headers.getdate('last-modified')
-	
-			# else http create date
+				try:
+
+					last_modified = headers['last-modified']
+
+					if self.verbose:
+						print ("HTTP Header Last-modified: {}".format(last_modified))
+
+					mtime = dateparser.parse(mtimestring)
+					# convert datetime to time
+					mtime = mtime.timetuple()
+
+					if self.verbose:
+						print ("Parsed date: {}".format(mtime))
+
+				except:
+					mtime = False
+					print ("Failed to parse HTTP header last-modified")
+
+			# else HTTP create date
 			if not mtime:
-				mtime = headers.getdate('date')
+				try:
+					date = headers['date']
+
+					if self.verbose:
+						print ("HTTP Header date: {}".format(date))
+					
+					mtime = dateparser.parse(date)
+					# convert datetime to time
+					mtime = mtime.timetuple()
+
+					if self.verbose:
+						print ("Parsed date: {}".format(mtime))
+
+				except:
+					mtime = False
+					print ("Failed to parse HTTP header date")
 	
 			# else now
 			if not mtime:
@@ -207,8 +230,8 @@ if __name__ == "__main__":
 
 	#get uri or filename from args
 
-	parser = OptionParser("etl-web [options] uri") 
-	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=None, help="Dont print status (filenames) while indexing")
+	parser = OptionParser("etl-web [options] URL") 
+	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=None, help="Do not print status (filenames) while indexing")
 	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=None, help="Print debug messages")
 	parser.add_option("-f", "--force", dest="force", action="store_true", default=None, help="Force (re)indexing, even if no changes")
 	parser.add_option("-c", "--config", dest="config", default=False, help="Config file")

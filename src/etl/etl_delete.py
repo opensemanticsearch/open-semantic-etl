@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import importlib
@@ -54,7 +54,7 @@ class Delete(ETL):
 	def delete(self, uri):
 
 		if self.verbose:
-			print "Deleting from index {}".format(uri)
+			print ( "Deleting from index {}".format(uri) )
 		
 		self.connector.delete(parameters=self.config, docid=uri)
 
@@ -62,7 +62,7 @@ class Delete(ETL):
 	def empty(self):
 
 		if self.verbose:
-			print "Deleting all documents from index"
+			print ("Deleting all documents from index")
 	
 		self.connector.delete(parameters=self.config, query="*:*")
 		

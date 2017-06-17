@@ -1,7 +1,7 @@
 import sys
 import os
 import csv
-import urllib
+import urllib.request
 import codecs
 from etl import ETL
 
@@ -316,12 +316,9 @@ class enhance_csv(object):
 
 			# Download url to an tempfile
 			is_tempfile = True
-			self.filename, headers = urllib.urlretrieve(self.filename)
+			self.filename, headers = urllib.request.urlretrieve(self.filename)
 
-	
-	
-
-		
+			
 		#
 		# Get CSV dialect parameters
 		#

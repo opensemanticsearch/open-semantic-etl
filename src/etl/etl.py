@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import importlib
@@ -56,7 +56,7 @@ class ETL(object):
 		
 		if os.path.isfile(configfile):
 			config = self.config
-			execfile( configfile, locals() )
+			exec(open(configfile).read(), locals())
 			self.config = config
 	
 			result = True
@@ -206,7 +206,7 @@ class ETL(object):
 
 					sys.stderr.write( "Exception while data enrichment of {} with plugin {}: {}\n".format( parameters['id'], plugin, e ) )
 
-					errormessage = unicode(e)
+					errormessage = "{}".format(e)
 					
 					if 'error_ss' in data:
 						data['etl_error_ss'].append(errormessage)
