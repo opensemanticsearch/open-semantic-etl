@@ -4,7 +4,7 @@ import hashlib
 import tempfile
 import os
 import shutil
-from etl_file import Connector_File
+from etl.etl_file import Connector_File
 
 
 class enhance_zip(object):

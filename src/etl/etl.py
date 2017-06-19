@@ -4,7 +4,7 @@
 import importlib
 import sys
 import os
-import filter_blacklist
+import etl.filter_blacklist
 
 #
 # Extract Transform Load (ETL):

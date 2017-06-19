@@ -5,10 +5,10 @@ import pyinotify
 
 from optparse import OptionParser
 
-from tasks import index_file
-from tasks import delete
+from etl.tasks import index_file
+from etl.tasks import delete
 
-from enhance_mapping_id import mapping
+from etl.enhance_mapping_id import mapping
 
 
 class EventHandler(pyinotify.ProcessEvent):

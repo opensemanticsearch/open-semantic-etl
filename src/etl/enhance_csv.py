@@ -3,7 +3,7 @@ import os
 import csv
 import urllib.request
 import codecs
-from etl import ETL
+from etl.etl import ETL
 
 
 # import each row of CSV file to index

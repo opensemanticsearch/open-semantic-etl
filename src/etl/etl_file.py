@@ -5,7 +5,7 @@ import os.path
 import sys
 import threading
 
-from etl import ETL
+from etl.etl import ETL
 
 
 class Connector_File(ETL):

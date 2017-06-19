@@ -8,9 +8,9 @@ import sys
 import urllib
 from dateutil import parser as dateparser
 
-from etl_web import Connector_Web
+from etl.etl_web import Connector_Web
 
-import export_solr
+import etl.export_solr
 
 
 class Connector_RSS(Connector_Web):
@@ -54,7 +54,7 @@ class Connector_RSS(Connector_Web):
 		result = True
 		# todo: result to false if getting/parsing uri failed
 
-		exporter = export_solr.export_solr()
+		exporter = etl.export_solr.export_solr()
 
 		feed = feedparser.parse(uri)
 	

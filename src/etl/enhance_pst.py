@@ -4,7 +4,7 @@ import tempfile
 import os
 import shutil
 import subprocess
-from etl_file import Connector_File
+from etl.etl_file import Connector_File
 
 
 class enhance_pst(object):

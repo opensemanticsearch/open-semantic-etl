@@ -1,7 +1,7 @@
 import sys
 import rdflib
 
-from etl import ETL
+from etl.etl import ETL
 
 
 # Import RDF graph file granular, not only as a whole single file:
