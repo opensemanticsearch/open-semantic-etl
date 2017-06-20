@@ -26,10 +26,10 @@ class enhance_rdf(object):
 
 			# get all labels for this obj
 			for label in self.graph.objects(subject=obj, predicate=rdflib.RDFS.label):
-				values.append( label.encode('UTF-8') )
+				values.append( label )
 
 				if self.verbose:
-					print ( "Appending RDFS:label: {}".format(label.encode('UTF-8')) )
+					print ( "Appending RDFS:label: {}".format(label) )
 
 			#
 			# append SKOS labels
@@ -38,24 +38,24 @@ class enhance_rdf(object):
 			# append SKOS prefLabel
 			skos = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
 			for label in self.graph.objects(subject=obj, predicate=skos['prefLabel']):
-				values.append( label.encode('UTF-8') )
+				values.append( label )
 
 				if self.verbose:
-					print ( "Appending SKOS:prefLabel: {}".format(label.encode('UTF-8')) )
+					print ( "Appending SKOS:prefLabel: {}".format(label) )
 
 			# append SKOS altLabels
 			for label in self.graph.objects(subject=obj, predicate=skos['altLabel']):
-				values.append( label.encode('UTF-8') )
+				values.append( label )
 
 				if self.verbose:
-					print ( "Appending SKOS:altLabel: {}".format(label.encode('UTF-8')) )
+					print ( "Appending SKOS:altLabel: {}".format(label) )
 
 			# append SKOS hiddenLabels
 			for label in self.graph.objects(subject=obj, predicate=skos['hiddenLabel']):
-				values.append( label.encode('UTF-8') )
+				values.append( label )
 
 				if self.verbose:
-					print ( "Appending SKOS:hiddenLabel: {}".format(label.encode('UTF-8')) )
+					print ( "Appending SKOS:hiddenLabel: {}".format(label) )
 
 
 			#if no label use URI instead
