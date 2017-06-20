@@ -9,7 +9,7 @@ import tempfile
 from lxml import etree
 from dateutil import parser as dateparser
 
-from etl.etl_file import Connector_File
+from etl_file import Connector_File
 
 class Connector_Web(Connector_File):
 

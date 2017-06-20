@@ -1,4 +1,4 @@
-import etl.etl
+import etl
 from nltk.tag.stanford import StanfordNERTagger
 
 
@@ -9,7 +9,6 @@ from nltk.tag.stanford import StanfordNERTagger
 # Appends classified (Persons, Locations, Organizations) entities (Names/Words) to mapped facets/fields
 
 class enhance_ner_stanford(object):
-
 
 	def process (self, parameters={}, data={} ):
 	

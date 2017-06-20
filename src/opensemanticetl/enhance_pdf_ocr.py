@@ -2,8 +2,8 @@ import os.path
 import sys
 import subprocess
 import tempfile
-import etl.enhance_ocr
-import etl.enhance_ocr_descew
+import enhance_ocr
+import enhance_ocr_descew
 
 # Extract text from all extracted images from pdf
 # if splitpages is off, return one txt instead of page based list of texts
@@ -36,7 +36,7 @@ def pdfimages2text(filename, lang='eng', verbose=False, pdf_ocr=True, pdf_ocr_de
 					pagenumber = int( image.split('-')[1] )
 	
 					
-					result = etl.enhance_ocr.image2text(filename=imagefilename, lang=lang, verbose=verbose)
+					result = enhance_ocr.image2text(filename=imagefilename, lang=lang, verbose=verbose)
 					
 					if result:
 						
@@ -59,7 +59,7 @@ def pdfimages2text(filename, lang='eng', verbose=False, pdf_ocr=True, pdf_ocr_de
 					# extract page number from extracted image filename (image-pagenumber-imagenumber.jpg)
 					pagenumber = int( image.split('-')[1] )
 
-					result = etl.enhance_ocr_descew.optimized_image2text(imagefilename, lang, verbose=verbose)
+					result = enhance_ocr_descew.optimized_image2text(imagefilename, lang, verbose=verbose)
 					
 					if result:
 	

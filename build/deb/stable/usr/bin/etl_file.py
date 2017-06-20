@@ -1,1 +1,1 @@
-../lib/python2.7/etl/etl_file.py
+../lib/python3/dist-packages/opensemanticetl/etl_file.py

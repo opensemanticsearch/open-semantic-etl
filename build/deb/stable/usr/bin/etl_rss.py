@@ -1,1 +1,1 @@
-../lib/python2.7/etl/etl_rss.py
+../lib/python3/dist-packages/opensemanticetl/etl_rss.py

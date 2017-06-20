@@ -3,7 +3,7 @@
 
 import importlib
 
-from etl.etl import ETL
+from etl import ETL
 
 
 class Delete(ETL):

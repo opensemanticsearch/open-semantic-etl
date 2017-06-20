@@ -1,1 +1,1 @@
-../lib/python2.7/etl/tasks.py
+../lib/python3/dist-packages/opensemanticetl/etl_tasks.py

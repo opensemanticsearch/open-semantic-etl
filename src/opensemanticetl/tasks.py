@@ -9,11 +9,11 @@
 from celery import Celery
 
 # ETL connectors
-from etl.etl import ETL
-from etl.etl_delete import Delete
-from etl.etl_file import Connector_File
-from etl.etl_web import Connector_Web
-from etl.etl_rss import Connector_RSS
+from etl import ETL
+from etl_delete import Delete
+from etl_file import Connector_File
+from etl_web import Connector_Web
+from etl_rss import Connector_RSS
 
 
 verbose = True

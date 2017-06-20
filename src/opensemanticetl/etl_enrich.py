@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from etl.etl import ETL
+from etl import ETL
 import pysolr
-import etl.export_solr
+import export_solr
 import importlib
 import threading
 
@@ -33,7 +33,7 @@ class ETL_Enrich(ETL):
 
 
 		# init exporter	(todo: exporter as extended PySolr)	
-		self.export_solr = etl.export_solr.export_solr()
+		self.export_solr = export_solr.export_solr()
 
 
 		# init PySolr
