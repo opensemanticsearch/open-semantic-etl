@@ -135,16 +135,19 @@ class Connector_File(ETL):
 		for dirName, subdirList, fileList in os.walk(rootDir, followlinks=followlinks):
 	
 			if self.verbose:
-				print('Scanning directory: %s' % dirName)
+				print("Scanning directory: {}".format(dirName))
 	
 				
 			for fileName in fileList:
 				if self.verbose:
-					print('Scanning file: %s' % fileName)
+					print("Scanning file: {}".format(fileName))
 	
 				try:
 					
-					fullname = dirName + os.path.sep + fileName
+					fullname = dirName
+					if not fullname.endswith(os.path.sep):
+						fullname += os.path.sep
+					fullname += fileName
 
 					# no threading					
 					if self.threads_max == 1:
