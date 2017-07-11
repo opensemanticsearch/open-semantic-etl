@@ -64,7 +64,7 @@ class enhance_extract_text_tika_server(object):
 		if httpheader:
 			curl.setopt(pycurl.HTTPHEADER, httpheader)
 
-		curl.setopt(curl.HTTPPOST, [('fileupload', (curl.FORM_FILE, filename, curl.FORM_FILENAME, filename ))])
+		curl.setopt(curl.HTTPPOST, [('fileupload', (curl.FORM_FILE, filename.encode('utf-8'), curl.FORM_FILENAME, filename.encode('utf-8') ))])
 		curl.setopt(curl.WRITEFUNCTION, tika_result_IO.write)
 		curl.perform()
 
