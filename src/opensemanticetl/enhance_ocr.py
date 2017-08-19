@@ -15,12 +15,12 @@ def image2text(filename, lang='eng', verbose=False, cache=None):
 	#
 	if cache:
 		# calc filename from cache dir and file content not filename, which will be different temp filename in future
-		md5hash = hashlib.md5(open(filename, 'rb').read()).hexdigest()		
+		md5hash = hashlib.md5(open(filename, 'rb').read().encode('utf-8')).hexdigest()
 		ocr_temp_filename = cache + os.path.sep + lang +'-' + md5hash
 
 	else:
 		# calc tempfilename from temp dir and filename
-		md5hash = hashlib.md5(filename).hexdigest()
+		md5hash = hashlib.md5(filename.encode('utf-8')).hexdigest()
 		ocr_temp_filename = tempfile.gettempdir() + os.path.sep + "opensemanticetl_ocr_" + md5hash
 
 
