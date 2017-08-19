@@ -59,7 +59,7 @@ class enhance_pst(object):
 		else:
 			system_temp_dirname = tempfile.gettempdir()
 	
-		h = hashlib.md5(parameters['id'])
+		h = hashlib.md5(parameters['id'].encode('UTF-8'))
 		temp_dirname = system_temp_dirname + os.path.sep + "opensemanticetl_enhancer_pst_" + h.hexdigest()
 	
 		if not os.path.exists(temp_dirname):
