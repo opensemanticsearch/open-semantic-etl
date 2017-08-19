@@ -49,7 +49,7 @@ class enhance_zip(object):
 			system_temp_dirname = tempfile.gettempdir()
 
 		# we build temp dirname ourselfes instead of using system_temp_dirname so we can use configurable / external tempdirs
-		h = hashlib.md5(parameters['id'])
+		h = hashlib.md5(parameters['id'].encode('UTF-8'))
 		temp_dirname = system_temp_dirname + os.path.sep + "opensemanticetl_enhancer_zip_" + h.hexdigest()
 	
 		if os.path.exists(temp_dirname) == False:
