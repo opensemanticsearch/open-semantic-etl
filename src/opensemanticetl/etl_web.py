@@ -48,6 +48,7 @@ class Connector_Web(Connector_File):
 		self.config['plugins'] = [
 			'filter_blacklist',
 			'enhance_extract_text_tika_server',
+			'enhance_contenttype_group',
 			'enhance_pst',
 			'enhance_csv',
 			'enhance_path',

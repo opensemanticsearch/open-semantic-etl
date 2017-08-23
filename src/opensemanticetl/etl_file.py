@@ -53,6 +53,7 @@ class Connector_File(ETL):
 			'filter_blacklist',
 			'filter_file_not_modified',
 			'enhance_extract_text_tika_server',
+			'enhance_contenttype_group',
 			'enhance_pst',
 			'enhance_csv',
 			'enhance_file_mtime',
