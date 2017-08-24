@@ -8,6 +8,8 @@
 
 class enhance_contenttype_group(object):
 
+	fieldname = 'content_type_group'
+
 	contenttype_groups = {
 		'application/vnd.ms-excel': 'Spreadsheet',
 		'application/vnd.oasis.opendocument.spreadsheet': 'Spreadsheet',
@@ -39,11 +41,11 @@ class enhance_contenttype_group(object):
 		# Contenttype to group
 		for contenttype, group in self.contenttype_groups.items():
 			if data['content_type'].startswith(contenttype):
-				data['contenttype_group_ss'] = group
+				data[self.fieldname] = group
 
 		# Suffix to group
 		for suffix, group in self.suffix_groups.items():
 			if parameters['id'].upper().endswith(suffix.upper()):
-				data['contenttype_group_ss'] = group
+				data[self.fieldname] = group
 
 		return parameters, data
