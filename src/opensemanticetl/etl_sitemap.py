@@ -3,11 +3,12 @@
 
 import sys
 import urllib.request
+import xml.etree.ElementTree as ElementTree
 from dateutil import parser as dateparser
 import re
 
 from etl_web import Connector_Web
-from opensemanticetl.tasks import index_web
+from tasks import index_web
 
 
 class Connector_Sitemap(Connector_Web):
@@ -48,39 +49,80 @@ class Connector_Sitemap(Connector_Web):
 	
 	def index (self, sitemap):
 
-		req = urllib.request.Request(sitemap)
-		with urllib.request.urlopen(req) as response:
-		   sitemap = response.readlines()
-	
-		for line in sitemap:
-			urls = re.findall('<loc>(http:\/\/.+)<\/loc>', line.decode('utf-8'))
+		if self.verbose or self.quiet==False:
+			print ( "Downloading sitemap {}".format(sitemap) )
 
-			for url in urls:
+		sitemap = urllib.request.urlopen(sitemap)
 
-				# Download and Index the new or updated uri
+		et = ElementTree.parse(sitemap)
+		
+		root = et.getroot()
+
+		# process subsitemaps if sitemapindex
+		for sitemap in root.findall("{http://www.sitemaps.org/schemas/sitemap/0.9}sitemap"):
+			url = sitemap.findtext('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')
+
+			if self.verbose or self.quiet==False:
+				print ("Processing subsitemap {}".format(url) )
+
+			self.index(url)
+
+
+		#
+		# get urls if urlset
+		#
+		
+		urls=[]
+		
+		# XML schema with namespace sitemaps.org
+		for url in root.findall("{http://www.sitemaps.org/schemas/sitemap/0.9}url"):
+
+			url = url.findtext('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')
+
+			urls.append(url)
+
+		# XML schema with namespace Google sitemaps
+		for url in root.findall("{http://www.google.com/schemas/sitemap/0.84}url"):
+
+			url = url.findtext('{http://www.google.com/schemas/sitemap/0.84}loc')
+
+			urls.append(url)
+
+
+		# Queue or download and index the urls
+
+		for url in urls:
+				
+			if self.queue:
+
+				# add webpage to queue as Celery task
 				try:
-					
-					if self.queue:
-	
-						# add webpage to queue as Celery task
 
-						if self.verbose or self.quiet==False:
-							print ("Adding URL to queue: {}".format(url) )
+					if self.verbose or self.quiet==False:
+						print ("Adding URL to queue: {}".format(url) )
 
-						result = index_web.delay(uri=uri)
-
-					else:
-
-						# batchmode, index page after page ourselves
-						if self.verbose or self.quiet==False:
-							print ("Indexing {}".format(url) )
-
-						result = Connector_Web.index(self, uri=url)
+					result = index_web.delay(uri=uri)
 
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt	
 				except BaseException as e:
-					sys.stderr.write( "Exception while getting {} : {}".format(url, e) )
+					sys.stderr.write( "Exception while adding to queue {} : {}\n".format(url, e) )
+
+
+			else:
+
+				# batchmode, index page after page ourselves
+				
+				try:
+					if self.verbose or self.quiet==False:
+						print ("Indexing {}".format(url) )
+
+					result = Connector_Web.index(self, uri=url)
+
+				except KeyboardInterrupt:
+					raise KeyboardInterrupt	
+				except BaseException as e:
+					sys.stderr.write( "Exception while indexing {} : {}\n".format(url, e) )
 	
 #
 # If runned (not imported for functions) get parameters and start
