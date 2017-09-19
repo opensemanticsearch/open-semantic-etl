@@ -2,7 +2,6 @@ import sys
 import os
 import csv
 import urllib.request
-import codecs
 from etl import ETL
 
 
@@ -111,7 +110,6 @@ class enhance_csv(object):
 	# Autodetect and/or construct from parameters
 	def get_csv_dialect(self):
 
-	
 		kwargs={}
 	
 		# automatically detect dialect
@@ -122,7 +120,7 @@ class enhance_csv(object):
 				if self.verbose:
 					print ( "Opening {} for guessing CSV dialect".format(self.filename) )	
 
-				csvfile = codecs.open(self.filename, "rb")
+				csvfile = open(self.filename, newline='', encoding=self.encoding)
 		
 				if self.verbose:
 					print ("Starting dialect guessing")
@@ -138,7 +136,7 @@ class enhance_csv(object):
 				raise KeyboardInterrupt
 
 			except BaseException as e:
-				sys.stderr.write( "Exception while CSV format autodetection for {}: {}".format(self.filename, e.message) )
+				sys.stderr.write( "Exception while CSV format autodetection for {}: {}".format(self.filename, e) )
 	
 			finally:
 				csvfile.close()
@@ -175,15 +173,7 @@ class enhance_csv(object):
 		for col in row:
 	
 			colnumber += 1
-	
-			# if a codec is given, decode charset
-			if self.encoding:
-				try:
-					col = col.decode(self.encoding)
-				except:
-					print ("Exception while decoding title column")
-					col = 'Column {}'.format(colnumber)
-	
+		
 			self.titles.append(col)
 	
 		return self.titles
@@ -208,7 +198,7 @@ class enhance_csv(object):
 		except KeyboardInterrupt:
 			raise KeyboardInterrupt
 		except BaseException as e:
-			sys.stderr.write( "Exception adding CSV row {} : {}".format(rownumber, e.message) )
+			sys.stderr.write( "Exception adding CSV row {} : {}".format(rownumber, e) )
 
 			if 'raise_pluginexception' in self.config:
 				if self.config['raise_pluginexception']:
@@ -244,14 +234,6 @@ class enhance_csv(object):
 
 
 			if not exclude_column:
-			
-				# if a codec is given, decode charset
-				if self.encoding:
-					try:
-						col = col.decode(self.encoding)
-					except:
-						print ( "Exception while decoding row {} column {}".format(rownumber, colnumber) )
-	
 				
 				if self.titles and len(self.titles) >= colnumber:
 					fieldname = self.titles[colnumber-1] + "_t"
@@ -333,7 +315,7 @@ class enhance_csv(object):
 		# Open and read CSV
 		#
 		
-		csvfile = codecs.open(self.filename, "rb")
+		csvfile = open(self.filename, newline='', encoding=self.encoding)
 	
 		reader = csv.reader(csvfile, **dialect_kwargs)
 		
