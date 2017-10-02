@@ -18,7 +18,7 @@ class Delete(ETL):
 		
 		self.read_configfiles()
 
-			# read on what DB or search server software our index is
+		# read on what DB or search server software our index is
 		export = self.config['export']
 	
 		# call delete function of the configured exporter
@@ -55,7 +55,7 @@ class Delete(ETL):
 
 		if self.verbose:
 			print ( "Deleting from index {}".format(uri) )
-		
+
 		self.connector.delete(parameters=self.config, docid=uri)
 
 

@@ -8,6 +8,7 @@ from optparse import OptionParser
 from tasks import index_file
 from tasks import delete
 
+from etl import ETL
 from enhance_mapping_id import mapping
 
 
@@ -54,36 +55,35 @@ class EventHandler(pyinotify.ProcessEvent):
 	
 	def process(self, filename, function):
 
-
 		if function == 'index-file':
+
+			if self.verbose:
+				print ( "Indexing file {}".format(filename) )
+
 			index_file.delay(filename = filename)
 			
 		elif function == 'delete':
 
-			# map the filename to URI, since in the index its an URI
+			uri = filename
 			if 'mappings' in self.config:
-				uri = mapping( value = filename, mappings = self.config['mappings'] )
-			else:
-				uri = filename
+				uri = mapping( value = uri, mappings = self.config['mappings'] )
 
 			if self.verbose:
-				print ("Deleting URI {}".format(uri) )
+				print ( "Deleting from index filename {} with URL {}".format(filename, uri) )
+
 			delete.delay(uri = uri)
 
 
-class Filemonitor(object):
+class Filemonitor(ETL):
 
 	def __init__(self, verbose = False ):
 
+		ETL.__init__(self, verbose=verbose)
+
 		self.verbose=verbose
+
+		self.read_configfiles()
 		
-		self.config = {}
-
-		# filename to URI mapping
-		# Todo: read from config file
-		self.config['mappings'] = { "/": "file:///" }
-
-
 		self.mask = pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM  # watched events
 
 		self.watchmanager = pyinotify.WatchManager()  # Watch Manager
@@ -92,6 +92,16 @@ class Filemonitor(object):
 		
 		self.notifier = pyinotify.Notifier(self.watchmanager, self.handler)
 
+		
+
+	def read_configfiles(self):
+		#
+		# include configs
+		#
+				
+		self.read_configfile ('/etc/opensemanticsearch/etl')
+		self.read_configfile ('/etc/opensemanticsearch/connector-files')
+		
 
 	def add_watch(self, filename):
 
