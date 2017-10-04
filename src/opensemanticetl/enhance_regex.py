@@ -9,7 +9,6 @@ import re
 def cleantext(text):
 
 	# delete newlines so a phrase will be found even if part of phrase in new line
-	#text=text.replace("\r\n", " ") # not needet, since each of them will be cleaned and after that we will replace more than one space later
 	text=text.replace("\n", " ")
 	text=text.replace("\r", " ")
 	
@@ -17,6 +16,7 @@ def cleantext(text):
 	text=text.replace("  ", " ")
 
 	return text
+
 
 def regex2facet(data, text, regex, group, facet, verbose=False):
 
