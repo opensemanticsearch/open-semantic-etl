@@ -38,6 +38,7 @@ class ETL(object):
 
 		self.config['plugins'] = [ 'enhance_extract_text_tika_server' ]
 		self.config['export'] = 'export_solr'
+		self.config['regex_lists'] = []
 		
 		self.config['raise_pluginexception'] = False
 		
