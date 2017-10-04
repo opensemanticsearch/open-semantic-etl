@@ -33,7 +33,7 @@ def regex2facet(data, text, regex, group, facet, verbose=False):
 				if verbose:
 					print ("Found regex {} with value {} for facet {}".format(regex, value, facet))
 
-				etl.etl.append(data, facet, value)
+				etl.append(data, facet, value)
 
 			except BaseException as e:
 				print ( "Exception while adding value {} from regex {} and group {} to facet {}:".format(value, regex, group, facet) )
