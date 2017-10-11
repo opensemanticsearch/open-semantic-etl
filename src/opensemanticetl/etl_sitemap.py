@@ -101,7 +101,7 @@ class Connector_Sitemap(Connector_Web):
 					if self.verbose or self.quiet==False:
 						print ("Adding URL to queue: {}".format(url) )
 
-					result = index_web.delay(uri=uri)
+					result = index_web.delay(uri=url)
 
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt	
