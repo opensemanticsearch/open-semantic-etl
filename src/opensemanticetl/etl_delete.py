@@ -102,7 +102,8 @@ if __name__ == "__main__":
         print(
             "This will delete the whole index, are you sure ? Then enter \"yes\"")
         descision = input()
-        if descision is "yes":
+        if descision == "yes":
+            print("huhu")
             connector.empty()
 
     # index each filename
