@@ -28,6 +28,7 @@ class ETL_Enrich(ETL):
 
 		self.read_configfile ('/etc/etl/config')
 		self.read_configfile ('/etc/opensemanticsearch/etl')
+		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 
 		self.fields = self.getfieldnames_from_plugins()
 
@@ -254,10 +255,6 @@ class ETL_Enrich(ETL):
 				
 				docid = result['id']
 
-				# workround since Solr and pysolr work with utf-8 but the rest of python environment here with unicode
-				docid = docid.encode('utf-8')
-
-				
 				if self.threads_max == 1:
 
 					# no threading, do it directly in this process					
