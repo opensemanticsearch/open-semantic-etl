@@ -51,7 +51,6 @@ def index_file(filename, wait=0):
 #
 # Index a webpage
 #
-
 @app.task(name='etl.index_web')
 def index_web(uri, wait=0):
 
@@ -59,6 +58,22 @@ def index_web(uri, wait=0):
 		time.sleep(wait)
 
 	result = etl_web.index(uri)
+
+	return result
+
+
+#
+# Index webpages from sitemap
+#
+
+@app.task(name='etl.index_sitemap')
+def index_sitemap(uri):
+
+	from etl_sitemap import Connector_Sitemap
+
+	connector_sitemap = Connector_Sitemap()
+
+	result = connector_sitemap.index(uri)
 
 	return result
 
@@ -76,7 +91,6 @@ def index_rss(uri, wait=0):
 	result = etl_rss.index(uri)
 
 	return result
-
 
 
 #

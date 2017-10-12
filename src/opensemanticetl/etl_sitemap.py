@@ -8,7 +8,7 @@ from dateutil import parser as dateparser
 import re
 
 from etl_web import Connector_Web
-from tasks import index_web
+import tasks
 
 
 class Connector_Sitemap(Connector_Web):
@@ -101,7 +101,7 @@ class Connector_Sitemap(Connector_Web):
 					if self.verbose or self.quiet==False:
 						print ("Adding URL to queue: {}".format(url) )
 
-					result = index_web.delay(uri=url)
+					result = tasks.index_web.delay(uri=url)
 
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt	
