@@ -66,7 +66,8 @@ class enhance_ner_stanford(object):
 				etl.append(data, mapping[entity_class], entity)
 
 			else:
-				print ( "Ignore unknown Named Entity Recognition (NER) class {} for entity/word {}, since class not mapped to a field/facet".format(entity_class, entity) )
+				if verbose:
+					print ( "Ignore unknown Named Entity Recognition (NER) class {} for entity/word {}, since class not mapped to a field/facet".format(entity_class, entity) )
 
 
 		# mark the document, that it was analyzed by this plugin yet
