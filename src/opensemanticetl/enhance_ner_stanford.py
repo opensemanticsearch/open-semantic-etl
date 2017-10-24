@@ -26,14 +26,23 @@ class enhance_ner_stanford(object):
 			 'PERSON': 'person_ss',
 			 'LOCATION': 'location_ss',
 			 'ORGANIZATION': 'organization_ss',
+			 'I-ORG': 'organization_ss',
+			 'I-PER': 'person_ss',
+			 'I-LOC': 'location_ss',
 			}
 	
 
+		# default classifier
 		if 'stanford_ner_classifier' in parameters:
 			classifier = parameters['stanford_ner_classifier']
 		else:
 			classifier = 'english.all.3class.distsim.crf.ser.gz'
 
+		# set language specific classifier, if configured and document language detected
+		if 'stanford_ner_classifiers' in parameters and 'language_s' in data:
+			# is a language specific cassifier there for the detected language?
+			if data['language_s'] in parameters['stanford_ner_classifiers']:
+				classifier = parameters['stanford_ner_classifiers'][data['language_s']]
 
 		kwargs={}
 
