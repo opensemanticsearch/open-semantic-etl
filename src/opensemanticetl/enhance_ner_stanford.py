@@ -6,9 +6,49 @@ from nltk.tag.stanford import StanfordNERTagger
 # Stanford Named Entitiy Recognizer (NER)
 #
 
-# Appends classified (Persons, Locations, Organizations) entities (Names/Words) to mapped facets/fields
+# Appends classified (Persons, Locations, Organizations) entities (names/words) to mapped facets/fields
 
 class enhance_ner_stanford(object):
+
+	# compound words of same class to multi word entities (result is a split by class changes instead of split on single words/tokens)
+	def multi_word_entities (self, entities):
+
+		multi_word_entities = []
+		multi_word_entity = ""
+		last_entity_class = ""
+
+		i = 0
+
+		for entity, entity_class in entities:
+
+			i += 1
+
+			class_change = False
+
+			# new entity class different from last words which had been joined?
+			if last_entity_class:
+				if entity_class != last_entity_class:
+					class_change = True
+
+			# if new class add last values to dictionary and begin new multi word entity
+			if class_change:
+				multi_word_entities.append( (multi_word_entity, last_entity_class) )
+				multi_word_entity = ""
+
+			#add new word to multi word entity
+			if multi_word_entity:
+				multi_word_entity += " " + entity
+			else:
+				multi_word_entity = entity
+
+			# if last entity, no next class change, so add now
+			if i == len(entities):
+				multi_word_entities.append( (multi_word_entity, entity_class) )
+
+			last_entity_class = entity_class
+
+		return multi_word_entities
+
 
 	def process (self, parameters={}, data={} ):
 	
@@ -40,7 +80,7 @@ class enhance_ner_stanford(object):
 
 		# set language specific classifier, if configured and document language detected
 		if 'stanford_ner_classifiers' in parameters and 'language_s' in data:
-			# is a language specific cassifier there for the detected language?
+			# is a language speciic cassifier there for the detected language?
 			if data['language_s'] in parameters['stanford_ner_classifiers']:
 				classifier = parameters['stanford_ner_classifiers'][data['language_s']]
 
@@ -52,17 +92,18 @@ class enhance_ner_stanford(object):
 		if 'stanford_ner_path_to_jar' in parameters:
 			kwargs['path_to_jar'] = parameters['stanford_ner_path_to_jar']
 
-	
 		if 'content' in parameters:
-			content = parameters['content']
+			text = parameters['content']
 		else:
-			content = data['content']
+			text = data['content']
 	
 	
 		# classify/tag with class each word of the content
 		st = StanfordNERTagger(classifier, encoding='utf8', verbose=verbose, **kwargs)
-		entities = st.tag(content.split())
+		entities = st.tag(text.split())
 
+		# compound words of same class to multi word entities (result is a split by class changes instead of split on single words/tokens)
+		entities = self.multi_word_entities(entities)
 
 		# if class of entity is mapped to a facet/field, append the entity to this facet/field
 		for entity, entity_class in entities:
@@ -70,17 +111,16 @@ class enhance_ner_stanford(object):
 			if entity_class in mapping:
 				
 				if verbose:
-					print ( "NER classified word/name {} to {}. Appending to mapped facet {}".format(entity, entity_class, mapping[entity_class]) )
+					print ( "NER classified word(s)/name {} to {}. Appending to mapped facet {}".format(entity, entity_class, mapping[entity_class]) )
 
 				etl.append(data, mapping[entity_class], entity)
 
 			else:
 				if verbose:
-					print ( "Ignore unknown Named Entity Recognition (NER) class {} for entity/word {}, since class not mapped to a field/facet".format(entity_class, entity) )
+					print ( "Since Named Entity Recognition (NER) class {} not mapped to a field/facet, ignore entity/word(s): {}".format(entity_class, entity) )
 
 
 		# mark the document, that it was analyzed by this plugin yet
 		data['enhance_ner_stanford_b'] = "true"
 		
 		return parameters, data
-
