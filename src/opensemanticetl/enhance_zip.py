@@ -106,11 +106,11 @@ class enhance_zip(object):
 						raise KeyboardInterrupt
 
 					except BaseException as e:
-						sys.stderr.write( "Exception while indexing zipped content {} from {} : {}\n".format(fileName, connector.config['container'], e.message) )
+						sys.stderr.write( "Exception while indexing zipped content {} from {} : {}\n".format(fileName, connector.config['container'], e) )
 	
 					os.remove(unziped_filename)
 	
 				except BaseException as e:
-					sys.stderr.write( "Exception while indexing file {} : {}\n".format(fileName, e.message) )
+					sys.stderr.write( "Exception while indexing file {} : {}\n".format(fileName, e) )
 	
 		shutil.rmtree(temp_dirname)
