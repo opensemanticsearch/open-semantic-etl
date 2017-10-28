@@ -1,9 +1,10 @@
 # Blacklist of contenttype prefixes
 
-# Open Office / Libreoffice 
-# Open document format is a zip archive with the document as XML, the embedded images and meta data as XML
+# Open Office / Libreoffice / MS Office
+# Open document format and MS office open xml format is a zip archive with the document as XML, the embedded images and meta data as XML
 # Tika will extract the main content, which - if you do not forensics - is enough in most cases.
 # So we dont want additional handle each single (metadata) file in this archive, so we deactivate the ZIP plugin for that content type
-# Since this is a prefix blacklist, it will application/vnd.oasis.opendocument.text, application/vnd.oasis.opendocument.spreadsheet and so on ...
+# Since this is a prefix blacklist, it will stop unzip application/vnd.oasis.opendocument.text, application/vnd.oasis.opendocument.spreadsheet and so on ...
 
 application/vnd.oasis.opendocument.
+application/vnd.openxmlformats-officedocument.

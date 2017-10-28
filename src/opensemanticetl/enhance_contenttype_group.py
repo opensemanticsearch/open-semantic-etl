@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
 #
 # Map/aggregate content type to content type group
 #
@@ -14,15 +13,18 @@ class enhance_contenttype_group(object):
 		'application/vnd.ms-excel': 'Spreadsheet',
 		'application/vnd.oasis.opendocument.spreadsheet': 'Spreadsheet',
 		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Spreadsheet',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.template': 'Spreadsheet template',
 		'text': 'Text document',
 		'application/pdf': 'Text document',
 		'application/msword': 'Text document',
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Text document',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.template': 'Text document template',
 		'application/vnd.oasis.opendocument.text': 'Text document',
 		'application/rtf': 'Text document',
 		'application/vnd.ms-powerpoint': 'Presentation',
 		'application/vnd.oasis.opendocument.presentation': 'Presentation',
 		'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'Presentation',
+		'application/vnd.openxmlformats-officedocument.presentationml.template': 'Presentation template',
 		'image': 'Image',
 		'audio': 'Audio',
 		'video': 'Video',
