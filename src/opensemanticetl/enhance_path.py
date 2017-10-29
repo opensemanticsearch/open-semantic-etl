@@ -26,19 +26,28 @@ class enhance_path(object):
 		# replace # (i.e. uri) with unix path seperator
 		docid = docid.replace("#", '/')
 	
-	
 		# if more then one /
 		docid = docid.replace("//", '/')
-	
 	
 		# path
 		path = docid.split('/')
 		
 		i = 0
+		deep = 0
+
 		for subpath in path:
+			i += 1
 			# we dont want empty values because of leading / in paths or ending / in domains
 			if subpath:
-				data['path' + str(i) + '_s'] = subpath
-				i += 1
+
+				# not last path element, so part of path, not the filename at the end
+				if i < len(path):
+					data['path' + str(deep) + '_s'] = subpath
+					deep += 1
+
+				# last element, so basename/pure filename without path
+				else:
+				    data['path_basename'] = subpath
+
 	
 		return parameters, data
