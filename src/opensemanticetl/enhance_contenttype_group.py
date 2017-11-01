@@ -21,7 +21,7 @@ class enhance_contenttype_group(object):
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Text document',
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.template': 'Text document template',
 		'application/vnd.oasis.opendocument.text': 'Text document',
-		'application/vnd.oasis.opendocument.text-template': 'Text document',
+		'application/vnd.oasis.opendocument.text-template': 'Text document template',
 		'application/rtf': 'Text document',
 		'application/vnd.ms-powerpoint': 'Presentation',
 		'application/vnd.oasis.opendocument.presentation': 'Presentation',
