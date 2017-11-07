@@ -52,12 +52,12 @@ def index_file(filename, wait=0):
 # Index a webpage
 #
 @app.task(name='etl.index_web')
-def index_web(uri, wait=0):
+def index_web(uri, wait=0, downloaded_file=False, downloaded_headers=[]):
 
 	if wait:
 		time.sleep(wait)
 
-	result = etl_web.index(uri)
+	result = etl_web.index(uri, downloaded_file=downloaded_file, downloaded_headers=downloaded_headers)
 
 	return result
 

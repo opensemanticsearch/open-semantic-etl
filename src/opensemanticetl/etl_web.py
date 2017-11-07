@@ -127,7 +127,7 @@ class Connector_Web(Connector_File):
 		return mtime
 	
 	
-	def index(self, uri, last_modified=False ):
+	def index(self, uri, last_modified=False, downloaded_file=False, downloaded_headers=[] ):
 	
 			parameters = self.config.copy()
 
@@ -145,15 +145,22 @@ class Connector_Web(Connector_File):
 
 			
 			#
-			# Download to tempfile
+			# Download to tempfile, if not yet downloaded by crawler
 			#
-			if self.verbose:
-				print ("Downloading {}".format(uri))
-	
-			tempfilename, headers = urllib.request.urlretrieve(uri)
 
-			if self.verbose:
-				print ("Download done")
+			if downloaded_file:
+				tempfilename = downloaded_file
+				headers = downloaded_headers
+
+			else:
+
+				if self.verbose:
+					print ("Downloading {}".format(uri))
+	
+				tempfilename, headers = urllib.request.urlretrieve(uri)
+
+				if self.verbose:
+					print ("Download done")
 
 
 			parameters['filename'] = tempfilename
