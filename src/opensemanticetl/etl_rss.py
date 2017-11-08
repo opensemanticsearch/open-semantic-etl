@@ -2,11 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import json
-import time
 import feedparser
 import sys
 import urllib
-from dateutil import parser as dateparser
 
 from etl_web import Connector_Web
 
@@ -50,9 +48,8 @@ class Connector_RSS(Connector_Web):
 	# Import a RSS feed: If article has changed or not indexed, call download_and_index_to_solr()
 	#
 	def index (self, uri):
-	
+
 		result = True
-		# todo: result to false if getting/parsing uri failed
 
 		exporter = export_solr.export_solr()
 
@@ -61,66 +58,32 @@ class Connector_RSS(Connector_Web):
 		for item in feed.entries:
 		
 			articleuri = item.link
-			mtime = None
-			
-			#get modification time from file todo: from download
-			try:
-	
-				mtime = dateparser.parse(item.published)
-	
-				# maybe there was a update
-				try:
-					if item.updated:
-						mtime = dateparser.parse(item.updated)
-				except BaseException as e:
-					sys.stderr.write( "Exception while parsing updated date. Status: {}\n".format(e.message) )
-	
-			except BaseException as e:
-				sys.stderr.write( "Exception while parsing date. Status: {}\n".format(e.message) )
-	
-			if not mtime:
-				mtime = time.localtime()
 
-			#convert mtime to Solr format
-			mtime_masked = mtime.strftime("%Y-%m-%dT%H:%M:%SZ")
-	
-			#get modtime in index
+			#
+			# Is new article or indexed in former runs?
+			#
+			
 			doc_mtime = exporter.get_lastmodified(docid=articleuri)
 
-			#
-			# Is new article (not indexed so initial 0) or modified (doc_mtime <> mtime of file)?
-			#
-			
-			if mtime_masked == doc_mtime:
+			if doc_mtime:
 
-				# Doc found in Solr and field moddate of Solr doc same as files mtime
-				# so file was indexed as newest version before
-				doindex = False;
-		
 				if self.verbose:
-					print ( "Not indexing unchanged article {}".format(articleuri) )
-		
-			else:
-			
-				# Index the article, because new or changed
-				doindex = True
-		
-				if doc_mtime==None:
-					if self.verbose or self.quiet==False:
-						print ("Indexing new article {}".format(articleuri) )
-				else:
-					if self.verbose or self.quiet==False:
-						print ("Indexing modified article {}".format(articleuri) )
+					print ("Article indexed before, so skip new indexing: {}".format(articleuri))
 
+			else:
 				# Download and Index the new or updated uri
+
+				if self.verbose:
+					print ("Article not in index: {}".format(articleuri))
+	
 				try:
-					partresult = Connector_Web.index(self, uri=articleuri, last_modified=False)
+					partresult = Connector_Web.index(self, uri=articleuri)
 					if partresult == False:
 						result = False
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt	
 				except BaseException as e:
-					sys.stderr.write( "Exception while getting {} : {}".format(articleuri, e.message) )
+					sys.stderr.write( "Exception while getting {} : {}".format(articleuri, e) )
 	
 		return result
 
