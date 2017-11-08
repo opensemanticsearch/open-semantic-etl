@@ -63,6 +63,20 @@ def index_web(uri, wait=0, downloaded_file=False, downloaded_headers=[]):
 
 
 #
+# Index full website
+#
+
+@app.task(name='etl.index_web_crawl')
+def index_web_crawl(uri):
+
+	import etl_web_crawl
+
+	result = etl_web_crawl.index(uri)
+
+	return result
+
+
+#
 # Index webpages from sitemap
 #
 
@@ -83,10 +97,7 @@ def index_sitemap(uri):
 #
 
 @app.task(name='etl.index_rss')
-def index_rss(uri, wait=0):
-
-	if wait:
-		time.sleep(wait)
+def index_rss(uri):
 
 	result = etl_rss.index(uri)
 
