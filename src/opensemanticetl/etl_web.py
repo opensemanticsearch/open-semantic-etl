@@ -54,6 +54,7 @@ class Connector_Web(Connector_File):
 			'enhance_csv',
 			'enhance_path',
 			'enhance_zip',
+			'enhance_extract_hashtags',
 			'clean_title'
 
 		]
