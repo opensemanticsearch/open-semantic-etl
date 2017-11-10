@@ -50,6 +50,9 @@ def index(uri):
 	process.crawl(OpenSemanticETL_Spider, start_urls=start_urls, rules=rules, name=name)
 	process.start() # the script will block here until the crawling is finished
 
+	# the start URL itselves shall be indexed, too, so add task to index the downloaded file/page by ETL web in Celery task worker
+	index_web.delay(uri = uri)
+
 
 if __name__ == "__main__":
 
