@@ -28,26 +28,31 @@ class enhance_path(object):
 	
 		# if more then one /
 		docid = docid.replace("//", '/')
-	
-		# path
+
+		# split paths
 		path = docid.split('/')
-		
-		i = 0
-		deep = 0
 
-		for subpath in path:
-			i += 1
-			# we dont want empty values because of leading / in paths or ending / in domains
-			if subpath:
+		# its only a domain
+		if (len(path) == 1) or (len(path)==2 and docid.endswith('/')):
+			data['path0_s'] = path[0]
 
-				# not last path element, so part of path, not the filename at the end
-				if i < len(path):
-					data['path' + str(deep) + '_s'] = subpath
-					deep += 1
+		else:
+		# its a path
 
+			# if leeding / on unix paths, split leads to first element empty, so delete it
+			if not path[0]:
+				del path[0]
+
+			i = 0
+			for subpath in path:
+
+				if i == len(path)-1:
 				# last element, so basename/pure filename without path
+					if subpath: # if not ending / so empty last part after split
+						data['path_basename'] = subpath
 				else:
-				    data['path_basename'] = subpath
-
+				# not last path element (=filename), so part of path, not the filename at the end
+					data['path' + str(i) + '_s'] = subpath
+					i += 1
 	
 		return parameters, data
