@@ -10,11 +10,43 @@
 
 import requests
 import json
+import sys
 
 from etl import ETL
 
-
 verbose = True
+
+from etl_web import Connector_Web
+
+import export_solr
+
+exporter = export_solr.export_solr()
+
+def etl_document(uri):
+
+	result = True
+	doc_mtime = exporter.get_lastmodified(docid=uri)
+
+	if doc_mtime:
+
+		if self.verbose:
+			print ("Article indexed before, so skip new indexing: {}".format(uri))
+
+	else:
+		# Download and Index the new or updated uri
+
+		if verbose:
+			print ("Annotated page not in index: {}".format(uri))
+	
+		try:
+			etl = Connector_Web()
+			etl.index(uri=uri)
+		except KeyboardInterrupt:
+			raise KeyboardInterrupt	
+		except BaseException as e:
+			sys.stderr.write( "Exception while getting {} : {}".format(uri, e) )
+			result = False
+	return result
 
 
 def etl_hypothesis_annotations(searchurl, last_update=""):
@@ -26,7 +58,6 @@ def etl_hypothesis_annotations(searchurl, last_update=""):
 	etl.verbose = verbose
 	
 	
-
 	if verbose:
 		print ( "Get from hypothesis API {}".format(searchurl) )
 	request = requests.get(searchurl)
@@ -60,6 +91,12 @@ def etl_hypothesis_annotations(searchurl, last_update=""):
 	
 			# id/uri of the annotated document, not the annotation id
 			parameters['id'] = annotation['uri']
+
+			# first index / etl the webpage / document that has been annotated if not yet in index
+			
+			result = etl_document(uri=annotation['uri'])
+			if not result:
+				data['etl_error_hypothesis_ss']="Error while indexing the document that has been annotated"
 
 			# annotation id
 			data['annotation_id_ss'] = annotation['id']
