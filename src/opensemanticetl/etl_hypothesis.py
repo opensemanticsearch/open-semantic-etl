@@ -29,7 +29,7 @@ def etl_document(uri):
 
 	if doc_mtime:
 
-		if self.verbose:
+		if verbose:
 			print ("Article indexed before, so skip new indexing: {}".format(uri))
 
 	else:
