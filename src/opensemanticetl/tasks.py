@@ -67,11 +67,11 @@ def index_web(uri, wait=0, downloaded_file=False, downloaded_headers=[]):
 #
 
 @app.task(name='etl.index_web_crawl')
-def index_web_crawl(uri):
+def index_web_crawl(uri, crawler_type="PATH"):
 
 	import etl_web_crawl
 
-	result = etl_web_crawl.index(uri)
+	result = etl_web_crawl.index(uri, crawler_type)
 
 	return result
 

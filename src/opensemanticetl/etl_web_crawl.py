@@ -31,27 +31,51 @@ class OpenSemanticETL_Spider(CrawlSpider):
 		index_web.delay(uri = response.url, downloaded_file=filename, downloaded_headers=response.headers)
 
 
-def index(uri):
+def index(uri, crawler_type="PATH"):
 
 	name = "Open Semantic ETL {}".format(uri)
 
 	start_urls = [uri]
 
-	filter_regex = re.escape(uri) + '*'
-
-	rules = (
-		Rule( LinkExtractor(allow=filter_regex), callback='parse_item' ),
-	)
-
 	process = CrawlerProcess({
 		'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 	})
 
-	process.crawl(OpenSemanticETL_Spider, start_urls=start_urls, rules=rules, name=name)
-	process.start() # the script will block here until the crawling is finished
+	if crawler_type=="PATH":
+	# crawl only the path
+		filter_regex = re.escape(uri) + '*'
+		rules = (
+			Rule( LinkExtractor(allow=filter_regex), callback='parse_item' ),
+		)
+		process.crawl(OpenSemanticETL_Spider, start_urls=start_urls, rules=rules, name=name)
+
+	else:
+	# crawl full domain and subdomains
+
+		allowed_domain = uri
+		# remove protocol prefix
+		if allowed_domain.lower().startswith('http://www.'):
+			allowed_domain = allowed_domain[11:]
+		elif allowed_domain.lower().startswith('https://www.'):
+			allowed_domain = allowed_domain[12:]
+		elif allowed_domain.lower().startswith('http://'):
+			allowed_domain = allowed_domain[7:]
+		elif allowed_domain.lower().startswith('https://'):
+			allowed_domain = allowed_domain[8:]
+
+		# get only domain name without path
+		allowed_domain = allowed_domain.split("/")[0]
+
+		rules = (
+		Rule( LinkExtractor(), callback='parse_item' ),
+		)
+		process.crawl(OpenSemanticETL_Spider, start_urls=start_urls, allowed_domains=[allowed_domain], rules=rules, name=name)
 
 	# the start URL itselves shall be indexed, too, so add task to index the downloaded file/page by ETL web in Celery task worker
 	index_web.delay(uri = uri)
+
+	process.start() # the script will block here until the crawling is finished
+
 
 
 if __name__ == "__main__":
