@@ -59,6 +59,7 @@ class Connector_File(ETL):
 			'enhance_csv',
 			'enhance_file_mtime',
 			'enhance_path',
+			'enhance_extract_hashtags',
 			'enhance_zip',
 			'clean_title'
 		]
@@ -86,8 +87,10 @@ class Connector_File(ETL):
 		
 		# Linux style filenames
 		self.read_configfile ('/etc/opensemanticsearch/etl')
+		self.read_configfile ('/etc/opensemanticsearch/etl-custom')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 		self.read_configfile ('/etc/opensemanticsearch/connector-files')
+		self.read_configfile ('/etc/opensemanticsearch/connector-files-custom')
 
 
 	# clean filename (convert filename given as URI to filesystem)
