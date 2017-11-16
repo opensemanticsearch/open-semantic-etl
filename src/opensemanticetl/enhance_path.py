@@ -49,7 +49,7 @@ class enhance_path(object):
 				if i == len(path)-1:
 				# last element, so basename/pure filename without path
 					if subpath: # if not ending / so empty last part after split
-						data['path_basename'] = subpath
+						data['path_basename_s'] = subpath
 				else:
 				# not last path element (=filename), so part of path, not the filename at the end
 					data['path' + str(i) + '_s'] = subpath
