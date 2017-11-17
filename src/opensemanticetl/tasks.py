@@ -19,6 +19,7 @@ from etl_rss import Connector_RSS
 verbose = True
 
 app = Celery('etl.tasks')
+app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
 
 etl_delete = Delete()
 etl_file = Connector_File()
