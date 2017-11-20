@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 
 # Connect to Elastic Search
 
-class export_elastic_search(object):
+class export_elasticsearch(object):
 	
 	def __init__(self, index = "opensemanticsearch"):
 	
@@ -33,15 +33,13 @@ class export_elastic_search(object):
 			self.index = parameters['index']
 
 	
-
-		# post data to solr
+		# post data
 		self.update(data=data)
 	
 		return parameters, data
 
-	
-	
-	# send the updated field data to Solr
+
+	# send the updated field data to Elastic Search
 	def update(self, docid=None, data=[]):
 	
 		if docid:
