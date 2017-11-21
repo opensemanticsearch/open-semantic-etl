@@ -34,19 +34,19 @@ class export_elasticsearch(object):
 
 	
 		# post data
-		self.update(data=data)
+		self.update(parameters=parameters, data=data)
 	
 		return parameters, data
 
 
 	# send the updated field data to Elastic Search
-	def update(self, docid=None, data=[]):
+	def update(self, docid=None, data={}, parameters={}):
 	
 		if docid:
-			data['id'] = docid
+			parameters['id'] = docid
 		else:
-			docid = data['id']
-			
+			docid = parameters['id']
+		
 		es = Elasticsearch()
 		result = es.index(index=self.index, doc_type='document', id=docid, body=data)
 
