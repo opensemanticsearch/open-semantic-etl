@@ -57,10 +57,12 @@ class enhance_csv(object):
 			self.cache = parameters['cache']
 
 		if 'title_row' in parameters:
-			self.title_row = parameters['title_row']
+			if parameters['title_row']:
+				self.title_row = parameters['title_row']
 	
 		if 'start_row' in parameters:
-			self.start_row = parameters['start_row']
+			if parameters['start_row']:
+				self.start_row = parameters['start_row']
 
 		if 'sniff_dialect' in parameters:
 			self.sniff_dialect = parameters['sniff_dialect']
@@ -348,8 +350,6 @@ class enhance_csv(object):
 			# Import data row
 			#
 			if rownumber >= self.start_row:
-
-
 
 				exclude_row = False
 
