@@ -106,14 +106,16 @@ config['regex_lists'].append('/etc/opensemanticsearch/regex/email.tsv')
 
 # Default classifier if no classifier for specific language
 
-# Set default classifier to English
-config['stanford_ner_classifier'] = '/usr/share/java/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz'
+# disable NER for languages where no classifier defined in config['stanford_ner_classifiers']
+config['stanford_ner_classifier_default'] = None
 
-# Set default classifier to German (only if all documents are german)
-#config['stanford_ner_classifier'] = '/usr/share/java/stanford-ner/classifiers/german.conll.hgc_175m_600.crf.ser.gz'
+# Set default classifier to English (only if you are sure, that all documents you index are english)
+#config['stanford_ner_classifier_default'] = '/usr/share/java/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz'
 
-# Language specific classifiers
-# mapping to autodetected document language
+# Set default classifier to German (only if you are sure, that all documents you index are german)
+#config['stanford_ner_classifier_default'] = '/usr/share/java/stanford-ner/classifiers/german.conll.hgc_175m_600.crf.ser.gz'
+
+# Language specific classifiers (mapping to autodetected document language)
 # Before you have to download additional language classifiers to the configured path
 config['stanford_ner_classifiers'] = {
     'en': '/usr/share/java/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',

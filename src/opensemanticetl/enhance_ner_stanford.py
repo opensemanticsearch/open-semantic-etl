@@ -73,16 +73,20 @@ class enhance_ner_stanford(object):
 	
 
 		# default classifier
-		if 'stanford_ner_classifier' in parameters:
-			classifier = parameters['stanford_ner_classifier']
-		else:
-			classifier = 'english.all.3class.distsim.crf.ser.gz'
+		classifier = 'english.all.3class.distsim.crf.ser.gz'
+
+		if 'stanford_ner_classifier_default' in parameters:
+			classifier = parameters['stanford_ner_classifier_default']
 
 		# set language specific classifier, if configured and document language detected
 		if 'stanford_ner_classifiers' in parameters and 'language_s' in data:
 			# is a language speciic cassifier there for the detected language?
 			if data['language_s'] in parameters['stanford_ner_classifiers']:
 				classifier = parameters['stanford_ner_classifiers'][data['language_s']]
+
+		# if standard classifier configured to None and no classifier for detected language, exit the plugin
+		if not classifier:
+			return parameters, data
 
 		kwargs={}
 
