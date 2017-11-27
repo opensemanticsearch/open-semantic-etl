@@ -61,7 +61,8 @@ class Connector_File(ETL):
 			'enhance_path',
 			'enhance_extract_hashtags',
 			'enhance_zip',
-			'clean_title'
+			'clean_title',
+			'enhance_multilingual',
 		]
 		
 		self.config['blacklist'] = ["/etc/opensemanticsearch/blacklist/blacklist-url"]

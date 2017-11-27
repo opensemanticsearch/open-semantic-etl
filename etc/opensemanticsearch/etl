@@ -1,13 +1,49 @@
 # -*- coding: utf-8 -*-
 
-# Config for connector
-
+#
+# ETL config for connector(s)
+#
 
 # print debug messages
 #config['verbose'] = True
 
 
+#
+# Languages for language specific index
+#
+# Each document is analyzed without grammr rules in the index fields like content, additionally it can be added/copied to language specific index fields/analyzers
+# Document language is autodetected by default plugin enhance_detect_language_tika_server
+
+# If index support enhanced analytics for specific languages, we can add/copy data to language specific fields/analyzers
+# Set which languages are configured and shall be used in index for language specific analysis/stemming/synonyms
+# Default / if not set all languages that are supported will be analyzed additionally language specific
+#config['languages'] = ['en','de','fr']
+
+# force to language specific analysis additional in this language(s) grammar & synonyms, even if language autodetection detects other language
+#config['languages_force'] = ['en','de']
+
+
+# only use language for language specific analysis which are added / uncommented later
+#config['languages'] = []
+
+# add English
+#config['languages'].append('en')
+
+
+# add German / Deutsch
+#config['languages'].append('de')
+
+# add Frensch / Francais
+#config['languages'].append('fr')
+
+# add Polish / Polski
+#config['languages'].append('pl')
+
+
+
+#
 # Index/storage
+#
 
 #
 # Solr uri and port
@@ -85,7 +121,7 @@ config['ocr_lang'] = 'eng'
 
 
 #
-# Rexex pattern for extraction
+# Regex pattern for extraction
 #
 
 # Enable Regex plugin
