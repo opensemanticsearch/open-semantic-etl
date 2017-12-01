@@ -11,9 +11,17 @@ class enhance_extract_text_tika_server(object):
 
 		try:
 			# if field exist in jsonresults
-			if tika_fieldname in tika_results[0]:
-				#copy data from Tika fieldname to data fieldname
-				data[data_fieldname] = tika_results[0][tika_fieldname]
+			for tika_result in tika_results:
+				if tika_fieldname in tika_result:
+
+					#copy or add data from Tika fieldname to data fieldname
+					if data_fieldname in data:
+						# do not add if yet there
+						if not tika_result[tika_fieldname] in data[data_fieldname]:
+							data[data_fieldname] += "\n\n" + tika_result[tika_fieldname]
+					else:
+						data[data_fieldname] = tika_result[tika_fieldname]
+
 		except:
 			sys.stderr.write( 'Error while loading Tika field {} to field {}'.format(tika_fieldname, data_fieldname) )
 
@@ -34,7 +42,7 @@ class enhance_extract_text_tika_server(object):
 		if 'tika_server' in parameters:
 			tika_server = parameters['tika_server']
 		else:
-			tika_server = 'localhost:9998'
+			tika_server = 'http://localhost:9998'
 
 
 		uri = tika_server + '/rmeta/form/text'
