@@ -195,7 +195,7 @@ class Connector_File(ETL):
 		if self.verbose:
 			parameters['verbose'] = True
 	
-		data = {'content_type': 'Unknown'}
+		data = {}
 	
 	
 		if not 'id' in parameters:
