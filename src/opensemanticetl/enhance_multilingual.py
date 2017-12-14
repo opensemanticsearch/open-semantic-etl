@@ -11,7 +11,7 @@ class enhance_multilingual(object):
 	verbose = False
 
 	# languages that are defined in index schema for language specific analysis and used if autodetected as documents language
-	languages = ['en','fr','de','es','ru','nl','pl','ro','pt']
+	languages = ['en','fr','de','es','ru','nl','pl','ro','pt','it','cz']
 	# todo: add all dynamic language field types preconfigured in Solr
 
 	# languages for language specific analysis even if not the autodetected document language
