@@ -53,7 +53,7 @@ def optimized_image2text(filename, lang='eng', verbose=False):
 			except KeyboardInterrupt:
 				raise KeyboardInterrupt
 			except BaseException as e:
-				sys.stderr.write( "Exception while OCR descewed image of: {} - Maybe descewed image {} corrupt? Exception: {}\n" .format(filename, imagefilename, e.message) )
+				sys.stderr.write( "Exception while OCR descewed image of: {} - Maybe descewed image {} corrupt? Exception: {}\n" .format(filename, imagefilename, e) )
 
 
 

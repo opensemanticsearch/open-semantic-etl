@@ -40,7 +40,7 @@ def image2text(filename, lang='eng', verbose=False, cache=None):
 
 	
 		# start external OCR Program
-		result = subprocess.call(['tesseract', '-l', lang , filename, ocr_temp_filename])
+		result = subprocess.call(['tesseract', '-l', lang , '--user-words', '/etc/opensemanticsearch/ocr/dictionary.txt' , filename, ocr_temp_filename])
 
 		if not result == 0:
 			sys.stderr.write( "Error: OCR failed for {}".format(filename) )

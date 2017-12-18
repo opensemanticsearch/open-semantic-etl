@@ -73,7 +73,7 @@ def pdfimages2text(filename, lang='eng', verbose=False, pdf_ocr=True, pdf_ocr_de
 
 				except BaseException as e:
 
-					sys.stderr.write( "Exception while optimized ocr pdf: {} - maybe corrupt image: {} - exception: {}".format(filename, imagefilename, e.message) )
+					sys.stderr.write( "Exception while optimized ocr pdf: {} - maybe corrupt image: {} - exception: {}".format(filename, imagefilename, e) )
 
 			os.remove(imagefilename)
 
@@ -115,7 +115,7 @@ def enrich_pdf ( parameters={}, data={} ):
 		raise KeyboardInterrupt
 
 	except BaseException as e:
-		sys.stderr.write( "Exception while OCR the PDF {} - {}\n".format(filename, e.message) )
+		sys.stderr.write( "Exception while OCR the PDF {} - {}\n".format(filename, e) )
 
 	parameters['enhance_pdf_ocr'] = ocr_txt
 	parameters['enhance_pdf_ocr_descew'] = ocr_optimized_txt
