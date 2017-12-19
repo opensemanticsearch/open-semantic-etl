@@ -17,7 +17,7 @@
 # If index support enhanced analytics for specific languages, we can add/copy data to language specific fields/analyzers
 # Set which languages are configured and shall be used in index for language specific analysis/stemming/synonyms
 # Default / if not set all languages that are supported will be analyzed additionally language specific
-#config['languages'] = ['en','de','fr']
+#config['languages'] = ['en','de','fr','it','pt','nl','cz','ro','ar','fa']
 
 # force to language specific analysis additional in this language(s) grammar & synonyms, even if language autodetection detects other language
 #config['languages_force'] = ['en','de']
@@ -29,15 +29,29 @@
 # add English
 #config['languages'].append('en')
 
-
 # add German / Deutsch
 #config['languages'].append('de')
 
 # add Frensch / Francais
 #config['languages'].append('fr')
 
-# add Polish / Polski
-#config['languages'].append('pl')
+# add Spanish
+#config['languages'].append('es')
+
+# add Portuguese
+#config['languages'].append('pt')
+
+# add Italian
+#config['languages'].append('it')
+
+# add Czech
+#config['languages'].append('cz')
+
+# add Dutch
+#config['languages'].append('nl')
+
+# add Romanian
+#config['languages'].append('ro')
 
 
 
@@ -103,7 +117,7 @@ config['plugins'].append('enhance_pdf_ocr')
 
 # additionally descew before OCR (deskewing of low quality scans)
 # needs more CPU time, so OCR needs more than double time but sometimes you get more / better results
-#config['plugins'].append('enhance_ocr_descew')
+config['plugins'].append('enhance_ocr_descew')
 
 #OCR language
 
@@ -111,13 +125,13 @@ config['plugins'].append('enhance_pdf_ocr')
 #and set ocr_lang to this value (be careful, the tesseract package for english is "eng" (not "en") german is named "deu", not "de"!)
 
 # set OCR language to English/default
-config['ocr_lang'] = 'eng'
+#config['ocr_lang'] = 'eng'
 
 # set OCR language to German/Deutsch
 #config['ocr_lang'] = 'deu'
 
 # set multiple OCR languages
-#config['ocr_lang'] = 'eng+deu'
+config['ocr_lang'] = 'eng+deu'
 
 
 #
