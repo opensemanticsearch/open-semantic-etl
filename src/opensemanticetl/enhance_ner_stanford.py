@@ -69,6 +69,11 @@ class enhance_ner_stanford(object):
 			 'I-ORG': 'organization_ss',
 			 'I-PER': 'person_ss',
 			 'I-LOC': 'location_ss',
+			 'ORG': 'organization_ss',
+			 'PER': 'person_ss',
+			 'LOC': 'location_ss',
+			 'PERS': 'person_ss',
+			 'LUG': 'location_ss',
 			}
 	
 
