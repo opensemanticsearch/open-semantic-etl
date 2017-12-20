@@ -62,6 +62,22 @@ class ETL(object):
 	
 			result = True
 
+		# sort added plugins because of dependencies
+		# OCR has to be done before language detection, since content maybe only scanned text within images
+		if "enhance_detect_language_tika_server" in self.config['plugins'] and "enhance_pdf_ocr" in self.config['plugins']:
+			if self.config['plugins'].index("enhance_pdf_ocr") > self.config['plugins'].index("enhance_detect_language_tika_server"):
+				# remove after
+				self.config['plugins'].remove("enhance_pdf_ocr")
+				# add before
+				self.config['plugins'].insert(self.config['plugins'].index("enhance_detect_language_tika_server"), "enhance_pdf_ocr")
+
+		if "enhance_detect_language_tika_server" in self.config['plugins'] and "enhance_ocr_descew" in self.config['plugins']:
+			if self.config['plugins'].index("enhance_ocr_descew") > self.config['plugins'].index("enhance_detect_language_tika_server"):
+				# remove after
+				self.config['plugins'].remove("enhance_ocr_descew")
+				# add before
+				self.config['plugins'].insert(self.config['plugins'].index("enhance_detect_language_tika_server"), "enhance_ocr_descew")
+
 		# if another exporter
 		self.init_exporter()
 
@@ -111,9 +127,8 @@ class ETL(object):
 				if os.path.isfile(filename):
 					if filter_blacklist.is_in_list(filename=filename, value=content_type, match="regex"):
 						blacklisted = True
-		
-	
-	
+
+
 			# check whitelists for plugin, if blacklisted but should not
 			if blacklisted:
 				filename = blacklistdir + 'whitelist-contenttype'

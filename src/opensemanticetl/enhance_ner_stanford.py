@@ -96,12 +96,13 @@ class enhance_ner_stanford(object):
 		if 'stanford_ner_path_to_jar' in parameters:
 			kwargs['path_to_jar'] = parameters['stanford_ner_path_to_jar']
 
-		if 'content' in parameters:
-			text = parameters['content']
-		else:
-			text = data['content']
-	
-	
+		analyse_fields = ['title','content','description','ocr_t','ocr_descew_t']
+
+		text = ''
+		for field in analyse_fields:
+			if field in data:
+				text = "{}{}\n".format(text, data[field])
+
 		# classify/tag with class each word of the content
 		st = StanfordNERTagger(classifier, encoding='utf8', verbose=verbose, **kwargs)
 		entities = st.tag(text.split())
