@@ -8,3 +8,10 @@
 
 application/vnd.oasis.opendocument.
 application/vnd.openxmlformats-officedocument.
+application/msword
+application/vnd.ms-word.
+application/msexcel
+application/vnd.ms-excel.
+application/mspowerpoint
+application/vnd.ms-powerpoint.
+
