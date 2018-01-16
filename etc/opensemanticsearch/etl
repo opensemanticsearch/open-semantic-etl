@@ -149,6 +149,43 @@ config['regex_lists'].append('/etc/opensemanticsearch/regex/email.tsv')
 # Config for Named Entities Recognition (NER)
 #
 
+# Enable SpaCy NER plugin
+config['plugins'].append('enhance_ner_spacy')
+
+# Spacy NER Machine learning classifier (for which language and with which/how many classes)
+
+# Default classifier if no classifier for specific language
+
+# disable NER for languages where no classifier defined in config['spacy_ner_classifiers']
+config['spacy_ner_classifier_default'] = None
+
+# Set default classifier to Multilanguage
+#config['spacy_ner_classifier_default'] = 'xx'
+
+# Set default classifier to English (only if you are sure, that all documents you index are english)
+# config['spacy_ner_classifier_default'] = 'en'
+
+# Set default classifier to German (only if you are sure, that all documents you index are german)
+# config['spacy_ner_classifier_default'] = 'de'
+
+# Language specific classifiers (mapping to autodetected document language to Spacy classifier / language)
+#
+# You have to download additional language classifiers for example english (en) or german (de) by
+# python3 -m spacy download en
+# python3 -m spacy download de
+# ...
+
+config['spacy_ner_classifiers'] = {
+    'en': 'en',
+    'de': 'de',
+    'es': 'es',
+    'pt': 'pt',
+    'fr': 'fr',
+    'it': 'it',
+    'nl': 'nl',
+}
+
+
 # Enable Stanford NER plugin
 #config['plugins'].append('enhance_ner_stanford')
 
