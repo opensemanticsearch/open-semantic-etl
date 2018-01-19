@@ -5,16 +5,6 @@ adduser --system --disabled-password opensemanticetl
 # install Scrapy
 pip3 install scrapy
 
-# install SpaCy and download language specific models
-pip3 install -U spacy
-python3 -m spacy download en
-python3 -m spacy download de
-python3 -m spacy download es
-python3 -m spacy download pt
-python3 -m spacy download fr
-python3 -m spacy download it
-python3 -m spacy download nl
-
 # start on boot
 update-rc.d opensemanticsearch defaults
 update-rc.d opensemanticsearch-filemonitoring defaults
