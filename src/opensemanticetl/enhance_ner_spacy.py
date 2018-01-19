@@ -1,5 +1,6 @@
 import etl
-import spacy
+import requests
+import json
 
 #
 # SpaCy Named Entitiy Recognizer (NER)
@@ -28,6 +29,13 @@ class enhance_ner_spacy(object):
 			 'GPE': 'location_ss',
 			 'LOC': 'location_ss',
 			 'FACILITY': 'location_ss',
+			 'PRODUCT': 'product_ss',
+			 'EVENT': 'event_ss',
+			 'LAW': 'law_ss',
+			 'DATE': 'date_ss',
+			 'TIME': 'time_ss',
+			 'MONEY': 'money_ss',
+			 'WORK_OF_ART': 'work_of_art_ss',
 			}
 	
 
@@ -49,9 +57,7 @@ class enhance_ner_spacy(object):
 			return parameters, data
 
 		if verbose:
-			print ("Loading SpaCY NER language / classifier: {}".format(classifier))
-
-		nlp = spacy.load(classifier)
+			print ("Using SpaCY NER language / classifier: {}".format(classifier))
 
 		analyse_fields = ['title','content','description','ocr_t','ocr_descew_t']
 
@@ -61,14 +67,28 @@ class enhance_ner_spacy(object):
 				text = "{}{}\n".format(text, data[field])
 
 		# classify/tag with class each word of the content
-		
-		doc = nlp(text)
 
-		for ent in doc.ents:
+		url = "http://localhost:8000/ent"
+		headers = {'content-type': 'application/json'}
+		d = {'text': text, 'model': classifier}
 
-		# if class of entity is mapped to a facet/field, append the entity to this facet/field
-			entity = ent.text
-			entity_class = ent.label_
+		response = requests.post(url, data=json.dumps(d), headers=headers)
+		r = response.json()
+
+		for ent in r:
+
+			entity_class = ent['type']
+			# get entity string from returned start and end value
+			entity = text[ int(ent['start']) : int(ent['end']) ]
+
+			# strip whitespaces from begin and end
+			entity = entity.strip()
+
+			# after strip exclude empty entities
+			if not entity:
+				continue
+
+			# if class of entity is mapped to a facet/field, append the entity to this facet/field
 
 			if entity_class in mapping:
 				
@@ -80,7 +100,6 @@ class enhance_ner_spacy(object):
 			else:
 				if verbose:
 					print ( "Since Named Entity Recognition (NER) class {} not mapped to a field/facet, ignore entity/word(s): {}".format(entity_class, entity) )
-
 
 		# mark the document, that it was analyzed by this plugin yet
 		data['enhance_ner_spacy_b'] = "true"
