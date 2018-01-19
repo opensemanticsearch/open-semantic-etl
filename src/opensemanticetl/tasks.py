@@ -58,13 +58,13 @@ def index_file(filename, wait=0, config=False):
 #
 
 @app.task(name='etl.index_filedirectory')
-def index_filedirectory(uri):
+def index_filedirectory(filename):
 
 	from etl_filedirectory import Connector_Filedirectory
 
 	connector_filedirectory = Connector_Filedirectory()
 
-	result = connector_filedirectory.index(uri)
+	result = connector_filedirectory.index(filename)
 
 	return result
 
