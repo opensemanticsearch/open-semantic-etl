@@ -17,12 +17,12 @@ from etl_rss import Connector_RSS
 
 
 verbose = True
+quiet = False
 
 app = Celery('etl.tasks')
 app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
 
 etl_delete = Delete()
-etl_file = Connector_File()
 etl_web = Connector_Web()
 etl_rss = Connector_RSS()
 
@@ -41,12 +41,32 @@ def delete(uri):
 #
 
 @app.task(name='etl.index_file')
-def index_file(filename, wait=0):
+def index_file(filename, wait=0, config=False):
 
 	if wait:
 		time.sleep(wait)
 
+	etl_file = Connector_File()
+
+	if config:
+		etl_file.config = config
+
 	etl_file.index(filename=filename)
+
+#
+# Index file directory
+#
+
+@app.task(name='etl.index_filedirectory')
+def index_filedirectory(uri):
+
+	from etl_filedirectory import Connector_Filedirectory
+
+	connector_filedirectory = Connector_Filedirectory()
+
+	result = connector_filedirectory.index(uri)
+
+	return result
 
 
 #
@@ -155,11 +175,10 @@ if __name__ == "__main__":
 	if options.verbose == False or options.verbose==True:
 		verbose = options.verbose
 		etl_delete.verbose = options.verbose
-		etl_file.verbose = options.verbose
 		etl_web.verbose = options.verbose
 		etl_rss.verbose = options.verbose
 		
 	if options.quiet == False or options.quiet==True:
-		etl_file.quiet = options.quiet
+		quiet = options.quiet
 
 	app.worker_main()

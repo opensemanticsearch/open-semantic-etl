@@ -3,7 +3,6 @@
 
 import os.path
 import sys
-import threading
 
 from etl import ETL
 
@@ -20,15 +19,6 @@ class Connector_File(ETL):
 		
 		self.read_configfiles()
 
-		# if not set explicit, autodetection of count of CPUs for amount of threads
-		if not self.threads_max:
-			import multiprocessing
-			self.threads_max = multiprocessing.cpu_count()
-			if self.verbose:
-				print ( "Setting threads to count of CPUs: " + str(self.threads_max) )
-
-		self.e_job_done = threading.Event()
-
 
 	def set_configdefaults(self):
 		#
@@ -38,9 +28,7 @@ class Connector_File(ETL):
 		#
 		
 		ETL.set_configdefaults(self)
-		
-		self.threads_max = None
-				
+						
 		self.config['force'] = False
 
 		# filename to URI mapping
@@ -155,24 +143,7 @@ class Connector_File(ETL):
 						fullname += os.path.sep
 					fullname += fileName
 
-					# no threading					
-					if self.threads_max == 1:
-
-						self.index_file( filename = fullname )
-
-
-					else:
-
-						# open new thread or sleep if yet maximum threads (but do not count this main thread) running
-						while threading.active_count() >= self.threads_max + 1:
-							self.e_job_done.wait(1)
-
-	
-						thread = threading.Thread( target=self.index_file, args=( fullname, ) )
-						# reset signal event we will wait for which will be set/signaled after work / thread was done
-						self.e_job_done.clear()
-						thread.start()
-					
+					self.index_file( filename = fullname )					
 					
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt
@@ -205,10 +176,6 @@ class Connector_File(ETL):
 	
 	
 		parameters, data = self.process( parameters=parameters, data=data)
-		
-
-		# set "done" signal event, so main thread wakes up and knows next job/thread can be started
-		self.e_job_done.set()
 
 
 #
@@ -264,11 +231,5 @@ if __name__ == "__main__":
 	for filename in args:
 		connector.index(filename)
 
-
-	# wait until all started threads done (event will signalize after a job done)
-	while threading.active_count() > 1:
-		connector.e_job_done.wait(1)
-		connector.e_job_done.clear()
-
-	# commit changes, if not yet done automatically by Index timer
+	# commit changes, if not yet done automatically by index timer
 	connector.commit()
