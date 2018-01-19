@@ -19,9 +19,9 @@ def image2text(filename, lang='eng', verbose=False, cache=None):
 		ocr_temp_filename = cache + os.path.sep + lang +'-' + md5hash
 
 	else:
-		# calc tempfilename from temp dir and filename
+		# calc tempfilename from temp dir, process id and filename
 		md5hash = hashlib.md5(filename.encode('utf-8')).hexdigest()
-		ocr_temp_filename = tempfile.gettempdir() + os.path.sep + "opensemanticetl_ocr_" + md5hash
+		ocr_temp_filename = tempfile.gettempdir() + os.path.sep + "opensemanticetl_ocr_" + os.getpid() + md5hash
 
 
 	# if yet in cache, dont call OCR
