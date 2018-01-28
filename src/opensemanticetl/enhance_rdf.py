@@ -100,10 +100,11 @@ class enhance_rdf(object):
 
 
 		# since there can be multiple triples/values for same property,
-		# do not overwrite but add value to existent values of the facet/field/property
+		# do not overwrite document but add value to existent document & values of the facet/field/property
 		part_parameters['add'] = True
+		# but not for the field content_type which doesn't change and is not multi valued
+		part_parameters['fields_set'] = "content_type"
 
-	
 		for subj, pred, obj in self.graph:
 
 			part_data = {}
@@ -167,9 +168,7 @@ class enhance_rdf(object):
 	
 
 	def	etl_graph_file(self, docid, filename, parameters={}):
-	
-		# todo: docid 2 path
-	
+		
 		self.graph = rdflib.Graph()
 		self.graph.parse(filename)
 
