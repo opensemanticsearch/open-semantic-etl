@@ -150,6 +150,8 @@ class enhance_extract_text_tika_server(object):
 
 			data['error_enhance_extract_text_tika_server_t'] = errormessage
 
+			data['content_type'] = "Unknown"
+
 			data['content']=''
 	
 		return parameters, data
