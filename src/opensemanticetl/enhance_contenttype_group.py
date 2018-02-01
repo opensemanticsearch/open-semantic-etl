@@ -33,6 +33,8 @@ class enhance_contenttype_group(object):
 		'video': 'Video',
 		'application/mp4': 'Video',
 		'application/x-matroska': 'Video',
+		'application/vnd.etsi.asic-e+zip': 'Electronic Signature Container',
+		'Knowledge graph': 'Knowledge graph',
 	}
 
 	suffix_groups = {
