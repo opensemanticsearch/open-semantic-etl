@@ -201,8 +201,8 @@ class enhance_rdf(object):
 					# set Solr datatype strings so facets not available yet in Solr schema can be inserted automatically (dynamic fields) with right datatype
 					
 					facet = pred + '_ss'
-					facet_uri = pred + '_uri_ss'
-					facet_preferred_label_and_uri = pred + '_preflabel_and_uri_ss'
+					facet_uri = facet + '_uri_ss'
+					facet_preferred_label_and_uri = facet + '_preflabel_and_uri_ss'
 					
 					if self.verbose:
 						print ( "Facet: {}".format(facet) )
@@ -241,8 +241,6 @@ class enhance_rdf(object):
 	
 				except BaseException as e:
 					sys.stderr.write( "Exception while triple {} of subject {}: {}\n".format(count_subject_triple, subj, e) )
-
-
 	
 	
 			# index triple
