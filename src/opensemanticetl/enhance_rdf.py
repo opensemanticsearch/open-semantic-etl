@@ -202,7 +202,7 @@ class enhance_rdf(object):
 					
 					facet = pred + '_ss'
 					facet_uri = pred + '_uri_ss'
-					facet_preferd_label_and_uri = pred + '_preferedlabel_and_uri_ss'
+					facet_preferred_label_and_uri = pred + '_preflabel_and_uri_ss'
 					
 					if self.verbose:
 						print ( "Facet: {}".format(facet) )
@@ -233,7 +233,7 @@ class enhance_rdf(object):
 					else:
 						preferredlabel_and_uri = self.get_preferred_label(subject=obj)
 					
-					etl.append(data=part_data, facet=facet_preferd_label_and_uri, values=preferredlabel_and_uri)
+					etl.append(data=part_data, facet=facet_preferred_label_and_uri, values=preferredlabel_and_uri)
 
 
 				except KeyboardInterrupt:
