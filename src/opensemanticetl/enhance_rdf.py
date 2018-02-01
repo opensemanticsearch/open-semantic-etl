@@ -25,13 +25,6 @@ class enhance_rdf(object):
 		self.labelProperties = (rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#prefLabel'), rdflib.term.URIRef(u'http://www.w3.org/2000/01/rdf-schema#label'), rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#altLabel'), rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#hiddenLabel'))
 
 
-	# In which facet to write the predicate / property ?
-	def property2facet(self, prop):
-
-		facet = prop + '_ss'
-
-		return facet
-
 	#
 	# get all labels, alternate labels / synonyms for the URI/subject, if not there, use subject (=URI) as default
 	#
@@ -79,10 +72,10 @@ class enhance_rdf(object):
 
 		if type(obj) == rdflib.URIRef:
 
-			# get labels of this object (therefore it is a subject for getlabels)
+			# get labels of this object, therefore it is the subject parameter for getlabels()
 			values = self.get_labels(subject=obj)
 
-			if not values: 
+			if not values:
 
 				if self.verbose:
 					print ( "No label for this object, using URI {}".format(obj) )
@@ -180,6 +173,7 @@ class enhance_rdf(object):
 
 			part_data = {}
 			part_data['content_type'] = 'Knowledge graph'
+			part_data['content_type_group'] = 'Knowledge graph'
 			# subject as URI/ID
 			part_parameters['id'] = subj
 			part_data['title'] = self.get_preferred_label(subject=subj)
@@ -206,8 +200,10 @@ class enhance_rdf(object):
 
 					# set Solr datatype strings so facets not available yet in Solr schema can be inserted automatically (dynamic fields) with right datatype
 					
-					facet = self.property2facet(prop=pred)
-
+					facet = pred + '_ss'
+					facet_uri = pred + '_uri_ss'
+					facet_preferd_label_and_uri = pred + '_preferedlabel_and_uri_ss'
+					
 					if self.verbose:
 						print ( "Facet: {}".format(facet) )
 
@@ -217,13 +213,28 @@ class enhance_rdf(object):
 					#
 
 					values = self.get_values(obj=obj)
-
 					if self.verbose:
 						print ( "Values: {}".format(values) )
 
-
 					# insert or append value (object of triple) to data
 					etl.append(data=part_data, facet=facet, values=values)
+					
+
+					# if object is reference/URI append URI
+					if type(obj) == rdflib.URIRef:
+						
+						uri = obj
+						
+						etl.append( data=part_data, facet=facet_uri, values=uri )
+
+						# append mixed field with preferred label and uri of the object for disambiguation of different Entities/IDs/URIs with same names/labels in faceted search
+						preferredlabel_and_uri = "{} <{}>".format ( self.get_preferred_label(subject=obj), obj)
+
+					else:
+						preferredlabel_and_uri = self.get_preferred_label(subject=obj)
+					
+					etl.append(data=part_data, facet=facet_preferd_label_and_uri, values=preferredlabel_and_uri)
+
 
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt
