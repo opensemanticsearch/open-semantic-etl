@@ -53,8 +53,8 @@ class export_elasticsearch(object):
 		return result
 	
 	
+	# get last modified date for document
 	def get_lastmodified(self, docid, parameters = {}):
-	
 	
 		es = Elasticsearch()
 
@@ -68,3 +68,9 @@ class export_elasticsearch(object):
 			last_modified=None
 			
 		return last_modified
+
+
+	# commits are managed by Elastic Search setup, so no explicit commit here
+	def commit(self):
+		return
+	
