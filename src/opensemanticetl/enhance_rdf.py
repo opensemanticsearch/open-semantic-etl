@@ -148,7 +148,9 @@ class enhance_rdf(object):
 		etl_processor = ETL()
 		etl_processor.verbose = self.verbose
 		
-		
+		class_properties = []
+		class_properties.append(rdflib.term.URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'))
+		class_properties.append(rdflib.term.URIRef(u'http://www.wikidata.org/prop/direct/P31'))
 		# since there can be multiple triples/values for same property,
 		# do not overwrite document but add value to existent document & values of the facet/field/property
 		part_parameters['add'] = True
@@ -202,7 +204,8 @@ class enhance_rdf(object):
 					
 					# if class add preferredlabel of this entity to facet of its class (RDF rdf:type or Wikidata "instance of" (Property:P31)),
 					# so its name (label) will be available in entities view and as filter for faceted search
-					if pred == rdflib.term.URIRef(u'http://www.wikidata.org/prop/direct/P31'):
+					
+					if pred in class_properties:
 						class_facet = str(obj)
 						# map class to facet, if mapping for class exist
 						if class_facet in property2facet:
