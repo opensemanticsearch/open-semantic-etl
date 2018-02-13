@@ -2,8 +2,8 @@
 
 # Config for RDF metadata server
 
-# uri of the meta data server (RDF)
-# if set to False dont use additional metadata from server (like tags or annotations)
+# URL of the meta data server (RDF)
+# if set to False don't use additional metadata from server (like tags or annotations)
 #
 # Templates:
 # [uri] for URL of annotated page
@@ -20,15 +20,17 @@ config['metaserver'] = False
 # Use tagger app as meta server
 config['metaserver'] = [ 'http://localhost/search-apps/annotate/rdf?uri=[uri]' ]
 
-# mapping of the metadata server RDF properties to facets / columns
+# mapping of RDF properties or RDF classes to facets / columns
 config['property2facet'] = {
- 'http://purl.org/dc/terms/Tags': 'tag_ss',
- 'http://purl.org/dc/terms/location': 'location_ss',
- 'http://purl.org/dc/terms/organisation': 'organization_ss',
- 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3ATag': 'tag_ss',
- 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3APerson': 'person_ss',
- 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3ALocation': 'location_ss',
- 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3AOrganization': 'organization_ss',
- 'http://localhost/metawiki/index.php/Special:URIResolver/Property-3ANotes': 'notes_t',
+ 'http://www.wikidata.org/wiki/Q5': 'person_ss',
+ 'http://www.wikidata.org/wiki/Q43229': 'organization_ss',
+ 'http://www.wikidata.org/wiki/Q178706': 'organization_ss',
+ 'http://www.wikidata.org/wiki/Q18810687': 'organization_ss',
+ 'http://www.wikidata.org/wiki/Q2221906', 'location_ss',
+ 'http://schema.org/Person': 'person_ss',
+ 'http://schema.org/Organization': 'organization_ss',
+ 'http://schema.org/Place': 'location_ss',
+ 'http://schema.org/location': 'location_ss',
+ 'http://schema.org/address': 'location_ss',
  'http://semantic-mediawiki.org/swivt/1.0#specialProperty_dat': 'meta_date_dts'
 }
