@@ -26,7 +26,7 @@ config['property2facet'] = {
  'http://www.wikidata.org/entity/Q43229': 'organization_ss',
  'http://www.wikidata.org/entity/Q178706': 'organization_ss',
  'http://www.wikidata.org/entity/Q18810687': 'organization_ss',
- 'http://www.wikidata.org/entity/Q2221906', 'location_ss',
+ 'http://www.wikidata.org/entity/Q2221906': 'location_ss',
  'http://schema.org/Person': 'person_ss',
  'http://schema.org/Organization': 'organization_ss',
  'http://schema.org/Place': 'location_ss',
