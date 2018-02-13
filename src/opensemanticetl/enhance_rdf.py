@@ -140,6 +140,10 @@ class enhance_rdf(object):
 		part_parameters = {}
 		part_parameters['plugins'] = []
 		part_parameters['export'] = parameters['export']
+						
+		property2facet = {}
+		if 'property2facet' in parameters:
+			property2facet = parameters['property2facet']
 
 		etl_processor = ETL()
 		etl_processor.verbose = self.verbose
@@ -176,9 +180,10 @@ class enhance_rdf(object):
 			part_data['content_type_group'] = 'Knowledge graph'
 			# subject as URI/ID
 			part_parameters['id'] = subj
-			part_data['title'] = self.get_preferred_label(subject=subj)
-
-
+			
+			preferred_label = self.get_preferred_label(subject=subj)
+			part_data['title'] = preferred_label
+			
 			count_subject_triple = 0
 
 			# get all triples for this subject
@@ -194,6 +199,16 @@ class enhance_rdf(object):
 
 
 				try:
+					
+					# if class add preferredlabel of this entity to facet of its class (RDF rdf:type or Wikidata "instance of" (Property:P31)),
+					# so its name (label) will be available in entities view and as filter for faceted search
+					if pred == rdflib.term.URIRef(u'http://www.wikidata.org/prop/direct/P31'):
+						class_facet = str(obj)
+						# map class to facet, if mapping for class exist
+						if class_facet in property2facet:
+							class_facet = property2facet[class_facet]
+						etl.append(data=part_data, facet=class_facet, values=preferred_label)			
+
 					#
 					# Predicate/property to facet/field
 					#
@@ -227,7 +242,7 @@ class enhance_rdf(object):
 						
 						etl.append( data=part_data, facet=facet_uri, values=uri )
 
-						# append mixed field with preferred label and uri of the object for disambiguation of different Entities/IDs/URIs with same names/labels in faceted search
+						# append mixed field with preferred label and URI of the object for disambiguation of different Entities/IDs/URIs with same names/labels in faceted search
 						preferredlabel_and_uri = "{} <{}>".format ( self.get_preferred_label(subject=obj), obj)
 
 					else:
