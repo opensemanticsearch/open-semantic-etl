@@ -110,7 +110,7 @@ class enhance_rdf(object):
 			# use label from some other language
 			if not preferred_label:
 				
-				preferred_label = self.graph.preferredLabel(subject=subject, lang='en', labelProperties=self.labelProperties)
+				preferred_label = self.graph.preferredLabel(subject=subject, labelProperties=self.labelProperties)
 
 			# if no label, use URI
 			if preferred_label:
