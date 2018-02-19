@@ -79,6 +79,7 @@ class Connector_File(ETL):
 		self.read_configfile ('/etc/opensemanticsearch/etl-custom')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 		self.read_configfile ('/etc/opensemanticsearch/connector-files')
+		self.read_configfile ('/etc/opensemanticsearch/facets')
 		self.read_configfile ('/etc/opensemanticsearch/connector-files-custom')
 
 

@@ -151,11 +151,9 @@ class enhance_rdf(object):
 		class_properties = []
 		class_properties.append(rdflib.term.URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'))
 		class_properties.append(rdflib.term.URIRef(u'http://www.wikidata.org/prop/direct/P31'))
-		# since there can be multiple triples/values for same property,
+		# since there can be multiple triples/values for same property in/from different graphs or graph describes existing other file/document,
 		# do not overwrite document but add value to existent document & values of the facet/field/property
 		part_parameters['add'] = True
-		# but not for the field content_type which doesn't change and is not multi valued
-		part_parameters['fields_set'] = "content_type"
 
 		# use SPARQL query with distinct to get subjects only once
 		res = self.graph.query(
@@ -178,7 +176,7 @@ class enhance_rdf(object):
 				print ( "Processing RDF subject {}".format(subj) )
 
 			part_data = {}
-			part_data['content_type'] = 'Knowledge graph'
+			
 			part_data['content_type_group'] = 'Knowledge graph'
 			# subject as URI/ID
 			part_parameters['id'] = subj
@@ -210,7 +208,10 @@ class enhance_rdf(object):
 						# map class to facet, if mapping for class exist
 						if class_facet in property2facet:
 							class_facet = property2facet[class_facet]
-						etl.append(data=part_data, facet=class_facet, values=preferred_label)			
+							if class_facet in parameters['facets']:
+								part_data['content_type'] = 'Knowledge graph class {}'.format(parameters['facets'][class_facet]['label'])
+						etl.append(data=part_data, facet=class_facet, values=preferred_label)
+
 
 					#
 					# Predicate/property to facet/field
