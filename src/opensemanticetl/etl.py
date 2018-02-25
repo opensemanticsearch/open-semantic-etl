@@ -284,8 +284,7 @@ class ETL(object):
 				except BaseException as e:
 					sys.stderr.write( "Error while exporting to index or database: {}\n".format(parameters['id']) )
 					raise e
-	
-		
+
 		return parameters, data
 
 

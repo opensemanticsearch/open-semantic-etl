@@ -75,6 +75,7 @@ class Connector_Web(Connector_File):
 		# Linux style filenames
 		self.read_configfile ('/etc/opensemanticsearch/etl')
 		self.read_configfile ('/etc/opensemanticsearch/etl-custom')
+		self.read_configfile ('/etc/opensemanticsearch/facets')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 		self.read_configfile ('/etc/opensemanticsearch/connector-web')
 		self.read_configfile ('/etc/opensemanticsearch/connector-web-custom')
