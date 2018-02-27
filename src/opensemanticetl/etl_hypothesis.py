@@ -113,23 +113,41 @@ class Connector_Hypothesis (ETL):
 	# import all annotations since last imported annotation
 	#
 	
-	def etl_annotations(self, searchurl, last_update=""):
+	def etl_annotations(self, last_update="", user=None, group=None, tag=None, uri=None):
+
+		limit = 200
+
+		newest_update = last_update
 	
 		if not self.api.endswith('/'):
 			self.api = self.api + '/'
-				
+		
+		searchurl = '{}search?limit={}&sort=updated&order=desc'.format(self.api, limit)
+
+		if user:
+			searchurl += "&user={}".format(user)
+
+		if group:
+			searchurl += "&group={}".format(group)
+
+		if tag:
+			searchurl += "&tag={}".format(tag)
+
+		if uri:
+			searchurl += "&uri={}".format(hypothesis.uri)
+
+
+		# Authorization	
 		headers = {'user-agent': 'Open Semantic Search'}
 		
 		if self.token:
 			headers['Authorization'] = 'Bearer ' + token
-	
-		newest_update = last_update
-	
+
 		# stats
 		stat_downloaded_annotations = 0
 		stat_imported_annotations = 0
 	
-		# download annotations
+		# Call API / download annotations
 		if self.verbose:
 			print ( "Calling hypothesis API {}".format(searchurl) )
 	
@@ -164,3 +182,46 @@ class Connector_Hypothesis (ETL):
 			print ("Imported new annotations: {}".format(stat_imported_annotations))
 	
 		return newest_update
+
+
+#
+# Read command line arguments and start
+#
+
+#if running (not imported to use its functions), run main function
+if __name__ == "__main__":
+
+	from optparse import OptionParser 
+
+	#get uri or filename from args
+
+	parser = OptionParser("etl-file [options] filename")
+	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=None, help="Print debug messages")
+	parser.add_option("-a", "--api", dest="api", default="https://hypothes.is/api/", help="API URL")
+	parser.add_option("-p", "--token", dest="token", default=None, help="API token for authorization")
+	parser.add_option("-d", "--documents", dest="documents", action="store_true", default=True, help="Index content of annotated document(s), too")
+	parser.add_option("-f", "--force", dest="force", action="store_true", default=None, help="Force (re)indexing, even if no changes")
+	parser.add_option("-c", "--config", dest="config", default=False, help="Config file")
+	parser.add_option("-t", "--tag", dest="tag", default=None, help="Filter for a tag")
+	parser.add_option("-u", "--user", dest="user", default=None, help="Filter for an user")
+	parser.add_option("-g", "--group", dest="group", default=None, help="Filter for a group")
+
+	(options, args) = parser.parse_args()
+
+	connector = Connector_Hypothesis()
+
+	# add optional config parameters
+	if options.config:
+		connector.read_configfile(options.config)
+
+	if options.verbose == False or options.verbose==True:
+		connector.verbose = options.verbose
+		
+	connector.documents = options.documents
+
+	if options.token:
+		connector.token = options.token
+
+	connector.api = options.api
+
+	connector.etl_annotations(last_update="", user=options.user, group=options.group, tag=options.tag)
