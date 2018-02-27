@@ -17,13 +17,15 @@ from etl_web import Connector_Web
 
 import export_solr
 
-class Connector_Hypothesis (ETL):
+class Connector_Hypothesis(ETL):
 
 	verbose = False
 
 	documents = True
 	
 	token = None
+	
+	api = 'https://hypothes.is/api/'
 	
 	# initialize Open Semantic ETL
 	etl = ETL()
