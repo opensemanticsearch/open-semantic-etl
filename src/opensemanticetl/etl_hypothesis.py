@@ -143,7 +143,7 @@ class Connector_Hypothesis(ETL):
 		headers = {'user-agent': 'Open Semantic Search'}
 		
 		if self.token:
-			headers['Authorization'] = 'Bearer ' + token
+			headers['Authorization'] = 'Bearer ' + self.token
 
 		# stats
 		stat_downloaded_annotations = 0
