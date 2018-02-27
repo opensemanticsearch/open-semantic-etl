@@ -174,7 +174,7 @@ class Connector_Hypothesis(ETL):
 				if annotation['updated'] > newest_update:
 					newest_update = annotation['updated']
 		
-					self.etl_annotation(annotation)	
+				self.etl_annotation(annotation)	
 
 		# commit to index, if yet buffered
 		self.etl.commit()
