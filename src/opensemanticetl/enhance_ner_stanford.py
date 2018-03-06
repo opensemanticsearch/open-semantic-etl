@@ -61,7 +61,7 @@ class enhance_ner_stanford(object):
 		if 'stanford_ner_mapping' in parameters:
 			mapping = parameters['stanford_ner_mapping']
 		else:
-			# todo: extend mapping for models with more classes like money and date
+			# todo: extend mapping for models with more classes like dates
 			mapping = {
 			 'PERSON': 'person_ss',
 			 'LOCATION': 'location_ss',
@@ -74,6 +74,7 @@ class enhance_ner_stanford(object):
 			 'LOC': 'location_ss',
 			 'PERS': 'person_ss',
 			 'LUG': 'location_ss',
+			 'MONEY': 'money_ss',
 			}
 	
 
