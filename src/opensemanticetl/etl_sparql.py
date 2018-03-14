@@ -8,7 +8,7 @@ import tempfile
 from etl import ETL
 from enhance_rdf import enhance_rdf
 
-from SPARQLWrapper import SPARQLWrapper, XML
+from SPARQLWrapper import SPARQLWrapper, XML, JSON
 
 
 #
@@ -17,21 +17,21 @@ from SPARQLWrapper import SPARQLWrapper, XML
 
 def download_rdf_from_sparql_endpoint(endpoint, query):
 
-    # read graph by construct query results from SPARQL endpoint
-    sparql = SPARQLWrapper(endpoint)
-    sparql.setQuery(query)
-    sparql.setReturnFormat(XML)
-    results = sparql.query().convert()
+	# read graph by construct query results from SPARQL endpoint
+	sparql = SPARQLWrapper(endpoint)
+	sparql.setQuery(query)
+	sparql.setReturnFormat(XML)
+	results = sparql.query().convert()
 
-    # crate temporary filename
-    file = tempfile.NamedTemporaryFile()
-    filename = file.name
-    file.close()
+	# crate temporary filename
+	file = tempfile.NamedTemporaryFile()
+	filename = file.name
+	file.close()
 
-    # export graph to RDF file
-    results.serialize(destination=filename, format="xml")
+	# export graph to RDF file
+	results.serialize(destination=filename, format="xml")
 
-    return filename
+	return filename
 
 
 class Connector_SPARQL(ETL):
@@ -41,6 +41,8 @@ class Connector_SPARQL(ETL):
 		ETL.__init__(self, verbose=verbose)
 
 		self.read_configfiles()
+
+		self.config["plugins"] = []
 
 
 	def read_configfiles(self):
@@ -60,9 +62,10 @@ class Connector_SPARQL(ETL):
 		self.read_configfile ('/etc/opensemanticsearch/connector-sparql')
 		
 
-	# Import SPARQL
+
+	# Import RDF from SPARQL result
 	
-	def index (self, endpoint, query):
+	def index_rdf (self, endpoint, query):
 
 		# download (part of) graph from endpoint to temporary rdf file
 		rdffilename = download_rdf_from_sparql_endpoint(endpoint=endpoint, query=query)
@@ -74,6 +77,41 @@ class Connector_SPARQL(ETL):
 		enhancer.etl_graph_file(docid=endpoint, filename=rdffilename, parameters=parameters)
 
 		os.remove(rdffilename)
+
+
+	# Import fields and values from SPARQL SELECT result
+	
+	def index_select (self, endpoint, query):
+
+		# read graph by construct query results from SPARQL endpoint
+		sparql = SPARQLWrapper(endpoint)
+		sparql.setQuery(query)
+		sparql.setReturnFormat(JSON)
+		results = sparql.query().convert()
+
+		i = 0
+		for result in results["results"]["bindings"]:
+			i += 1
+			data = {}
+			data['id'] = endpoint + "/" + query + "/" + str(i)
+
+			for variable in results["head"]["vars"]:
+				if variable in result:
+					if "value" in result[variable]:
+						data[variable] = result[variable]["value"]
+
+			self.process(data=data)
+
+
+	# Import SPARQL result
+	
+	def index (self, endpoint, query):
+
+		if query.startswith("SELECT "):
+			self.index_select(endpoint, query)
+		else:
+			self.index_rdf(endpoint, query)
+
 
 #
 # If runned (not imported for functions) get parameters and start
