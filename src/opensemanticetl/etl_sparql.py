@@ -34,6 +34,41 @@ def download_rdf_from_sparql_endpoint(endpoint, query):
 	return filename
 
 
+#
+# Append values from SPARQL SELECT result to plain text list file
+#
+
+def sparql_select_to_list_file (endpoint, query, filename=None):
+		
+	# read graph by construct query results from SPARQL endpoint
+	sparql = SPARQLWrapper(endpoint)
+	sparql.setQuery(query)
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+
+	if not filename:
+		# crate temporary filename
+		listfile = tempfile.NamedTemporaryFile(delete=False)
+		filename = listfile.name
+		listfile.close()
+	
+	listfile = open(filename, 'a', encoding="utf-8")
+
+	for result in results["results"]["bindings"]:
+
+		for variable in results["head"]["vars"]:
+			if variable in result:
+				if "value" in result[variable]:
+					value = result[variable]["value"]
+					value = value.strip()
+					if value:
+						listfile.write( result[variable]["value"] + "\n" )
+
+	listfile.close()
+
+	return filename
+
+
 class Connector_SPARQL(ETL):
 
 	def __init__(self, verbose=False, quiet=True):
