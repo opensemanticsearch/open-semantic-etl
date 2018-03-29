@@ -5,8 +5,6 @@
 # Import annotations from Hypothesis - https://hypothes.is
 #
 
-# Todo: Paging, so not only import maximum last 200 annotations, which might be all since last run, but not if rebuild index and > 200 annotations per queried user or queried document
-
 import requests
 import json
 import sys
@@ -26,6 +24,9 @@ class Connector_Hypothesis(ETL):
 	token = None
 	
 	api = 'https://hypothes.is/api/'
+	
+	# how many annotations to download at once / per page
+	limit = 10
 	
 	# initialize Open Semantic ETL
 	etl = ETL()
@@ -117,14 +118,12 @@ class Connector_Hypothesis(ETL):
 	
 	def etl_annotations(self, last_update="", user=None, group=None, tag=None, uri=None):
 
-		limit = 200
-
 		newest_update = last_update
 	
 		if not self.api.endswith('/'):
 			self.api = self.api + '/'
 		
-		searchurl = '{}search?limit={}&sort=updated&order=desc'.format(self.api, limit)
+		searchurl = '{}search?limit={}&sort=updated&order=desc'.format(self.api, self.limit)
 
 		if user:
 			searchurl += "&user={}".format(user)
@@ -136,7 +135,7 @@ class Connector_Hypothesis(ETL):
 			searchurl += "&tag={}".format(tag)
 
 		if uri:
-			searchurl += "&uri={}".format(hypothesis.uri)
+			searchurl += "&uri={}".format(uri)
 
 
 		# Authorization	
@@ -148,33 +147,53 @@ class Connector_Hypothesis(ETL):
 		# stats
 		stat_downloaded_annotations = 0
 		stat_imported_annotations = 0
+		stat_pages = 0
 	
-		# Call API / download annotations
-		if self.verbose:
-			print ( "Calling hypothesis API {}".format(searchurl) )
+		offset = 0
+		last_page = False
+
+		while not last_page:
+			
+			searchurl_paged = searchurl + "&offset={}".format(offset)
 	
-		request = requests.get(searchurl, headers=headers)
-	
-		result = json.loads(request.content.decode('utf-8'))
-	
-		# import annotations
-		for annotation in result['rows']:
-	
-			stat_downloaded_annotations += 1
-	
-			if annotation['updated'] > last_update:
-				
-				if self.verbose:
-					print ( "Importing new annotation {}annotations/{}".format(self.api, annotation['id']) )
-					print (annotation['text'])
-				
-				stat_imported_annotations += 1
-	
-				# save update time from newest annotation/edit
-				if annotation['updated'] > newest_update:
-					newest_update = annotation['updated']
+			# Call API / download annotations
+			if self.verbose:
+				print ( "Calling hypothesis API {}".format(searchurl_paged) )
 		
-				self.etl_annotation(annotation)	
+			request = requests.get(searchurl_paged, headers=headers)
+		
+			result = json.loads(request.content.decode('utf-8'))
+
+			stat_pages += 1
+
+			if len(result['rows']) < self.limit:
+				last_page = True
+			
+			# import annotations
+			for annotation in result['rows']:
+		
+				stat_downloaded_annotations += 1
+		
+				if annotation['updated'] > last_update:
+					
+					if self.verbose:
+						print ( "Importing new annotation {}annotations/{}".format(self.api, annotation['id']) )
+						print (annotation['text'])
+					
+					stat_imported_annotations += 1
+		
+					# save update time from newest annotation/edit
+					if annotation['updated'] > newest_update:
+						newest_update = annotation['updated']
+			
+					self.etl_annotation(annotation)
+
+				else:
+				
+					last_page = True
+
+			offset += self.limit
+
 
 		# commit to index, if yet buffered
 		self.etl.commit()
