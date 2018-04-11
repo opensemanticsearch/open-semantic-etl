@@ -35,7 +35,7 @@ class enhance_multilingual(object):
 			self.languages = parameters['languages']
 
 		if 'languages_force' in parameters:
-			self.languages = parameters['languages_force']
+			self.languages_force = parameters['languages_force']
 
 		if 'languages_exclude_fields' in parameters:
 			self.exclude_fields = parameters['languages_exclude_fields']
