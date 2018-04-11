@@ -117,7 +117,9 @@ config['plugins'].append('enhance_pdf_ocr')
 
 # additionally descew before OCR (deskewing of low quality scans)
 # needs more CPU time, so OCR needs more than double time but sometimes you get more / better results
-config['plugins'].append('enhance_ocr_descew')
+
+#config['plugins'].append('enhance_ocr_descew')
+
 
 #OCR language
 
@@ -148,6 +150,9 @@ config['regex_lists'].append('/etc/opensemanticsearch/regex/email.tsv')
 #
 # Config for Named Entities Recognition (NER)
 #
+
+# Enable dictionary based Named Entities Extraction from thesaurus and ontologies
+config['plugins'].append('enhance_ner_dictionary')
 
 # Enable SpaCy NER plugin
 config['plugins'].append('enhance_ner_spacy')
