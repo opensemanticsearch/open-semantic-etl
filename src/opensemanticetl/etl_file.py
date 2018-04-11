@@ -75,7 +75,9 @@ class Connector_File(ETL):
 		
 		
 		# Linux style filenames
+		self.read_configfile ('/etc/etl/config')
 		self.read_configfile ('/etc/opensemanticsearch/etl')
+		self.read_configfile ('/etc/opensemanticsearch/etl-webadmin')
 		self.read_configfile ('/etc/opensemanticsearch/etl-custom')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 		self.read_configfile ('/etc/opensemanticsearch/connector-files')
@@ -205,8 +207,6 @@ if __name__ == "__main__":
 		parser.error("No filename given")
 
 	connector = Connector_File()
-
-	connector.read_configfile ('/etc/etl/config')
 
 	# add optional config parameters
 	if options.config:

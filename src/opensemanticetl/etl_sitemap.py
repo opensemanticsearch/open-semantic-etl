@@ -32,15 +32,15 @@ class Connector_Sitemap(Connector_Web):
 		self.read_configfile ('conf\\opensemanticsearch-enhancer-ocr')
 		self.read_configfile ('conf\\opensemanticsearch-enhancer-rdf')
 		self.read_configfile ('conf\\opensemanticsearch-connector-web')
-		self.read_configfile ('conf\\opensemanticsearch-connector-rss')
 		
 		
 		# linux style filenames
 		self.read_configfile ('/etc/opensemanticsearch/etl')
+		self.read_configfile ('/etc/opensemanticsearch/etl-webadmin')
+		self.read_configfile ('/etc/opensemanticsearch/etl-custom')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-ocr')
 		self.read_configfile ('/etc/opensemanticsearch/enhancer-rdf')
 		self.read_configfile ('/etc/opensemanticsearch/connector-web')
-		self.read_configfile ('/etc/opensemanticsearch/connector-rss')
 		
 	
 	# Import sitemap
