@@ -16,6 +16,7 @@ class enhance_contenttype_group(object):
 		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Spreadsheet',
 		'application/vnd.openxmlformats-officedocument.spreadsheetml.template': 'Spreadsheet template',
 		'text': 'Text document',
+		'application/gzip text': 'Text document',
 		'application/pdf': 'Text document',
 		'application/msword': 'Text document',
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Text document',
