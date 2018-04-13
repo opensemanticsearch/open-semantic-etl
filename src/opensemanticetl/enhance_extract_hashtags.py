@@ -5,7 +5,9 @@ class enhance_extract_hashtags(object):
 
 		minimallenght = 3
 		
-		data['hashtag_ss'] = [ word for word in data['content'].split() if (word.startswith("#") and len(word) > minimallenght) ]
+		if 'content' in data:
+			if data['content']:
+				data['hashtag_ss'] = [ word for word in data['content'].split() if (word.startswith("#") and len(word) > minimallenght) ]
 	
 		return parameters, data
 		
