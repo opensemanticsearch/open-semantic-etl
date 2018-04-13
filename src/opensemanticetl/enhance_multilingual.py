@@ -61,15 +61,14 @@ class enhance_multilingual(object):
 				if fieldname.endswith(suffix):
 					exclude = True
 
-
 			if not exclude:
 				# copy data to fields for language specific analysis for recognized language of document
 				if "language_s" in data:
-					language_specific_fieldname = fieldname + "_txt_" + data['language_s']
-					language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
-					if self.verbose:
-						print ( "Multilinguality: Detected document language {}, so copyied {} to {}".format(data['language_s'], fieldname, language_specific_fieldname) )
-
+					if data['language_s']:
+						language_specific_fieldname = fieldname + "_txt_" + data['language_s']
+						language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
+						if self.verbose:
+							print ( "Multilinguality: Detected document language {}, so copyied {} to {}".format(data['language_s'], fieldname, language_specific_fieldname) )
 
 				# fields for language specific analysis forced languages even if not recognized language
 				for language_force in self.languages_force:
