@@ -43,10 +43,15 @@ class enhance_extract_text_tika_server(object):
 			tika_server = parameters['tika_server']
 		else:
 			tika_server = 'http://localhost:9998'
-
+		
 		headers = None
 		if 'ocr_lang' in parameters:
 			headers = { 'X-Tika-OCRLanguage': parameters['ocr_lang'] }
+		
+		ocr = True
+		if 'ocr' in parameters:
+			if parameters['ocr'] == False:
+				headers = { 'X-Tika-OCRTesseractPath': '/False' }
 		
 		#
 		# Parse on Apache Tika Server by python-tika

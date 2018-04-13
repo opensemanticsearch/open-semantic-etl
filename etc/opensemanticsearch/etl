@@ -112,6 +112,10 @@ config['plugins'].append('enhance_rdf')
 # Config for OCR (automatic textrecognition)
 #
 
+# Disable OCR for image files (i.e for more performance and/or because you don't need the text within images or have only photos without photographed text)
+#config['ocr'] = False
+
+
 # Do OCR for images embedded in PDF documents (i.e. designed images or scanned or photographed documents)
 config['plugins'].append('enhance_pdf_ocr')
 
