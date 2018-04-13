@@ -48,7 +48,6 @@ class enhance_extract_text_tika_server(object):
 		if 'ocr_lang' in parameters:
 			headers = { 'X-Tika-OCRLanguage': parameters['ocr_lang'] }
 		
-		ocr = True
 		if 'ocr' in parameters:
 			if parameters['ocr'] == False:
 				headers = { 'X-Tika-OCRTesseractPath': '/False' }
