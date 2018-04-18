@@ -78,7 +78,7 @@ class export_solr(object):
 
 
 		
-	def post(self, data=[], docid=None):
+	def post(self, data=[], docid=None, commit=None):
 		
 		solr_uri = self.solr + self.core + '/update'
 	
@@ -86,6 +86,10 @@ class export_solr(object):
 			data['id'] = docid
 	
 		datajson = '[' + json.dumps(data) + ']'
+
+		params = {}
+		if commit:
+			params['commit'] = 'true'
 	
 		if self.verbose:
 			print ("Sending update request to {}".format(solr_uri) )
@@ -93,7 +97,7 @@ class export_solr(object):
 
 		try:
 
-			requests.post(solr_uri, data=datajson, headers={'Content-Type': 'application/json'})
+			requests.post(solr_uri, data=datajson, params=params, headers={'Content-Type': 'application/json'})
 
 		except BaseException as e:
 
