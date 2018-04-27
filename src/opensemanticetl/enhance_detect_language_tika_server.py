@@ -18,7 +18,7 @@ class enhance_detect_language_tika_server(object):
 
 		uri = tika_server + '/language/string'
 
-		analyse_fields = ['title','content','description','ocr_t','ocr_descew_t']
+		analyse_fields = ['title_ss','content_txt','description_txt','ocr_t','ocr_descew_t']
 
 		text = ''
 		for field in analyse_fields:

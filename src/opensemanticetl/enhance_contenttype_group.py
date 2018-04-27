@@ -7,7 +7,7 @@
 
 class enhance_contenttype_group(object):
 
-	fieldname = 'content_type_group'
+	fieldname = 'content_type_group_ss'
 
 	contenttype_groups = {
 		'application/vnd.ms-excel': 'Spreadsheet',
@@ -46,7 +46,7 @@ class enhance_contenttype_group(object):
 
 		# Contenttype to group
 		for contenttype, group in self.contenttype_groups.items():
-			if data['content_type'].startswith(contenttype):
+			if data['content_type_ss'].startswith(contenttype):
 				data[self.fieldname] = group
 
 		# Suffix to group

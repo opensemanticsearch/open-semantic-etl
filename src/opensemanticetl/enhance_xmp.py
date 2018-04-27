@@ -76,7 +76,7 @@ class enhance_xmp(object):
 					creator = root.findtext(".//{http://purl.org/dc/elements/1.1/}creator")
 					
 					if creator:
-						data['author'] = creator
+						data['author_ss'] = creator
 				
 				except BaseException as e:
 					sys.stderr.write( "Exception while parsing creator from xmp {} {}".format(xmpfilename, e.message ) )
@@ -87,7 +87,7 @@ class enhance_xmp(object):
 					headline = root.findtext(".//{http://ns.adobe.com/photoshop/1.0/}Headline")
 					
 					if headline:
-						data['title'] = headline
+						data['title_ss'] = headline
 	
 				except BaseException as e:
 					sys.stderr.write( "Exception while parsing headline from xmp {} {}".format(xmpfilename, e.message) )

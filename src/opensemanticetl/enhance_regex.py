@@ -102,15 +102,15 @@ class enhance_regex(object):
 		# build text from textfields
 		else:
 
-			if 'title' in data:
-				text = data['title']
-			elif 'title' in parameters:
-				text = parameters['title']
+			if 'title_ss' in data:
+				text = data['title_ss']
+			elif 'title_ss' in parameters:
+				text = parameters['title_ss']
 				
-			if 'content' in data:
-				text = text + ' ' + data['content']
-			elif 'content' in parameters:
-				text = text + ' ' + parameters['content']
+			if 'content_txt' in data:
+				text = text + ' ' + data['content_txt']
+			elif 'content_txt' in parameters:
+				text = text + ' ' + parameters['content_txt']
 		
 		text = cleantext(text)
 	

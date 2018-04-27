@@ -5,24 +5,12 @@ from tika import parser
 class enhance_extract_text_tika_server(object):
 
 	mapping = {
-		'Content-Type': 'content_type',
+		'Content-Type': 'content_type_ss',
 		'Author': 'author_ss',
-		'Content-Length': 'file_size_i',
-		'Content-Encoding': 'encoding_s',
-		'title': 'title',
-		'subject': 'subject',
-		'description': 'description',
-		'comments': 'comments',
-		'last_modified': 'last_modified',
-		'Keywords': 'keywords',
-		'Category': 'category',
-		'resourceName': 'resourcename',
-		'url': 'url',
-		'links': 'links',
-		'Message-From': 'message_from_ss',
-		'Message-To': 'message_to_ss',
-		'Message-CC': 'message_cc_ss',
-		'Message-BCC': 'message_bcc_ss',
+		'Content-Length': 'Content-Length_i',
+		'Content-Encoding': 'Content-Encoding_s',
+		'title': 'title_ss',
+		'last_modified': 'last_modified_dt',
 	}
 
 	def process (self, parameters={}, data={} ):
@@ -61,7 +49,7 @@ class enhance_extract_text_tika_server(object):
 		parsed = parser.from_file(filename=filename, serverEndpoint=tika_server, headers=headers)
 
 		if parsed['content']:
-			data['content'] = parsed['content']
+			data['content_txt'] = parsed['content']
 
 		# copy Tika fields to (mapped) data fields
 		for tika_field in parsed["metadata"]:
