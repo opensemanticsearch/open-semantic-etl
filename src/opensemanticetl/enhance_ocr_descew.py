@@ -16,7 +16,6 @@ def optimized_image2text(filename, lang='eng', verbose=False):
 	ocr_txt = False
 
 	ocr_temp_dirname = tempfile.mkdtemp(prefix="opensemanticetl_ocr_descew_")
-	
 
 	if verbose:
 		print ( "Optimizing image {}".format(filename) )
@@ -76,11 +75,11 @@ class enhance_ocr_descew(object):
 	# (if not enhanced on indexing but later)
 
 	# this plugin needs to read the field id as a parameters to enrich unenriched docs
-	fields = ['id', 'content_type']
+	fields = ['id', 'content_type_ss']
 		
 	# query to find documents, that were not enriched by this plugin yet
 	# (since we marked documents which were OCRd with ocr_b = true
-	query = "content_type: image\/* AND NOT enhance_ocr_descew_b:true"
+	query = "content_type_ss: image\/* AND NOT enhance_ocr_descew_b:true"
 
 
 	def process (self, parameters={}, data={} ):
@@ -92,10 +91,10 @@ class enhance_ocr_descew(object):
 	
 		filename = parameters['filename']
 		
-		if 'content_type' in data:
-			mimetype = data['content_type']
+		if 'content_type_ss' in data:
+			mimetype = data['content_type_ss']
 		else:
-			mimetype = parameters['content_type']
+			mimetype = parameters['content_type_ss']
 
 		#if connector returns a list, use only first value (which is the only entry of the list)
 		if isinstance(mimetype, list):

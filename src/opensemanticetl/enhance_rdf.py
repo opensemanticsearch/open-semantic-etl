@@ -177,7 +177,7 @@ class enhance_rdf(object):
 
 			part_data = {}
 			
-			part_data['content_type_group'] = 'Knowledge graph'
+			part_data['content_type_group_ss'] = 'Knowledge graph'
 			# subject as URI/ID
 			part_parameters['id'] = subj
 			
@@ -209,7 +209,7 @@ class enhance_rdf(object):
 						if class_facet in property2facet:
 							class_facet = property2facet[class_facet]
 							if class_facet in parameters['facets']:
-								part_data['content_type'] = 'Knowledge graph class {}'.format(parameters['facets'][class_facet]['label'])
+								part_data['content_type_ss'] = 'Knowledge graph class {}'.format(parameters['facets'][class_facet]['label'])
 						etl.append(data=part_data, facet=class_facet, values=preferred_label)
 
 
@@ -285,10 +285,10 @@ class enhance_rdf(object):
 		docid = parameters['id']
 		filename = parameters['filename']
 		
-		if 'content_type' in data:
-			mimetype = data['content_type']
+		if 'content_type_ss' in data:
+			mimetype = data['content_type_ss']
 		else:
-			mimetype = parameters['content_type']
+			mimetype = parameters['content_type_ss']
 
 		# if connector returns a list, use only first value (which is the only entry of the list)
 		if isinstance(mimetype, list):

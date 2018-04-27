@@ -24,10 +24,10 @@ class enhance_pst(object):
 			if not 'container_s' in data:
 				data['container_s'] = parameters['container']
 
-		if 'content_type' in data:
-			mimetype = data['content_type']
-		elif 'content_type' in parameters:
-			mimetype = parameters['content_type']
+		if 'content_type_ss' in data:
+			mimetype = data['content_type_ss']
+		elif 'content_type_ss' in parameters:
+			mimetype = parameters['content_type_ss']
 		else:
 			mimetype = 'Unknown'
 

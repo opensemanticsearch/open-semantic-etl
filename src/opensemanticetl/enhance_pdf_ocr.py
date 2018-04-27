@@ -174,10 +174,10 @@ class enhance_pdf_ocr(object):
 
 		filename = parameters['filename']
 
-		if 'content_type' in data:
-			mimetype = data['content_type']
+		if 'content_type_ss' in data:
+			mimetype = data['content_type_ss']
 		else:
-			mimetype = parameters['content_type']
+			mimetype = parameters['content_type_ss']
 
 		#if connector returns a list, use only first value (which is the only entry of the list)
 		if isinstance(mimetype, list):

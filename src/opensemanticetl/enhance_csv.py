@@ -213,7 +213,7 @@ class enhance_csv(object):
 		
 		data = {}
 	
-		data['content_type'] = "CSV row"
+		data['content_type_ss'] = "CSV row"
 		
 		data['container_s'] = docid
 	
