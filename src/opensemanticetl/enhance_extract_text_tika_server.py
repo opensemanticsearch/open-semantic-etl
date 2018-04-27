@@ -32,7 +32,7 @@ class enhance_extract_text_tika_server(object):
 		else:
 			tika_server = 'http://localhost:9998'
 		
-		headers = None
+		headers = {}
 		if 'ocr_lang' in parameters:
 			headers = { 'X-Tika-OCRLanguage': parameters['ocr_lang'] }
 		
