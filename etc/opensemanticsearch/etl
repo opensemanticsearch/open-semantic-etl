@@ -69,7 +69,7 @@ config['export'] = 'export_solr'
 config['solr'] = 'http://localhost:8983/solr/'
 
 # Solr core
-config['index'] = 'core1'
+config['index'] = 'opensemanticsearch'
 
 
 #
