@@ -9,7 +9,7 @@ class enhance_extract_text_tika_server(object):
 		'Author': 'author_ss',
 		'Content-Length': 'Content-Length_i',
 		'Content-Encoding': 'Content-Encoding_s',
-		'title': 'title_ss',
+		'title': 'title_txt',
 		'last_modified': 'last_modified_dt',
 	}
 

@@ -87,7 +87,7 @@ class enhance_xmp(object):
 					headline = root.findtext(".//{http://ns.adobe.com/photoshop/1.0/}Headline")
 					
 					if headline:
-						data['title_ss'] = headline
+						data['title_txt'] = headline
 	
 				except BaseException as e:
 					sys.stderr.write( "Exception while parsing headline from xmp {} {}".format(xmpfilename, e.message) )

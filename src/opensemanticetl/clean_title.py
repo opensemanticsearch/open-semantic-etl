@@ -13,16 +13,16 @@ class clean_title(object):
 		
 		try:
 			# if no field title exists, but field subject, use it
-			if not 'title_ss' in data:
+			if not 'title_txt' in data:
 				if 'subject_ss' in data:
-					data['title_ss'] = data['subject_ss']
+					data['title_txt'] = data['subject_ss']
 	
 			else:
 				# if title empty and field subject exists, use subjects value
-				if not data['title_ss']:
+				if not data['title_txt']:
 					if 'subject_ss' in data:
 						if data['subject_ss']:
-							data['title_ss'] = data['subject_ss']
+							data['title_txt'] = data['subject_ss']
 
 		except:
 			sys.stderr.write( "Error while trying to clean empty title with subject" )
@@ -31,12 +31,12 @@ class clean_title(object):
 		# if no title yet, use the filename part of URI
 		try:
 			# if no field title exists, but field subject, use it
-			if not 'title_ss' in data:
+			if not 'title_txt' in data:
 
 				# get filename from URI
 				filename = parameters['id'].split('/')[-1]
 				
-				data['title_ss'] = filename
+				data['title_txt'] = filename
 
 		except:
 			sys.stderr.write( "Error while trying to clean empty title with filename" )

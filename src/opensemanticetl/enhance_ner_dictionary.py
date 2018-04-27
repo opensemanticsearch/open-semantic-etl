@@ -16,7 +16,7 @@ class enhance_ner_dictionary(object):
 			if parameters['verbose']:	
 				verbose = True
 
-		analyse_fields = ['title_ss','content_txt','description_txt','ocr_t','ocr_descew_t']
+		analyse_fields = ['title_txt','content_txt','description_txt','ocr_t','ocr_descew_t']
 
 		text = ''
 		for field in analyse_fields:

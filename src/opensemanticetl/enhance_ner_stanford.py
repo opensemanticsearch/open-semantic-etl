@@ -102,7 +102,7 @@ class enhance_ner_stanford(object):
 		if 'stanford_ner_path_to_jar' in parameters:
 			kwargs['path_to_jar'] = parameters['stanford_ner_path_to_jar']
 
-		analyse_fields = ['title_ss','content_txt','description_txt','ocr_t','ocr_descew_t']
+		analyse_fields = ['title_txt','content_txt','description_txt','ocr_t','ocr_descew_t']
 
 		text = ''
 		for field in analyse_fields:
