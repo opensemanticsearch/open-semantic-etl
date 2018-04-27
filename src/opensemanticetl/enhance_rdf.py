@@ -182,7 +182,7 @@ class enhance_rdf(object):
 			part_parameters['id'] = subj
 			
 			preferred_label = self.get_preferred_label(subject=subj)
-			part_data['title'] = preferred_label
+			part_data['title_txt'] = preferred_label
 			
 			count_subject_triple = 0
 
