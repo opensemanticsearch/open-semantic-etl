@@ -271,6 +271,21 @@ class export_solr(object):
 		return result
 
 
+	#
+	# append synonyms by Solr REST API for managed resources
+	#
+	
+	def append_synonyms(self, resourceid, label, synonyms):
+
+		url = self.solr + self.core + '/schema/analysis/synonyms/' + resourceid
+		headers = {'content-type' : 'application/json'}
+				
+		data = { label: synonyms }
+		
+		r = requests.post(url=url, data=json.dumps(data), headers=headers)
+
+
+
 def solr_mask(string_to_mask, solr_specialchars = '\+-&|!(){}[]^"~*?:/'):
 	
 		masked = string_to_mask
