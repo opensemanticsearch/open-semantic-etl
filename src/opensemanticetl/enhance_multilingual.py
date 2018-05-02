@@ -41,8 +41,8 @@ class enhance_multilingual(object):
 	exclude_fields = [
 		'language_s',
 		'encoding_s',
-		'content_type',
-		'content_type_group',
+		'content_type_ss',
+		'content_type_group_ss',
 		'AEB Bracket Value_ss',
 		'AE Setting_ss',
 		'AF Area Height_ss',
@@ -73,6 +73,7 @@ class enhance_multilingual(object):
 		'Color Space_ss',
 		'Color Temperature_ss',
 		'Color Tone_ss',
+		'Content-Encoding_s',
 		'Continuous Drive Mode_ss',
 		'Control Mode_ss',
 		'Custom Functions_ss',
@@ -249,13 +250,27 @@ class enhance_multilingual(object):
 					exclude = True
 
 			if not exclude:
+
+				# if no support for language in index schema, use generic field for application
+				# of synonyms, which in cases a language is supported would be done by language specific fields
+				language_field_suffix = "_txt_synonyms"
+				language_status = 'Language not detected (apply only synonyms)'
+				
 				# copy data to fields for language specific analysis for recognized language of document
 				if "language_s" in data:
 					if data['language_s']:
-						language_specific_fieldname = fieldname + "_txt_" + data['language_s']
-						language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
-						if self.verbose:
-							print ( "Multilinguality: Detected document language {}, so copyied {} to {}".format(data['language_s'], fieldname, language_specific_fieldname) )
+						# if language support in schema
+						if data['language_s'] in self.languages:
+							language_status = 'Detected language {} with stemming setup'.format(data['language_s'])
+							language_field_suffix = "_txt_" + data['language_s']
+						else:
+							language_status = 'No stemming setup for detected language {}, apply only synonyms'.format(data['language_s'])
+				
+				language_specific_fieldname = fieldname + language_field_suffix
+				language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
+
+				if self.verbose:
+					print ( "Multilinguality: {}, so copyied {} to {}".format(language_status, fieldname, language_specific_fieldname) )
 
 				# fields for language specific analysis forced languages even if not recognized language
 				for language_force in self.languages_force:
@@ -267,7 +282,6 @@ class enhance_multilingual(object):
 		# append language specific fields to data
 		for key in language_specific_data:
 			data[key] = language_specific_data[key]
-
 
 		# mark the document, that it was analyzed by this plugin yet
 		data['enhance_multilingual_b'] = "true"
