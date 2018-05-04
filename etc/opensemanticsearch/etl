@@ -152,11 +152,11 @@ config['regex_lists'].append('/etc/opensemanticsearch/regex/email.tsv')
 
 
 #
-# Config for Named Entities Recognition (NER)
+# Config for Named Entities Recognition (NER) and Named Entity Linking (NEL)
 #
 
-# Enable dictionary based Named Entities Extraction from thesaurus and ontologies
-config['plugins'].append('enhance_ner_dictionary')
+# Enable Entity Linking / Normalization and dictionary based Named Entities Extraction from thesaurus and ontologies
+config['plugins'].append('enhance_entity_linking')
 
 # Enable SpaCy NER plugin
 config['plugins'].append('enhance_ner_spacy')
