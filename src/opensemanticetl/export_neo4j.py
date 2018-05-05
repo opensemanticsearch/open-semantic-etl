@@ -1,15 +1,21 @@
 from py2neo import Graph, Node, Relationship
 
+#
+# Export entities and connections to neo4j
+#
+
 class export_neo4j(object):
 	
-	#
-	# Export entities and connections to neo4j
-	#
+	verbose = False
+
 	
 	def process (self, parameters={}, data={} ):
 
+		if 'verbose' in parameters:
+			self.verbose = parameters['verbose']
+
 		# for this facets, do not add additional entity to connect with, but write to properties of the entity
-		properties = ['content_type', 'content_type_group', 'language_ss', 'language_s']
+		properties = ['content_type_ss', 'content_type_group_ss', 'language_ss', 'language_s']
 		
 		host = 'localhost'
 		if 'neo4j_host' in parameters:
@@ -17,7 +23,7 @@ class export_neo4j(object):
 
 		user = 'neo4j'
 		if 'neo4j_user' in parameters:
-			host = parameters['neo4j_user']
+			user = parameters['neo4j_user']
 
 		password = 'neo4j'
 		if 'neo4j_password' in parameters:
@@ -49,8 +55,10 @@ class export_neo4j(object):
 		for entity_class in parameters['facets']:
 			
 			if entity_class in data:
-				
-				entity_class_label = parameters['facets'][entity_class]['label']
+
+				entity_class_label = entity_class
+				if parameters['facets'][entity_class]['label']:
+					entity_class_label = parameters['facets'][entity_class]['label']
 
 				if not entity_class in properties:
 	
@@ -66,6 +74,9 @@ class export_neo4j(object):
 						entities = [ data[entity_class] ]
 	
 					for entity in entities:					
+	
+						if self.verbose:
+							print ("Export to Neo4j: Merging entity {} of class {}".format(entity, entity_class_label))
 	
 						# if not yet there, add the entity to graph
 						entity_node = Node(entity_class_label, name = entity)
