@@ -5,6 +5,9 @@ adduser --system --disabled-password opensemanticetl
 # install Scrapy
 pip3 install scrapy
 
+# install py2neo
+pip3 install py2neo
+
 # start on boot
 update-rc.d opensemanticsearch defaults
 update-rc.d opensemanticsearch-filemonitoring defaults
