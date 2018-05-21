@@ -1,5 +1,5 @@
-import tika
-from tika import parser
+import os
+import tempfile
 
 # Extract text from file(name)
 class enhance_extract_text_tika_server(object):
@@ -26,6 +26,15 @@ class enhance_extract_text_tika_server(object):
 				debug = True
 
 		filename = parameters['filename']
+		
+		tika_log_path = tempfile.mkdtemp(prefix = "tika-python-")
+		os.environ['TIKA_LOG_PATH'] = tika_log_path
+
+		import tika
+		from tika import parser
+
+		tika.TikaClientOnly = True
+		
 		
 		if 'tika_server' in parameters:
 			tika_server = parameters['tika_server']
@@ -57,6 +66,12 @@ class enhance_extract_text_tika_server(object):
 				data[self.mapping[tika_field]] = parsed['metadata'][tika_field]
 			else:
 				data[tika_field + '_ss'] = parsed['metadata'][tika_field]
+		
+		tika_log_file = tika_log_path + os.path.sep + 'tika.log'
+		if os.path.isfile(tika_log_file):
+			os.remove(tika_log_file)
+
+		os.rmdir(tika_log_path)
 									
 		return parameters, data
 		
