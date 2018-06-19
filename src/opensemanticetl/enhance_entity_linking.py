@@ -44,10 +44,10 @@ class enhance_entity_linking(object):
 
 		for match in results:
 			for candidate in results[match]['result']:
-
-				for facet in candidate['type']:
-					etl.append(data, facet, candidate['name'])
-					etl.append(data, facet + '_uri_ss', candidate['id'])
+				if candidate['match']:
+					for facet in candidate['type']:
+						etl.append(data, facet, candidate['name'])
+						etl.append(data, facet + '_uri_ss', candidate['id'])
 
 		# mark the document, that it was analyzed by this plugin yet
 		data['enhance_entity_linking_b'] = "true"
