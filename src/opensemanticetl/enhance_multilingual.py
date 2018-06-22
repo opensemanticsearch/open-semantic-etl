@@ -11,7 +11,7 @@ class enhance_multilingual(object):
 	verbose = False
 
 	# languages that are defined in index schema for language specific analysis and used if autodetected as documents language
-	languages = ['en','fr','de','es','pt','nl','ro','it','cz','ar','fa']
+	languages = ['en','fr','de','es','hu','pt','nl','ro','it','cz','ar','fa']
 
 	# languages for language specific analysis even if not the autodetected document language
 	languages_force = []
