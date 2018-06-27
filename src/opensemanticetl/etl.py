@@ -87,73 +87,75 @@ class ETL(object):
 		blacklisted = False
 
 		# is there a content type yet?
-		if 'content_type' in data:
-			content_type = data['content_type']
-		elif 'content_type' in parameters:
-			content_type = parameters['content_type']
+		if 'content_type_ss' in data:
+			content_types = data['content_type_ss']
+		elif 'content_type_ss' in parameters:
+			content_types = parameters['content_type_ss']
 		else:
-			content_type = None
+			content_types = None
 
 		#if connector returns a list, use only first value (which is the only entry of the list)
-		if isinstance(content_type, list):
-			content_type = content_type[0]
+		if not isinstance(content_types, list):
+			content_types = [content_types]
 			
 		# if content type check the plugins' blacklists
-		if content_type:
-
-			# directory where the plugins' blacklist are
-			blacklistdir = '/etc/opensemanticsearch/blacklist/' + plugin + '/'
-
-
-			filename = blacklistdir + 'blacklist-contenttype'
-			if os.path.isfile(filename):
-				if filter_blacklist.is_in_list(filename=filename, value=content_type):
-					blacklisted = True
-
-			if not blacklisted:
-				filename = blacklistdir + 'blacklist-contenttype-prefix'
-				if os.path.isfile(filename):
-					if filter_blacklist.is_in_list(filename=filename, value=content_type, match="prefix"):
-						blacklisted = True
+		if content_types:
 			
-			if not blacklisted:
-				filename = blacklistdir + 'blacklist-contenttype-suffix'
-				if os.path.isfile(filename):
-					if filter_blacklist.is_in_list(filename=filename, value=content_type, match="suffix"):
-						blacklisted = True
+			for content_type in content_types:
 	
-			if not blacklisted:
-				filename = blacklistdir + 'blacklist-contenttype-regex'
-				if os.path.isfile(filename):
-					if filter_blacklist.is_in_list(filename=filename, value=content_type, match="regex"):
-						blacklisted = True
-
-
-			# check whitelists for plugin, if blacklisted but should not
-			if blacklisted:
-				filename = blacklistdir + 'whitelist-contenttype'
+				# directory where the plugins' blacklist are
+				blacklistdir = '/etc/opensemanticsearch/blacklist/' + plugin + '/'
+	
+	
+				filename = blacklistdir + 'blacklist-contenttype'
 				if os.path.isfile(filename):
 					if filter_blacklist.is_in_list(filename=filename, value=content_type):
-						blacklisted = False
-			
-			if blacklisted:
-				filename=blacklistdir + 'whitelist-contenttype-prefix'
-				if os.path.isfile(filename):
-					if filter_blacklist.is_in_list(filename=filename, value=content_type, match="prefix"):
-						blacklisted = False
-		
-			if blacklisted:
-				filename=blacklistdir + 'whitelist-contenttype-suffix'
-				if os.path.isfile(filename):
-					if filter_blacklist.is_in_list(filename=filename, value=content_type, match="suffix"):
-						blacklisted = False
+						blacklisted = True
 	
-			if blacklisted:
-				filename=blacklistdir + 'whitelist-contenttype-regex'
-				if os.path.isfile(filename):
-					if filter_blacklist.is_in_list(filename=filename, value=content_type, match="regex"):
-						blacklisted = False
-
+				if not blacklisted:
+					filename = blacklistdir + 'blacklist-contenttype-prefix'
+					if os.path.isfile(filename):
+						if filter_blacklist.is_in_list(filename=filename, value=content_type, match="prefix"):
+							blacklisted = True
+				
+				if not blacklisted:
+					filename = blacklistdir + 'blacklist-contenttype-suffix'
+					if os.path.isfile(filename):
+						if filter_blacklist.is_in_list(filename=filename, value=content_type, match="suffix"):
+							blacklisted = True
+		
+				if not blacklisted:
+					filename = blacklistdir + 'blacklist-contenttype-regex'
+					if os.path.isfile(filename):
+						if filter_blacklist.is_in_list(filename=filename, value=content_type, match="regex"):
+							blacklisted = True
+	
+	
+				# check whitelists for plugin, if blacklisted but should not
+				if blacklisted:
+					filename = blacklistdir + 'whitelist-contenttype'
+					if os.path.isfile(filename):
+						if filter_blacklist.is_in_list(filename=filename, value=content_type):
+							blacklisted = False
+				
+				if blacklisted:
+					filename=blacklistdir + 'whitelist-contenttype-prefix'
+					if os.path.isfile(filename):
+						if filter_blacklist.is_in_list(filename=filename, value=content_type, match="prefix"):
+							blacklisted = False
+			
+				if blacklisted:
+					filename=blacklistdir + 'whitelist-contenttype-suffix'
+					if os.path.isfile(filename):
+						if filter_blacklist.is_in_list(filename=filename, value=content_type, match="suffix"):
+							blacklisted = False
+		
+				if blacklisted:
+					filename=blacklistdir + 'whitelist-contenttype-regex'
+					if os.path.isfile(filename):
+						if filter_blacklist.is_in_list(filename=filename, value=content_type, match="regex"):
+							blacklisted = False
+	
 
 		return blacklisted
 			
