@@ -94,7 +94,6 @@ class ETL(object):
 		else:
 			content_types = None
 
-		#if connector returns a list, use only first value (which is the only entry of the list)
 		if not isinstance(content_types, list):
 			content_types = [content_types]
 			

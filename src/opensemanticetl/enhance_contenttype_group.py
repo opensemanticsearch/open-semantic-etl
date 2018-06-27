@@ -44,14 +44,26 @@ class enhance_contenttype_group(object):
 
 	def process (self, parameters={}, data={} ):
 
-		# Contenttype to group
-		for contenttype, group in self.contenttype_groups.items():
-			if data['content_type_ss'].startswith(contenttype):
-				data[self.fieldname] = group
+		content_types = data['content_type_ss']
 
-		# Suffix to group
-		for suffix, group in self.suffix_groups.items():
-			if parameters['id'].upper().endswith(suffix.upper()):
-				data[self.fieldname] = group
+		if not isinstance(content_types, list):
+			content_types = [content_types]
+
+		groups = []
+
+		for content_type in content_types:
+
+			# Contenttype to group
+			for mapped_content_type, group in self.contenttype_groups.items():
+				if content_type.startswith(mapped_content_type):
+					groups.append(group)
+	
+			# Suffix to group
+			for suffix, group in self.suffix_groups.items():
+				if parameters['id'].upper().endswith(suffix.upper()):
+					groups.append(group)
+
+			if len(groups) > 0:
+					data[self.fieldname] = groups
 
 		return parameters, data
