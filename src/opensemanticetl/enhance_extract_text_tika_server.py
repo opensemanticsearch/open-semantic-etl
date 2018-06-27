@@ -7,10 +7,8 @@ class enhance_extract_text_tika_server(object):
 	mapping = {
 		'Content-Type': 'content_type_ss',
 		'Author': 'author_ss',
-		'Content-Length': 'Content-Length_i',
-		'Content-Encoding': 'Content-Encoding_s',
+		'Content-Encoding': 'Content-Encoding_ss',
 		'title': 'title_txt',
-		'last_modified': 'last_modified_dt',
 	}
 
 	def process (self, parameters={}, data={} ):
