@@ -12,9 +12,11 @@ class enhance_multilingual(object):
 
 	# languages that are defined in index schema for language specific analysis and used if autodetected as documents language
 	languages = ['en','fr','de','es','hu','pt','nl','ro','it','cz','ar','fa']
+	languages_hunspell = ['hu']
 
 	# languages for language specific analysis even if not the autodetected document language
 	languages_force = []
+	languages_force_hunspell = []
 	
 	#
 	# exclude fields like technical metadata
@@ -222,16 +224,27 @@ class enhance_multilingual(object):
 		if 'languages' in parameters:
 			self.languages = parameters['languages']
 
+		if 'languages_hunspell' in parameters:
+			self.languages_hunspell = parameters['languages_hunspell']
+
 		if 'languages_force' in parameters:
 			self.languages_force = parameters['languages_force']
 
+		if 'languages_force_hunspell' in parameters:
+			self.languages_force_hunspell = parameters['languages_force_hunspell']
+
 		if 'languages_exclude_fields' in parameters:
 			self.exclude_fields = parameters['languages_exclude_fields']
-	
+
+		language = None
+		if "language_s" in data:
+			language = data['language_s']
+
+
 		language_specific_data = {}
 
-		# copy each data field to language specific fild with suffix _txt_$language
 
+		# copy each data field to language specific field with suffix _txt_$language
 		for fieldname in data:
 
 			exclude = False
@@ -251,40 +264,52 @@ class enhance_multilingual(object):
 
 			if not exclude:
 
+				language_field_suffixes = []
+
+
+				# language specific analysis for recognized language of document
+				# if language support of detected language in index schema
+				if language in self.languages:
+					language_field_suffixes.append( "_txt_" + language )
+							
+				if language in self.languages_hunspell:
+					language_field_suffixes.append( "_txt_hunspell_" + language )
+
+
+				# fields for language specific analysis by forced languages even if other language or false recognized language
+				for language_force in self.languages_force:
+					
+					language_field_suffix = "_txt_" + language_force
+					
+					if not language_field_suffix in language_field_suffixes:
+						language_field_suffixes.append( language_field_suffix )
+						
+				for language_force in self.languages_force_hunspell:
+					
+					language_field_suffix = "_txt_hunspell_" + language_force
+					
+					if not language_field_suffix in language_field_suffixes:
+						language_field_suffixes.append( language_field_suffix )
+
+
 				# if no support for language in index schema, use generic field for application
 				# of synonyms, which in cases a language is supported would be done by language specific fields
-				language_field_suffix = "_txt_synonyms"
-				language_status = 'Language not detected (apply only synonyms)'
-				
-				# copy data to fields for language specific analysis for recognized language of document
-				if "language_s" in data:
-					if data['language_s']:
-						# if language support in schema
-						if data['language_s'] in self.languages:
-							language_status = 'Detected language {} with stemming setup'.format(data['language_s'])
-							language_field_suffix = "_txt_" + data['language_s']
-						else:
-							language_status = 'No stemming setup for detected language {}, apply only synonyms'.format(data['language_s'])
-				
-				language_specific_fieldname = fieldname + language_field_suffix
-				language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
+				if len(language_field_suffixes) == 0:
+					language_field_suffixes.append( "_txt_synonyms" )
 
-				if self.verbose:
-					print ( "Multilinguality: {}, so copyied {} to {}".format(language_status, fieldname, language_specific_fieldname) )
 
-				# fields for language specific analysis forced languages even if not recognized language
-				for language_force in self.languages_force:
-					language_specific_fieldname = fieldname+"_txt_" + language_force
-					language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
-					if self.verbose:
-						print ( "Multilinguality: Forced language {}, so copyied {} to {}".format(language_force, fieldname, language_specific_fieldname) )
+				# copy field to additional fields with added suffixes for language dependent stemming/analysis
+				for language_field_suffix in language_field_suffixes:
+						language_specific_fieldname = fieldname + language_field_suffix
+						language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
 
+						if self.verbose:
+							print ( "Multilinguality: Copied {} to {}".format(fieldname, language_specific_fieldname) )
+		
 		# append language specific fields to data
 		for key in language_specific_data:
 			data[key] = language_specific_data[key]
 
-		# mark the document, that it was analyzed by this plugin yet
-		data['enhance_multilingual_b'] = "true"
 		
 		return parameters, data
 
