@@ -3,35 +3,6 @@ import os.path
 import sys
 
 
-#
-# is there a xmp sidecar file?
-#
-
-def get_xml_filename(filename):
-	
-	xmlfilename = False
-
-	# some xmp sidecar filenames are based on the original filename without extensions like .jpg or .jpeg
-	filenamewithoutextension = '.' . join( filename.split('.')[:-1] )
-	
-	# check if a xmp sidecar file exists
-	if os.path.isfile(filename + ".xml"):
-		xmlfilename = filename + ".xml"
-	elif os.path.isfile(filename + ".XML"):
-		xmlfilename = filename + ".XML"
-	elif os.path.isfile(filenamewithoutextension + ".xml"):
-		xmlfilename = filenamewithoutextension + ".xml"
-	elif os.path.isfile(filenamewithoutextension + ".XML"):
-		xmlfilename = filenamewithoutextension + ".XML"
-
-	return xmlfilename
-
-
-
-
-
-
-
 
 class enhance_xml(object):
 
@@ -55,6 +26,23 @@ class enhance_xml(object):
 		return data
 
 
+	# get xml filename by mapping configuration
+	def get_xml_filename(self, filename, mapping):
+		
+		dirname = os.path.dirname(filename)
+		basename = os.path.basename(filename)
+		
+		xmlfilename = mapping
+
+		xmlfilename = xmlfilename.replace('%DIRNAME%', dirname)
+		xmlfilename = xmlfilename.replace('%BASENAME%', dirname)
+
+		if not os.path.isfile(xmlfilename):
+			xmlfilename = False
+				
+		return xmlfilename
+
+
 	def process (self, parameters={}, data={} ):
 	
 		verbose = False
@@ -63,25 +51,33 @@ class enhance_xml(object):
 				verbose = True
 	
 		filename = parameters['filename']
-	
+		
+		mapping = parameters['xml_sidecar_file_mapping']
+		
 		
 		#
-		# is there a xmp sidecar file?
+		# is there a xml sidecar file?
 		#
-		xmlfilename = get_xml_filename(filename)
+				
+		xmlfilename = self.get_xml_filename(filename, mapping)
 		
-		if not xmlfilename:
-			if verbose:
+		if verbose:
+			
+			if xmlfilename:
+			
+				print ('XML sidecar file: {}'.format(xmlfilename))
+			
+			else:
 				print ("No xml sidecar file")
 		
 		#
-		# read meta data of the xmp sidecar file (= xml + rdf)
+		# read meta data from the XML sidecar file
 		#
 		if xmlfilename:
 			
 			
 			if verbose:
-				print ("Reading XML sidecar file ".format(xmpfilename) )
+				print ("Reading XML sidecar file ".format(xmlfilename) )
 			try:
 				
 				# Parse the XML file
