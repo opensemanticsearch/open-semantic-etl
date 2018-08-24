@@ -34,7 +34,7 @@ class Connector_File(ETL):
 		# filename to URI mapping
 		self.config['mappings'] = { "/": "file:///" }
 
-		self.config['facet_path_strip_prefix'] = [ "file://" ]
+		self.config['facet_path_strip_prefix'] = [ "file://", "http://", "https://" ]
 		
 		self.config['plugins'] = [
 			'enhance_mapping_id',
@@ -48,6 +48,7 @@ class Connector_File(ETL):
 			'enhance_file_mtime',
 			'enhance_path',
 			'enhance_extract_hashtags',
+			'enhance_warc',
 			'enhance_zip',
 			'clean_title',
 			'enhance_multilingual',

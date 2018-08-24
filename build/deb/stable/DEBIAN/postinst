@@ -8,6 +8,9 @@ pip3 install scrapy
 # install py2neo
 pip3 install py2neo
 
+# install warcio
+pip3 install warcio
+
 # start on boot
 update-rc.d opensemanticsearch defaults
 update-rc.d opensemanticsearch-filemonitoring defaults
