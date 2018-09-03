@@ -19,12 +19,17 @@ class enhance_entity_linking(object):
 
 		openrefine_server = False
 
-		analyse_fields = ['title_txt','content_txt','description_txt','ocr_t','ocr_descew_t']
-
 		text = ''
-		for field in analyse_fields:
-			if field in data:
-				text = "{}{}\n".format(text, data[field])
+		for field in data:
+			
+			values = data[field]
+
+			if not isinstance(values, list):
+				values = [values]
+			
+			for value in values:
+				if value:
+					text = "{}{}\n".format(text, value)
 
 		if openrefine_server:
 			# use REST-API on (remote) HTTP server
