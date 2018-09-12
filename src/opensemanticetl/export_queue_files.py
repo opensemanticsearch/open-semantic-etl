@@ -5,6 +5,11 @@
 from tasks import index_file
 
 class export_queue_files(object):
+
+	def __init__(self, config = {'verbose': False} ):
+		
+		self.config = config	
+
 	
 	def process (self, parameters={}, data={} ):
 

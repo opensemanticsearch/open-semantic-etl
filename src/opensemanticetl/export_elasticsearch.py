@@ -5,13 +5,12 @@ from elasticsearch import Elasticsearch
 
 class export_elasticsearch(object):
 	
-	def __init__(self, index = "opensemanticsearch"):
-	
-		self.verbose=False
-	
-		self.config = {}
-		self.config['index'] = index
-		self.config['verbose'] = self.verbose
+	def __init__(self, config = {'index': 'opensemanticsearch'} ):
+		
+		self.config = config
+		
+		if not 'verbose' in self.config:
+			self.config['verbose'] = False
 
 
 	#
@@ -21,18 +20,7 @@ class export_elasticsearch(object):
 	def process (self, parameters={}, data={} ):
 
 		self.config = parameters
-
-		# if not there, set config defaults
-		if 'verbose' in self.config:
-			self.verbose = self.config['verbose']
-	
-		if 'elastic' in parameters:
-			self.elastic = parameters['elastic']
-
-		if 'index' in parameters:
-			self.index = parameters['index']
-
-	
+		
 		# post data
 		self.update(parameters=parameters, data=data)
 	
@@ -48,7 +36,7 @@ class export_elasticsearch(object):
 			docid = parameters['id']
 		
 		es = Elasticsearch()
-		result = es.index(index=self.index, doc_type='document', id=docid, body=data)
+		result = es.index(index=self.config['index'], doc_type='document', id=docid, body=data)
 
 		return result
 	
@@ -58,11 +46,11 @@ class export_elasticsearch(object):
 	
 		es = Elasticsearch()
 
-		doc_exists = es.exists(index=self.index, doc_type="document", id=docid)
+		doc_exists = es.exists(index=self.config['index'], doc_type="document", id=docid)
 
 		# if doc with id exists in index, read modification date
 		if doc_exists:	
-			doc = es.get(index=self.index, doc_type="document", id=docid, _source=False, fields="file_modified_dt")
+			doc = es.get(index=self.config['index'], doc_type="document", id=docid, _source=False, fields="file_modified_dt")
 			last_modified = doc['fields']['file_modified_dt'][0]
 		else:
 			last_modified=None

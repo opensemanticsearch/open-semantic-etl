@@ -49,7 +49,7 @@ class ETL(object):
 
 		module = importlib.import_module(exporter)
 		objectreference = getattr(module, exporter)
-		self.exporter = objectreference()
+		self.exporter = objectreference(self.config)
 	
 
 	def read_configfile(self, configfile):
@@ -211,6 +211,7 @@ class ETL(object):
 			# if exception because user interrupted processing by keyboard, respect this and abbort
 			except KeyboardInterrupt:
 				raise KeyboardInterrupt
+
 			# else dont break because fail of a plugin (maybe other plugins or data extraction will success), only error message
 			except BaseException as e:
 
@@ -271,15 +272,11 @@ class ETL(object):
 				# export results (data) to db/storage/index
 				module = importlib.import_module(exporter)
 				objectreference = getattr(module, exporter)
-				self.exporter = objectreference(self.config['solr'], self.config['index'], self.verbose)
-				if self.verbose:
-					print("Overriding exporter {} {}".format(self.config['solr'], self.config['index']))
-
+				self.exporter = objectreference(self.config)
 
 				try:
 
 					parameters, data = self.exporter.process(parameters=parameters, data=data)
-
 
 				# if exception because user interrupted processing by keyboard, respect this and abbort
 				except KeyboardInterrupt:
@@ -292,8 +289,10 @@ class ETL(object):
 
 
 	def commit(self):
+		
 		if self.verbose:
 			print ("Commiting cached or open transactions to index")
+		
 		self.exporter.commit()
 	
 

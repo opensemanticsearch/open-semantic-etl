@@ -2,8 +2,12 @@ import json
 
 class export_json(object):
 	
+	def __init__(self, config = {'verbose': False} ):
+		
+		self.config = config
+	
 	#
-	# Print data
+	# Json data
 	#
 
 	def process (self, parameters={}, data={} ):

@@ -6,13 +6,15 @@ from py2neo import Graph, Node, Relationship
 
 class export_neo4j(object):
 	
-	verbose = False
+	def __init__(self, config = {'verbose': False} ):
+		
+		self.config = config	
 
 	
 	def process (self, parameters={}, data={} ):
 
 		if 'verbose' in parameters:
-			self.verbose = parameters['verbose']
+			self.config['verbose'] = parameters['verbose']
 
 		# for this facets, do not add additional entity to connect with, but write to properties of the entity
 		properties = ['content_type_ss', 'content_type_group_ss', 'language_ss', 'language_s']
@@ -75,7 +77,7 @@ class export_neo4j(object):
 	
 					for entity in entities:					
 	
-						if self.verbose:
+						if self.config['verbose']:
 							print ("Export to Neo4j: Merging entity {} of class {}".format(entity, entity_class_label))
 	
 						# if not yet there, add the entity to graph
