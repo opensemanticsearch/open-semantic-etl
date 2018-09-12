@@ -9,13 +9,23 @@ import urllib.parse
 # Export data to Solr
 class export_solr(object):
 	
-	def __init__(self, solr = 'http://localhost:8983/solr/', core = 'opensemanticsearch', verbose = False):
-	
-		self.verbose = verbose
-	
-		self.solr = solr
-		self.core = core
+	def __init__(self, config = {} ):
+				
+		self.config = config
+		
+		if not 'solr' in self.config:
+			self.config['solr'] = 'http://localhost:8983/solr/'
+		
+		if not 'index' in self.config:
+			self.config['index'] = 'opensemanticsearch'
 
+		self.solr = self.config['solr']
+		self.core = self.config['index']
+		
+		if not 'verbose' in self.config:
+			self.config['verbose'] = False
+
+		self.verbose = self.config['verbose']
 
 	#
 	# Write data to Solr

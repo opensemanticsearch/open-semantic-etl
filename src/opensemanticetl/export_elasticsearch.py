@@ -5,9 +5,12 @@ from elasticsearch import Elasticsearch
 
 class export_elasticsearch(object):
 	
-	def __init__(self, config = {'index': 'opensemanticsearch'} ):
+	def __init__(self, config = {} ):
 		
 		self.config = config
+
+		if not 'index' in self.config:
+			self.config['index'] = 'opensemanticsearch'
 		
 		if not 'verbose' in self.config:
 			self.config['verbose'] = False
