@@ -271,12 +271,14 @@ class ETL(object):
 				# export results (data) to db/storage/index
 				module = importlib.import_module(exporter)
 				objectreference = getattr(module, exporter)
-				exporter = objectreference()
-	
-				
+				self.exporter = objectreference(self.config['solr'], self.config['index'], self.verbose)
+				if self.verbose:
+					print("Overriding exporter {} {}".format(self.config['solr'], self.config['index']))
+
+
 				try:
 
-					parameters, data = exporter.process(parameters=parameters, data=data)
+					parameters, data = self.exporter.process(parameters=parameters, data=data)
 
 
 				# if exception because user interrupted processing by keyboard, respect this and abbort
