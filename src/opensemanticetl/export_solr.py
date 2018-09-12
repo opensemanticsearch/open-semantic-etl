@@ -225,6 +225,8 @@ class export_solr(object):
 	def commit(self):
 		
 		uri = self.solr + self.core + '/update?commit=true'
+		if self.verbose:
+			print("Committing to {}".format(uri))
 		request = urllib.request.urlopen( uri )
 		request.close()
 	
