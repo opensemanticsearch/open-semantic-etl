@@ -17,7 +17,13 @@ class enhance_entity_linking(object):
 			if parameters['verbose']:	
 				verbose = True
 
+		entity_linking_taggers = ['all_labels_ss_tag']
+		if 'entity_linking_taggers' in parameters:
+			entity_linking_taggers = parameters['entity_linking_taggers']
+
 		openrefine_server = False
+		if 'openrefine_server' in parameters:
+			openrefine_server = parameters['openrefine_server']
 
 		text = ''
 		for field in data:
