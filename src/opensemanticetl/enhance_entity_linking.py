@@ -48,7 +48,7 @@ class enhance_entity_linking(object):
 			linker = Entity_Linker()
 			linker.verbose = verbose
 
-			results = linker.entities( text = text )
+			results = linker.entities( text = text, taggers = entity_linking_taggers )
 			
 		if verbose:
 			print ("Named Entity Linking: {}".format(results))
