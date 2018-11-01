@@ -21,6 +21,17 @@ class enhance_entity_linking(object):
 		if 'entity_linking_taggers' in parameters:
 			entity_linking_taggers = parameters['entity_linking_taggers']
 
+		entity_linking_taggers_document_language_dependent = {}
+		if 'entity_linking_taggers_document_language_dependent' in parameters:
+			entity_linking_taggers_document_language_dependent = parameters['entity_linking_taggers_document_language_dependent']
+
+		if 'language_s' in data:
+			# is a language specific tagger there for the detected language?
+			if data['language_s'] in entity_linking_taggers_document_language_dependent:
+				for entity_linking_tagger in entity_linking_taggers_document_language_dependent[data['language_s']]:
+					if not entity_linking_tagger in entity_linking_taggers:
+						entity_linking_taggers.append(entity_linking_tagger)
+		
 		openrefine_server = False
 		if 'openrefine_server' in parameters:
 			openrefine_server = parameters['openrefine_server']
