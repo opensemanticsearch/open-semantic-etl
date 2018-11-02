@@ -79,7 +79,7 @@ class enhance_pdf_page(object):
 			try:
 				result = subprocess.check_call(['pdftotext', '-enc', 'UTF-8','-f', str(pagenumber), '-l', str(pagenumber), filename, temp_filename])
 			except BaseException as e:
-				sys.stderr.write( "Exception extracting text from PDF page {}: {}\n".format(pagenumber, e.message) )
+				sys.stderr.write( "Exception extracting text from PDF page {}: {}\n".format(pagenumber, e) )
 	
 			# read text from tempfile
 			f = open(temp_filename, "r", encoding="utf-8")
@@ -116,7 +116,7 @@ class enhance_pdf_page(object):
 				partparameters, pagedata = etl.process( partparameters, pagedata)
 	
 			except BaseException as e:
-				sys.stderr.write( "Exception adding PDF page {} : {}".format(pagenumber, e.message) )
+				sys.stderr.write( "Exception adding PDF page {} : {}".format(pagenumber, e) )
 		
 		data['pages_i'] = pages
 		
