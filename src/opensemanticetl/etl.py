@@ -226,17 +226,17 @@ class ETL(object):
 
 					errormessage = "{}".format(e)
 					
-					if 'error_ss' in data:
-						data['etl_error_ss'].append(errormessage)
+					if 'etl_error_txt' in data:
+						data['etl_error_txt'].append(errormessage)
 					else:
-						data['etl_error_ss'] = [ errormessage ]
+						data['etl_error_txt'] = [ errormessage ]
 	
 					if 'etl_error_plugins_ss' in data:
 						data['etl_error_plugins_ss'].append(plugin)
 					else:
 						data['etl_error_plugins_ss'] = [ plugin ]
 	
-					data['etl_error_' + plugin + '_t'] = errormessage
+					data['etl_error_' + plugin + '_txt'] = errormessage
 
 				except:
 		
