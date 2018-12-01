@@ -48,26 +48,36 @@ class enhance_html(object):
 				self.verbose = True
 	
 		filename = parameters['filename']
+	
+		if 'content_type_ss' in data:
+			mimetype = data['content_type_ss']
+		else:
+			mimetype = parameters['content_type_ss']
+
+		#if connector returns a list, use only first value (which is the only entry of the list)
+		if isinstance(mimetype, list):
+			mimetype = mimetype[0]
 		
-		html_extract_tags = []
-		if 'html_extract_tags' in parameters:
-			html_extract_tags = parameters['html_extract_tags']
-
-		html_extract_tags_and_children = []
-		if 'html_extract_tags_and_children' in parameters:
-			html_extract_tags_and_children = parameters['html_extract_tags_and_children']
-
-		parser = etree.HTMLParser()
-
-		et = etree.parse(filename, parser)
-
-		for xpath in html_extract_tags:
-			for el in et.xpath(xpath):
-				self.elements2data(element=el, data=data, recursive=False)
-
-		for xpath in html_extract_tags_and_children:
-			for el in et.xpath(xpath):
-				self.elements2data(element=el, data=data)
+		if mimetype.startswith('application/xhtml+xml'):
+		
+			html_extract_tags = []
+			if 'html_extract_tags' in parameters:
+				html_extract_tags = parameters['html_extract_tags']
 	
+			html_extract_tags_and_children = []
+			if 'html_extract_tags_and_children' in parameters:
+				html_extract_tags_and_children = parameters['html_extract_tags_and_children']
 	
+			parser = etree.HTMLParser()
+	
+			et = etree.parse(filename, parser)
+	
+			for xpath in html_extract_tags:
+				for el in et.xpath(xpath):
+					self.elements2data(element=el, data=data, recursive=False)
+	
+			for xpath in html_extract_tags_and_children:
+				for el in et.xpath(xpath):
+					self.elements2data(element=el, data=data)
+		
 		return parameters, data
