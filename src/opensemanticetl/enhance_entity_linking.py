@@ -108,6 +108,9 @@ class enhance_entity_linking(object):
 					for facet in candidate['type']:
 						etl.append(data, facet, candidate['name'])
 						etl.append(data, facet + '_uri_ss', candidate['id'])
+						if 'matchtext' in candidate:
+							for matchtext in candidate['matchtext']:
+								etl.append(data, facet + 'matchtext_ss', candidate['id'] + "\t" + matchtext)
 						
 						for taxonomy_field in taxonomy_fields:
 							if taxonomy_field in candidate:
