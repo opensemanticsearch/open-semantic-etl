@@ -108,6 +108,7 @@ class enhance_entity_linking(object):
 					for facet in candidate['type']:
 						etl.append(data, facet, candidate['name'])
 						etl.append(data, facet + '_uri_ss', candidate['id'])
+						etl.append(data, facet + '_preflabel_and_uri_ss', candidate['name'] + ' <' + candidate['id'] + '>')
 						if 'matchtext' in candidate:
 							for matchtext in candidate['matchtext']:
 								etl.append(data, facet + 'matchtext_ss', candidate['id'] + "\t" + matchtext)
