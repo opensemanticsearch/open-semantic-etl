@@ -95,7 +95,7 @@ class Connector_Hypothesis(ETL):
 		# annotation id
 		data['annotation_id_ss'] = annotation['id']
 
-		data['annotation_text_tt'] = annotation['text']
+		data['annotation_text_txt'] = annotation['text']
 
 		tags = []
 		if 'tags' in annotation:
