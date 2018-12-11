@@ -57,6 +57,7 @@ class enhance_entity_linking(object):
 		if 'entity_linking_taggers' in parameters:
 			entity_linking_taggers = parameters['entity_linking_taggers']
 
+		# add taggers for stemming
 		entity_linking_taggers_document_language_dependent = {}
 		if 'entity_linking_taggers_document_language_dependent' in parameters:
 			entity_linking_taggers_document_language_dependent = parameters['entity_linking_taggers_document_language_dependent']
@@ -74,6 +75,7 @@ class enhance_entity_linking(object):
 
 		taxonomy_fields = ['skos_broader_taxonomy_prefLabel_ss']
 
+		# collect/copy to be analyzed text from all fields
 		text = ''
 		for field in data:
 			
@@ -86,39 +88,52 @@ class enhance_entity_linking(object):
 				if value:
 					text = "{}{}\n".format(text, value)
 
-		if openrefine_server:
-			# use REST-API on (remote) HTTP server
-			params = {'text': text}
-			r = requests.post(openrefine_server, params=params)
-			results = r.json()
-			
-		else:
-			# use local Python library
-			linker = Entity_Linker()
-			linker.verbose = verbose
+		# tag all entities (by different taggers for different analyzers/stemmers)
+		for entity_linking_tagger in entity_linking_taggers:
+	
+			# call REST API
+			if openrefine_server:
+				# use REST-API on (remote) HTTP server
+				params = {'text': text}
+				r = requests.post(openrefine_server, params=params)
+				results = r.json()
+				
+			else:
+				# use local Python library
+				linker = Entity_Linker()
+				linker.verbose = verbose
+	
+				results = linker.entities( text = text, taggers = [entity_linking_tagger], additional_result_fields = taxonomy_fields )
+				
+			if verbose:
+				print ("Named Entity Linking by Tagger {}: {}".format(entity_linking_tagger, results))
+	
+			# write entities from result to document facets
+			for match in results:
+				for candidate in results[match]['result']:
+					if candidate['match']:
+						for facet in candidate['type']:
 
-			results = linker.entities( text = text, taggers = entity_linking_taggers, additional_result_fields = taxonomy_fields )
-			
-		if verbose:
-			print ("Named Entity Linking: {}".format(results))
+							# use different facet for fuzzy/stemmed matches
+							if not entity_linking_tagger == 'all_labels_ss_tag':
+								# do not use another different facet if same stemmer but forced / not document language dependent
+								entity_linking_tagger_withoutforceoption = entity_linking_tagger.replace('_stemming_force_', '_stemming_')
+								facet = facet + entity_linking_tagger_withoutforceoption + '_ss'
+							
+							etl.append(data, facet, candidate['name'])
+							etl.append(data, facet + '_uri_ss', candidate['id'])
+							etl.append(data, facet + '_preflabel_and_uri_ss', candidate['name'] + ' <' + candidate['id'] + '>')
 
-		for match in results:
-			for candidate in results[match]['result']:
-				if candidate['match']:
-					for facet in candidate['type']:
-						etl.append(data, facet, candidate['name'])
-						etl.append(data, facet + '_uri_ss', candidate['id'])
-						etl.append(data, facet + '_preflabel_and_uri_ss', candidate['name'] + ' <' + candidate['id'] + '>')
-						if 'matchtext' in candidate:
-							for matchtext in candidate['matchtext']:
-								etl.append(data, facet + 'matchtext_ss', candidate['id'] + "\t" + matchtext)
-						
-						for taxonomy_field in taxonomy_fields:
-							if taxonomy_field in candidate:
-								separated_taxonomy_fields = taxonomy2fields(field=facet, data=candidate[taxonomy_field])
-								for separated_taxonomy_field in separated_taxonomy_fields:
-									etl.append(data, separated_taxonomy_field, separated_taxonomy_fields[separated_taxonomy_field])
-
+							if 'matchtext' in candidate:
+								for matchtext in candidate['matchtext']:
+									etl.append(data, facet + '_matchtext_ss', candidate['id'] + "\t" + matchtext)
+							
+							for taxonomy_field in taxonomy_fields:
+								if taxonomy_field in candidate:
+									separated_taxonomy_fields = taxonomy2fields(field=facet, data=candidate[taxonomy_field])
+									for separated_taxonomy_field in separated_taxonomy_fields:
+										etl.append(data, separated_taxonomy_field, separated_taxonomy_fields[separated_taxonomy_field])
+	
 
 		# mark the document, that it was analyzed by this plugin yet
 		data['enhance_entity_linking_b'] = "true"
