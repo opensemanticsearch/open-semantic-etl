@@ -221,7 +221,6 @@ class enhance_multilingual(object):
 
 		if 'verbose' in parameters:
 			self.verbose = parameters['verbose']
-		self.verbose = True
 
 		if 'languages' in parameters:
 			self.languages = parameters['languages']
