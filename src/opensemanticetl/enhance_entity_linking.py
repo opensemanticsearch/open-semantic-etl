@@ -27,7 +27,7 @@ def taxonomy2fields(field, data, separator="\t", field_suffix="_ss"):
 		path = ''
 		for taxonomy_entry_part in taxonomy_entry.split(separator):
 
-			taxonomy_fieldname = field + str(i) + field_suffix
+			taxonomy_fieldname = field + '_taxonomy_'+ str(i) + field_suffix
 			
 			if not taxonomy_fieldname in result:
 				result[taxonomy_fieldname] = []
@@ -136,6 +136,6 @@ class enhance_entity_linking(object):
 	
 
 		# mark the document, that it was analyzed by this plugin yet
-		data['enhance_entity_linking_b'] = "true"
+		data['etl_enhance_entity_linking_b'] = "true"
 		
 		return parameters, data
