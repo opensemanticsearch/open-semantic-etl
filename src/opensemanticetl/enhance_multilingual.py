@@ -214,11 +214,14 @@ class enhance_multilingual(object):
 		'Zoom Target Width_ss',
 	]
 
+	exclude_fields_map = {}
+
 
 	def process (self, parameters={}, data={} ):
 
 		if 'verbose' in parameters:
 			self.verbose = parameters['verbose']
+		self.verbose = True
 
 		if 'languages' in parameters:
 			self.languages = parameters['languages']
@@ -234,6 +237,9 @@ class enhance_multilingual(object):
 
 		if 'languages_exclude_fields' in parameters:
 			self.exclude_fields = parameters['languages_exclude_fields']
+
+		if 'languages_exclude_fields_map' in parameters:
+			self.exclude_fields_map = parameters['languages_exclude_fields_map']
 
 		language = None
 		if "language_s" in data:
@@ -290,18 +296,27 @@ class enhance_multilingual(object):
 
 				# copy field to default field with added suffixes for language dependent stemming/analysis
 				for language_field in language_fields:
+					
+					excluded_by_mapping = False
+					
+					if language_field in self.exclude_fields_map:
+						if fieldname in self.exclude_fields_map[language_field]:
+							excluded_by_mapping = True
+							if self.verbose:
+								print ( "Multilinguality: Excluding field {} to be copied to {} by config of exclude_field_map".format(fieldname, language_field) )
 
-					if self.verbose:
-						print ( "Multilinguality: Add {} to {}".format(fieldname, language_field) )
-						
-					if not language_field in language_specific_data:
-						language_specific_data[language_field] = []
-
-					if isinstance(data[fieldname], list):
-						language_specific_data[language_field].extend(data[fieldname])
-					else:
-						language_specific_data[language_field].append(data[fieldname])
-
+					if not excluded_by_mapping:
+						if self.verbose:
+							print ( "Multilinguality: Add {} to {}".format(fieldname, language_field) )
+							
+						if not language_field in language_specific_data:
+							language_specific_data[language_field] = []
+	
+						if isinstance(data[fieldname], list):
+							language_specific_data[language_field].extend(data[fieldname])
+						else:
+							language_specific_data[language_field].append(data[fieldname])
+	
 
 		# append language specific fields to data
 		for key in language_specific_data:
