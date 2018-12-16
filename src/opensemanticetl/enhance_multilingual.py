@@ -42,7 +42,6 @@ class enhance_multilingual(object):
 
 	exclude_fields = [
 		'language_s',
-		'encoding_s',
 		'content_type_ss',
 		'content_type_group_ss',
 		'AEB Bracket Value_ss',
@@ -240,8 +239,38 @@ class enhance_multilingual(object):
 		if "language_s" in data:
 			language = data['language_s']
 
-
+		language_fields = ['_text_']
 		language_specific_data = {}
+
+
+		# language specific analysis for recognized language of document
+		# if language support of detected language in index schema
+		if language in self.languages:
+			language_fields.append( "text_txt_" + language )
+					
+		if language in self.languages_hunspell:
+			language_fields.append( "text_txt_hunspell_" + language )
+
+
+		# fields for language specific analysis by forced languages even if other language or false recognized language
+		for language_force in self.languages_force:
+			
+			language_field = "text_txt_" + language_force
+			
+			if not language_field in language_fields:
+				language_fields.append( language_field )
+				
+		for language_force in self.languages_force_hunspell:
+			
+			language_field = "text_txt_hunspell_" + language_force
+			
+			if not language_field in language_fields:
+				language_fields.append( language_field )
+
+		# if no support for language in index schema, use generic field for application
+		# of synonyms, which in cases a language is supported would be done by language specific fields
+		if len(language_fields) == 0:
+			language_fields.append( "synonyms" )
 
 
 		# copy each data field to language specific field with suffix _txt_$language
@@ -262,68 +291,25 @@ class enhance_multilingual(object):
 				if fieldname.endswith(suffix):
 					exclude = True
 
-			if not exclude:
+			if not exclude and data[fieldname]:
 
-				language_field_suffixes = []
+				# copy field to default field with added suffixes for language dependent stemming/analysis
+				for language_field in language_fields:
 
-
-				# language specific analysis for recognized language of document
-				# if language support of detected language in index schema
-				if language in self.languages:
-					language_field_suffixes.append( "_txt_" + language )
-							
-				if language in self.languages_hunspell:
-					language_field_suffixes.append( "_txt_hunspell_" + language )
-
-
-				# fields for language specific analysis by forced languages even if other language or false recognized language
-				for language_force in self.languages_force:
-					
-					language_field_suffix = "_txt_" + language_force
-					
-					if not language_field_suffix in language_field_suffixes:
-						language_field_suffixes.append( language_field_suffix )
+					if self.verbose:
+						print ( "Multilinguality: Add {} to {}".format(fieldname, language_field) )
 						
-				for language_force in self.languages_force_hunspell:
-					
-					language_field_suffix = "_txt_hunspell_" + language_force
-					
-					if not language_field_suffix in language_field_suffixes:
-						language_field_suffixes.append( language_field_suffix )
+					if not language_field in language_specific_data:
+						language_specific_data[language_field] = []
+
+					if isinstance(data[fieldname], list):
+						language_specific_data[language_field].extend(data[fieldname])
+					else:
+						language_specific_data[language_field].append(data[fieldname])
 
 
-				# if no support for language in index schema, use generic field for application
-				# of synonyms, which in cases a language is supported would be done by language specific fields
-				if len(language_field_suffixes) == 0:
-					language_field_suffixes.append( "_txt_synonyms" )
-
-
-				# copy field to additional fields with added suffixes for language dependent stemming/analysis
-				for language_field_suffix in language_field_suffixes:
-						language_specific_fieldname = fieldname + language_field_suffix
-						language_specific_data[language_specific_fieldname] = to_text(data[fieldname])
-
-						if self.verbose:
-							print ( "Multilinguality: Copied {} to {}".format(fieldname, language_specific_fieldname) )
-		
 		# append language specific fields to data
 		for key in language_specific_data:
 			data[key] = language_specific_data[key]
-
 		
 		return parameters, data
-
-
-# convert multivalue field to single text field
-def to_text(fielddata):
-
-	if isinstance(fielddata, list):
-		texts = []
-		for value in fielddata:
-			texts.append( "{}".format(value) )
-		text = "\n".join(texts)
-	else:
-		text = "{}".format(fielddata)
-
-	return text
-
