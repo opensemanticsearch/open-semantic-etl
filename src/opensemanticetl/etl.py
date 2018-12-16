@@ -62,7 +62,10 @@ class ETL(object):
 	
 			result = True
 
+		#
 		# sort added plugins because of dependencies
+		#
+		
 		# OCR has to be done before language detection, since content maybe only scanned text within images
 		if "enhance_detect_language_tika_server" in self.config['plugins'] and "enhance_pdf_ocr" in self.config['plugins']:
 			if self.config['plugins'].index("enhance_pdf_ocr") > self.config['plugins'].index("enhance_detect_language_tika_server"):
@@ -77,6 +80,15 @@ class ETL(object):
 				self.config['plugins'].remove("enhance_ocr_descew")
 				# add before
 				self.config['plugins'].insert(self.config['plugins'].index("enhance_detect_language_tika_server"), "enhance_ocr_descew")
+
+		# manual annotations should be found by by fulltext search too (automatic entity linking does by including the text or synonym)
+		# so read befor generating the default search fields like _text_ or text_txt_languageX by enhance_multilingual 
+		if "enhance_rdf_annotations_by_http_request" in self.config['plugins'] and "enhance_multilingual" in self.config['plugins']:
+			if self.config['plugins'].index("enhance_rdf_annotations_by_http_request") > self.config['plugins'].index("enhance_multilingual"):
+				# remove after
+				self.config['plugins'].remove("enhance_rdf_annotations_by_http_request")
+				# add before
+				self.config['plugins'].insert(self.config['plugins'].index("enhance_multilingual"), "enhance_rdf_annotations_by_http_request")
 
 		# if another exporter
 		self.init_exporter()
@@ -298,7 +310,6 @@ class ETL(object):
 
 # append values (i.e. from an enhancer) to data structure
 def append(data, facet, values):
-	
 	
 		# if facet there yet, append/extend the values, else set values to facet
 		if facet in data:
