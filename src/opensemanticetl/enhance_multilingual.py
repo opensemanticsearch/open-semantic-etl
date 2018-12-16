@@ -267,11 +267,6 @@ class enhance_multilingual(object):
 			if not language_field in language_fields:
 				language_fields.append( language_field )
 
-		# if no support for language in index schema, use generic field for application
-		# of synonyms, which in cases a language is supported would be done by language specific fields
-		if len(language_fields) == 0:
-			language_fields.append( "synonyms" )
-
 
 		# copy each data field to language specific field with suffix _txt_$language
 		for fieldname in data:
