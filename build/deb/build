@@ -22,6 +22,8 @@ cp -a ${BASEDIR}/etc ${BUILDDIR}/
 mkdir -p ${BUILDDIR}/usr/lib/python3/dist-packages
 cp -a ${BASEDIR}/src/* ${BUILDDIR}/usr/lib/python3/dist-packages/
 
+mkdir -p ${BUILDDIR}/var/opensemanticsearch/thumbnails
+
 # Build standard package (preconfigured for Solr)
 dpkg -b ${BUILDDIR} ${PACKAGE}
 

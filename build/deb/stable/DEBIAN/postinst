@@ -17,3 +17,7 @@ update-rc.d opensemanticsearch-filemonitoring defaults
 
 # start workers after installation (but not the filemonitoring, since no pahts configured yet)
 service opensemanticsearch start
+
+# rights for thumbnail dir
+chown opensemanticetl /var/opensemanticsearch/thumbnails
+chmod o+w /var/opensemanticsearch/thumbnails
