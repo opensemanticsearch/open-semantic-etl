@@ -212,14 +212,14 @@ config['stanford_ner_classifier_default'] = None
 #config['stanford_ner_classifier_default'] = '/usr/share/java/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz'
 
 # Set default classifier to German (only if you are sure, that all documents you index are german)
-#config['stanford_ner_classifier_default'] = '/usr/share/java/stanford-ner/classifiers/german.conll.hgc_175m_600.crf.ser.gz'
+#config['stanford_ner_classifier_default'] = '/usr/share/java/stanford-ner/classifiers/german.conll.germeval2014.hgc_175m_600.crf.ser.gz'
 
 # Language specific classifiers (mapping to autodetected document language)
 # Before you have to download additional language classifiers to the configured path
 config['stanford_ner_classifiers'] = {
     'en': '/usr/share/java/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',
     'es': '/usr/share/java/stanford-ner/classifiers/spanish.ancora.distsim.s512.crf.ser.gz',
-    'de': '/usr/share/java/stanford-ner/classifiers/german.conll.hgc_175m_600.crf.ser.gz',
+    'de': '/usr/share/java/stanford-ner/classifiers/german.conll.germeval2014.hgc_175m_600.crf.ser.gz',
 }
 
 # If Stanford NER JAR not in standard path
