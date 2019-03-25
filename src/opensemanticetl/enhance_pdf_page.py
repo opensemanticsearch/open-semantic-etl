@@ -19,7 +19,7 @@ class enhance_pdf_page(object):
 		
 	# query to find documents, that were not enriched by this plugin yet
 	# (since we marked documents which were OCRd with ocr_b = true
-	query = "content_type: application\/pdf* AND NOT enhance_pdf_b:true"
+	query = "content_type: application\/pdf* AND NOT enhance_pdf_page_b:true"
 
 
 	def segment_pdf_to_pages ( self, parameters={}, data={} ):
@@ -90,6 +90,11 @@ class enhance_pdf_page(object):
 			
 			partparameters = parameters.copy()
 			partparameters['plugins'] = ['enhance_path', 'enhance_detect_language_tika_server', 'enhance_entity_linking', 'enhance_multilingual']
+
+			if 'enhance_ner_spacy' in parameters['plugins']:
+				partparameters['plugins'].append('enhance_ner_spacy')
+			if 'enhance_ner_stanford' in parameters['plugins']:
+				partparameters['plugins'].append('enhance_ner_stanford')
 
 			pagedata = {}
 			pagedata['id'] = partdocid
