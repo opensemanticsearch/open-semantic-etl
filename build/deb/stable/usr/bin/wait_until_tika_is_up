@@ -1,0 +1,10 @@
+#!/bin/sh
+
+printf 'Checking if and waiting until Tika is up'
+
+until $(curl --output /dev/null --silent --head --fail http://localhost:9998/); do
+    printf '.'
+    sleep 1
+done
+
+echo "\nTika is up"

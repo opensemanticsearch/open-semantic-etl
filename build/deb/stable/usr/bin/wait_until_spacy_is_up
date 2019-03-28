@@ -1,0 +1,10 @@
+#!/bin/sh
+
+printf 'Checking if and waiting until Spacy services is up'
+
+until $(curl --output /dev/null --silent --fail http://localhost:8080/models); do
+    printf '.'
+    sleep 1
+done
+
+echo "\nSpacy services is up"
