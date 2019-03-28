@@ -40,7 +40,7 @@ class enhance_ner_spacy(object):
 	
 
 		# default classifier
-		classifier = 'en'
+		classifier = 'en_core_web_sm'
 
 		if 'spacy_ner_classifier_default' in parameters:
 			classifier = parameters['spacy_ner_classifier_default']
@@ -68,7 +68,7 @@ class enhance_ner_spacy(object):
 
 		# classify/tag with class each word of the content
 
-		url = "http://localhost:8000/ent"
+		url = "http://localhost:8080/ent"
 		headers = {'content-type': 'application/json'}
 		d = {'text': text, 'model': classifier}
 
@@ -77,7 +77,7 @@ class enhance_ner_spacy(object):
 
 		for ent in r:
 
-			entity_class = ent['type']
+			entity_class = ent['label']
 			# get entity string from returned start and end value
 			entity = text[ int(ent['start']) : int(ent['end']) ]
 

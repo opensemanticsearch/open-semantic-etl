@@ -171,14 +171,11 @@ config['plugins'].append('enhance_ner_spacy')
 # disable NER for languages where no classifier defined in config['spacy_ner_classifiers']
 config['spacy_ner_classifier_default'] = None
 
-# Set default classifier to Multilanguage
-#config['spacy_ner_classifier_default'] = 'xx'
-
 # Set default classifier to English (only if you are sure, that all documents you index are english)
-# config['spacy_ner_classifier_default'] = 'en'
+# config['spacy_ner_classifier_default'] = 'en_core_web_sm'
 
 # Set default classifier to German (only if you are sure, that all documents you index are german)
-# config['spacy_ner_classifier_default'] = 'de'
+# config['spacy_ner_classifier_default'] = 'de_core_news_sm'
 
 # Language specific classifiers (mapping to autodetected document language to Spacy classifier / language)
 #
@@ -188,13 +185,13 @@ config['spacy_ner_classifier_default'] = None
 # ...
 
 config['spacy_ner_classifiers'] = {
-    'en': 'en',
-    'de': 'de',
-    'es': 'es',
-    'pt': 'pt',
-    'fr': 'fr',
-    'it': 'it',
-    'nl': 'nl',
+    'en': 'en_core_web_sm',
+    'de': 'de_core_news_sm',
+    'es': 'es_core_news_sm',
+    'pt': 'pt_core_news_sm',
+    'fr': 'fr_core_news_sm',
+    'it': 'it_core_news_sm',
+    'nl': 'nl_core_news_sm',
 }
 
 
