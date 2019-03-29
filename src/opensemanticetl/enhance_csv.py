@@ -188,6 +188,8 @@ class enhance_csv(object):
 		# todo: all content plugins configurated, not only this one
 		parameters['plugins'] = [
 			'enhance_path',
+			'enhance_entity_linking',
+			'enhance_multilingual',
 		]
 
 		etl = ETL()
