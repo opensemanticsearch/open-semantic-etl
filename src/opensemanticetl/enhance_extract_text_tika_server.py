@@ -1,5 +1,9 @@
 import os
 import tempfile
+import requests
+import sys
+import time
+
 
 # Extract text from file(name)
 class enhance_extract_text_tika_server(object):
@@ -27,6 +31,8 @@ class enhance_extract_text_tika_server(object):
 		
 		tika_log_path = tempfile.mkdtemp(prefix = "tika-python-")
 		os.environ['TIKA_LOG_PATH'] = tika_log_path
+		
+		os.environ['TIKA_CLIENT_ONLY'] = 'True'
 
 		import tika
 		from tika import parser
@@ -52,9 +58,29 @@ class enhance_extract_text_tika_server(object):
 		#
 		if verbose:
 			print ("Parsing by Tika Server on {}".format(tika_server) )
-	
-		parsed = parser.from_file(filename=filename, serverEndpoint=tika_server, headers=headers)
 
+		retries = 0
+		retrytime = 1
+		retrytime_max = 120 # wait time until next retry will be doubled until reaching maximum of 120 seconds (2 minutes) until next retry
+		no_connection = True
+		
+		while no_connection:
+			try:
+				if retries > 0:
+					print('Retrying to connect to Tika server in {} second(s).'.format(retrytime))
+					time.sleep(retrytime)
+					retrytime = retrytime * 2
+					if retrytime > retrytime_max:
+						retrytime = retrytime_max
+
+				parsed = parser.from_file(filename=filename, serverEndpoint=tika_server, headers=headers)
+				no_connection = False
+
+			except requests.exceptions.ConnectionError as e:
+				retries += 1
+				sys.stderr.write( "Connection to Tika server (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+		
+    
 		if parsed['content']:
 			data['content_txt'] = parsed['content']
 
