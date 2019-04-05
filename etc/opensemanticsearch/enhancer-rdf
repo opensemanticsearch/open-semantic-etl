@@ -33,6 +33,6 @@ config['property2facet'] = {
  'http://schema.org/location': 'location_ss',
  'http://schema.org/address': 'location_ss',
  'http://schema.org/keywords': 'tag_ss',
- 'http://schema.org/Comment': 'comment_tt',
+ 'http://schema.org/Comment': 'comment_txt',
  'http://semantic-mediawiki.org/swivt/1.0#specialProperty_dat': 'meta_date_dts'
 }
