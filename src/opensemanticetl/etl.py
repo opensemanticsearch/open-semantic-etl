@@ -36,7 +36,7 @@ class ETL(object):
 		# Do not edit config here! Overwrite options in /etc/opensemanticsearch/etl or connector configs
 		#
 
-		self.config['plugins'] = [ 'enhance_extract_text_tika_server' ]
+		self.config['plugins'] = [ 'enhance_extract_text_tika_server', 'enhance_detect_language_tika_server' ]
 		self.config['export'] = 'export_solr'
 		self.config['regex_lists'] = []
 		
@@ -178,11 +178,15 @@ class ETL(object):
 		else:
 			plugins = self.config['plugins']
 
-
+		data['etl_error_plugins_ss'] = []
+		data['etl_error_txt'] = []
+	
 		for plugin in plugins:
 
 			# mark plugin as runned			
 			data['etl_' + plugin + '_b'] = True
+
+			data['etl_error_' + plugin + '_txt'] = []
 			
 			# if content_type / plugin combination blacklisted, continue with next plugin
 			if self.is_plugin_blacklisted_for_contenttype(plugin, parameters, data):
@@ -228,13 +232,11 @@ class ETL(object):
 			except BaseException as e:
 
 				#
-				# Print error message and append errors to data
+				# Append errors to data/index and print error message
 				# so we have a log and can see something went wrong within search engine and / or filter for that
 				#
 				
 				try:
-
-					sys.stderr.write( "Exception while data enrichment of {} with plugin {}: {}\n".format( parameters['id'], plugin, e ) )
 
 					errormessage = "{}".format(e)
 					
@@ -250,22 +252,20 @@ class ETL(object):
 	
 					data['etl_error_' + plugin + '_txt'] = errormessage
 
+					sys.stderr.write( "Exception while data enrichment of {} with plugin {}: {}\n".format( parameters['id'], plugin, e ) )
+
 				except:
 		
 					sys.stderr.write( "Exception while generating error message for exception while processing plugin {} for file {}\n".format(plugin, parameters['id']) )
 
 				if self.config['raise_pluginexception']:
 					raise
-
 	
-
 			# Abort plugin chain if plugin set parameters['break'] to True
 			# (used for example by blacklist or exclusion plugins)
 			if 'break' in parameters:
 				if parameters['break']:
 					break
-
-
 
 		# if processing aborted (f.e. by blacklist filter or file modification time did not change)
 		abort = False
