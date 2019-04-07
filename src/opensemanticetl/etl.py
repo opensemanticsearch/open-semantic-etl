@@ -106,11 +106,11 @@ class ETL(object):
 		else:
 			content_types = None
 
-		if not isinstance(content_types, list):
-			content_types = [content_types]
-			
 		# if content type check the plugins' blacklists
 		if content_types:
+			
+			if not isinstance(content_types, list):
+				content_types = [content_types]
 			
 			for content_type in content_types:
 	
