@@ -1,6 +1,8 @@
 import etl
 import requests
 import json
+import sys
+import time
 
 #
 # SpaCy Named Entitiy Recognizer (NER)
@@ -72,7 +74,28 @@ class enhance_ner_spacy(object):
 		headers = {'content-type': 'application/json'}
 		d = {'text': text, 'model': classifier}
 
-		response = requests.post(url, data=json.dumps(d), headers=headers)
+		retries = 0
+		retrytime = 1
+		retrytime_max = 120 # wait time until next retry will be doubled until reaching maximum of 120 seconds (2 minutes) until next retry
+		no_connection = True
+		
+		while no_connection:
+			try:
+				if retries > 0:
+					print('Retrying to connect to Spacy services in {} second(s).'.format(retrytime))
+					time.sleep(retrytime)
+					retrytime = retrytime * 2
+					if retrytime > retrytime_max:
+						retrytime = retrytime_max
+
+				response = requests.post(url, data=json.dumps(d), headers=headers)
+
+				no_connection = False
+
+			except requests.exceptions.ConnectionError as e:
+				retries += 1
+				sys.stderr.write( "Connection to Spacy services (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+		
 		r = response.json()
 
 		for ent in r:
