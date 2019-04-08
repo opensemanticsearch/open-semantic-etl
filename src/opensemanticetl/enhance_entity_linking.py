@@ -112,6 +112,9 @@ class enhance_entity_linking(object):
 						# use REST-API on (remote) HTTP server
 						params = {'text': text}
 						r = requests.post(openrefine_server, params=params)
+						# if bad status code, raise exception
+						r.raise_for_status()
+
 						results = r.json()
 						
 					else:
