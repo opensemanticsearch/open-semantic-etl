@@ -89,6 +89,8 @@ class enhance_ner_spacy(object):
 						retrytime = retrytime_max
 
 				response = requests.post(url, data=json.dumps(d), headers=headers)
+				# if bad status code, raise exception
+				response.raise_for_status()
 
 				no_connection = False
 
