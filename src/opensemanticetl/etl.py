@@ -231,33 +231,8 @@ class ETL(object):
 			# else dont break because fail of a plugin (maybe other plugins or data extraction will success), only error message
 			except BaseException as e:
 
-				#
-				# Append errors to data/index and print error message
-				# so we have a log and can see something went wrong within search engine and / or filter for that
-				#
+				error_message(docid=parameters['id'], data=data, plugin=plugin, e=e)
 				
-				try:
-
-					errormessage = "{}".format(e)
-					
-					if 'etl_error_txt' in data:
-						data['etl_error_txt'].append(errormessage)
-					else:
-						data['etl_error_txt'] = [ errormessage ]
-	
-					if 'etl_error_plugins_ss' in data:
-						data['etl_error_plugins_ss'].append(plugin)
-					else:
-						data['etl_error_plugins_ss'] = [ plugin ]
-	
-					data['etl_error_' + plugin + '_txt'] = errormessage
-
-					sys.stderr.write( "Exception while data enrichment of {} with plugin {}: {}\n".format( parameters['id'], plugin, e ) )
-
-				except:
-		
-					sys.stderr.write( "Exception while generating error message for exception while processing plugin {} for file {}\n".format(plugin, parameters['id']) )
-
 				if self.config['raise_pluginexception']:
 					raise
 	
@@ -336,3 +311,32 @@ def append(data, facet, values):
 		else:
 			data[facet] = values
 	
+
+# Append errors to data/index and print error message
+# so we have a log and can see something went wrong within search engine and / or filter for that
+
+def error_message(docid, data, plugin, e):
+
+	try:
+
+		errormessage = "{}".format(e)
+		
+		# add error status and message to data to be indexed
+		
+		if 'etl_error_txt' in data:
+			data['etl_error_txt'].append(errormessage)
+		else:
+			data['etl_error_txt'] = [ errormessage ]
+
+		if 'etl_error_plugins_ss' in data:
+			data['etl_error_plugins_ss'].append(plugin)
+		else:
+			data['etl_error_plugins_ss'] = [ plugin ]
+
+		data['etl_error_' + plugin + '_txt'] = errormessage
+
+		sys.stderr.write( "Exception while data enrichment of {} with plugin {}: {}\n".format( docid, plugin, e ) )
+
+	except:
+
+		sys.stderr.write( "Exception while generating error message for exception while processing plugin {} for file {}\n".format(plugin, docid) )
