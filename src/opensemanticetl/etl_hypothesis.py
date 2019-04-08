@@ -76,7 +76,7 @@ class Connector_Hypothesis(ETL):
 	def etl_annotation(self, annotation):	
 
 		parameters = {}
-		parameters['plugins'] = []
+		parameters['plugins'] = ['enhance_multilingual']
 	
 		# since there can be multiple annotations for same URI,
 		# do not overwrite but add value to existent values of the facet/field/property
