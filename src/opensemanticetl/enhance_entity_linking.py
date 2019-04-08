@@ -6,6 +6,8 @@
 import requests
 import json
 import etl
+import sys
+import time
 
 from entity_linking.entity_linker import Entity_Linker
 
@@ -90,20 +92,51 @@ class enhance_entity_linking(object):
 
 		# tag all entities (by different taggers for different analyzers/stemmers)
 		for entity_linking_tagger in entity_linking_taggers:
+
+			retries = 0
+			retrytime = 1
+			retrytime_max = 120 # wait time until next retry will be doubled until reaching maximum of 120 seconds (2 minutes) until next retry
+			no_connection = True
+			
+			while no_connection:
+				try:
+					if retries > 0:
+						print('Retrying to connect to Solr tagger in {} second(s).'.format(retrytime))
+						time.sleep(retrytime)
+						retrytime = retrytime * 2
+						if retrytime > retrytime_max:
+							retrytime = retrytime_max
+		
+					# call REST API
+					if openrefine_server:
+						# use REST-API on (remote) HTTP server
+						params = {'text': text}
+						r = requests.post(openrefine_server, params=params)
+						results = r.json()
+						
+					else:
+						# use local Python library
+						linker = Entity_Linker()
+						linker.verbose = verbose
+			
+						results = linker.entities( text = text, taggers = [entity_linking_tagger], additional_result_fields = taxonomy_fields )
 	
-			# call REST API
-			if openrefine_server:
-				# use REST-API on (remote) HTTP server
-				params = {'text': text}
-				r = requests.post(openrefine_server, params=params)
-				results = r.json()
+					no_connection = False
 				
-			else:
-				# use local Python library
-				linker = Entity_Linker()
-				linker.verbose = verbose
-	
-				results = linker.entities( text = text, taggers = [entity_linking_tagger], additional_result_fields = taxonomy_fields )
+				except KeyboardInterrupt:
+					raise KeyboardInterrupt
+				except requests.exceptions.ConnectionError as e:
+					retries += 1
+					sys.stderr.write( "Connection to Solr tagger (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+				except requests.exceptions.HTTPError as e:
+					if e.response.status_code == 503:
+						retries += 1
+						sys.stderr.write( "Solr temporary unavailable (HTTP status code 503). Will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
+					else:
+						raise e
+				except BaseException as e:
+					raise e
+
 				
 			if verbose:
 				print ("Named Entity Linking by Tagger {}: {}".format(entity_linking_tagger, results))
