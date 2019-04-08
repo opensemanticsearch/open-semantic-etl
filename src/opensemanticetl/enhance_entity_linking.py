@@ -93,6 +93,8 @@ class enhance_entity_linking(object):
 		# tag all entities (by different taggers for different analyzers/stemmers)
 		for entity_linking_tagger in entity_linking_taggers:
 
+			results = {}
+
 			retries = 0
 			retrytime = 1
 			retrytime_max = 120 # wait time until next retry will be doubled until reaching maximum of 120 seconds (2 minutes) until next retry
@@ -128,28 +130,52 @@ class enhance_entity_linking(object):
 				
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt
+				
 				except requests.exceptions.ConnectionError as e:
+					
 					retries += 1
+					
 					if openrefine_server:
-						sys.stderr.write( "Connection to Openrefine server (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+						sys.stderr.write( "Connection to Openrefine server failed (will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
 					else:
-						sys.stderr.write( "Connection to Solr tagger (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+						sys.stderr.write( "Connection to Solr text tagger failed (will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
+				
 				except requests.exceptions.HTTPError as e:
 					if e.response.status_code == 503:
+
 						retries += 1
+						
 						if openrefine_server:
 							sys.stderr.write( "Openrefine server temporary unavailable (HTTP status code 503). Will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
 						else:
 							sys.stderr.write( "Solr temporary unavailable (HTTP status code 503). Will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
-							
-					else:
-						raise e
-				except BaseException as e:
-					raise e
 
-				
+					elif e.response.status_code == 400:
+						no_connection = False
+
+						# if error because of empty entity index for that tagger because no entities imported yet, no error message / index as fail
+						empty_entity_index = False
+						try:
+							errorstatus = e.response.json()
+							if errorstatus['error']['msg'] == 'field ' + entity_linking_tagger + ' has no indexed data':
+								empty_entity_index = True
+						except:
+							pass
+						
+						if not empty_entity_index:
+							etl.error_message(docid=parameters['id'], data=data, plugin='enhance_entity_linking', e=e)
+
+					else:
+						no_connection = False
+						etl.error_message(docid=parameters['id'], data=data, plugin='enhance_entity_linking', e=e)
+
+				except BaseException as e:
+					no_connection = False
+					etl.error_message(docid=parameters['id'], data=data, plugin='enhance_entity_linking', e=e)
+
 			if verbose:
 				print ("Named Entity Linking by Tagger {}: {}".format(entity_linking_tagger, results))
+	
 	
 			# write entities from result to document facets
 			for match in results:
