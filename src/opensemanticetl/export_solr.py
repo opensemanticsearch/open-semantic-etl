@@ -79,7 +79,7 @@ class export_solr(object):
 
 				if add and not fieldname in fields_set:
 					# add value to existent values of the field
-					update_fields[fieldname]['add'] = data[fieldname]
+					update_fields[fieldname]['add-distinct'] = data[fieldname]
 				else:	
 					# if document there with values for this fields, the existing values will be overwritten with new values
 					update_fields[fieldname]['set'] = data[fieldname]
