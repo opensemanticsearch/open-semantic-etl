@@ -130,11 +130,18 @@ class enhance_entity_linking(object):
 					raise KeyboardInterrupt
 				except requests.exceptions.ConnectionError as e:
 					retries += 1
-					sys.stderr.write( "Connection to Solr tagger (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+					if openrefine_server:
+						sys.stderr.write( "Connection to Openrefine server (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+					else:
+						sys.stderr.write( "Connection to Solr tagger (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
 				except requests.exceptions.HTTPError as e:
 					if e.response.status_code == 503:
 						retries += 1
-						sys.stderr.write( "Solr temporary unavailable (HTTP status code 503). Will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
+						if openrefine_server:
+							sys.stderr.write( "Openrefine server temporary unavailable (HTTP status code 503). Will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
+						else:
+							sys.stderr.write( "Solr temporary unavailable (HTTP status code 503). Will retry in {} seconds). Exception: {}\n".format(retrytime, e) )
+							
 					else:
 						raise e
 				except BaseException as e:
