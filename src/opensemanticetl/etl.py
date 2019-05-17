@@ -82,7 +82,7 @@ class ETL(object):
 				self.config['plugins'].insert(self.config['plugins'].index("enhance_detect_language_tika_server"), "enhance_ocr_descew")
 
 		# manual annotations should be found by by fulltext search too (automatic entity linking does by including the text or synonym)
-		# so read befor generating the default search fields like _text_ or text_txt_languageX by enhance_multilingual 
+		# so read before generating the default search fields like _text_ or text_txt_languageX by enhance_multilingual 
 		if "enhance_rdf_annotations_by_http_request" in self.config['plugins'] and "enhance_multilingual" in self.config['plugins']:
 			if self.config['plugins'].index("enhance_rdf_annotations_by_http_request") > self.config['plugins'].index("enhance_multilingual"):
 				# remove after
