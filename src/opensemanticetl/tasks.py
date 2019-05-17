@@ -54,8 +54,10 @@ def index_file(filename, additional_plugins=[], wait=0, config=None):
 
 	etl_file = Connector_File()
 
+	# set alternate config options (will overwrite config options from config file)
 	if config:
-		etl_file.config = config
+		for option in config:
+			etl_file.config[option] = config[option]
 
 	etl_file.index_file(filename=filename, additional_plugins=additional_plugins)
 
