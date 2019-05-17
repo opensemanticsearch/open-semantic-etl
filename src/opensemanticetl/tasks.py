@@ -7,6 +7,7 @@
 
 # Queue handler
 from celery import Celery
+from kombu import Queue, Exchange
 
 # ETL connectors
 from etl import ETL
@@ -20,7 +21,12 @@ verbose = True
 quiet = False
 
 app = Celery('etl.tasks')
+
+app.conf.CELERY_QUEUES = [Queue('tasks', Exchange('tasks'), routing_key='tasks', queue_arguments={'x-max-priority': 10})]
+
 app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
+app.conf.CELERYD_PREFETCH_MULTIPLIER = 1
+app.conf.CELERY_ACKS_LATE = True
 
 etl_delete = Delete()
 etl_web = Connector_Web()
@@ -41,7 +47,7 @@ def delete(uri):
 #
 
 @app.task(name='etl.index_file')
-def index_file(filename, wait=0, config=False):
+def index_file(filename, additional_plugins=[], wait=0, config=None):
 
 	if wait:
 		time.sleep(wait)
@@ -51,7 +57,7 @@ def index_file(filename, wait=0, config=False):
 	if config:
 		etl_file.config = config
 
-	etl_file.index(filename=filename)
+	etl_file.index_file(filename=filename, additional_plugins=additional_plugins)
 
 #
 # Index file directory

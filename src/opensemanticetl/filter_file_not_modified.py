@@ -56,6 +56,7 @@ class filter_file_not_modified(object):
 		plugins_failed = []
 		critical_plugins_failed = []
 		plugins_not_runned = []
+		additional_plugins_later_not_runned = []
 
 		# use abstracted function from exporter module to get last modification time of file in index
 		if 'export' in parameters:
@@ -69,7 +70,11 @@ class filter_file_not_modified(object):
 			
 			# get plugin status fields
 			for configured_plugin in parameters['plugins']:
-				metadatafields.append('etl_' + configured_plugin + '_b')
+				if not configured_plugin == 'export_queue_files':
+					metadatafields.append('etl_' + configured_plugin + '_b')
+			if 'additional_plugins_later' in parameters:
+				for configured_plugin in parameters['additional_plugins_later']:
+					metadatafields.append('etl_' + configured_plugin + '_b')
 			
 			# read yet indexed metadata, if there
 			indexed_metadata = exporter.get_data(docid=docid, fields=metadatafields)
@@ -93,14 +98,21 @@ class filter_file_not_modified(object):
 			
 			# all now configured plugins runned in former ETL/their analysis is in index?
 			for configured_plugin in parameters['plugins']:
-				if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
-					plugins_not_runned.append(configured_plugin)
+				if not configured_plugin == 'export_queue_files':
+					if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
+						plugins_not_runned.append(configured_plugin)
+			if 'additional_plugins_later' in parameters:
+				for configured_plugin in parameters['additional_plugins_later']:
+					if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
+						additional_plugins_later_not_runned.append(configured_plugin)
+					
 
 			for critical_plugin in self.force_reindex_if_former_etl_plugin_errors:
 				if critical_plugin in plugins_failed:
 					critical_plugins_failed.append(critical_plugin)
+
 			
-			if len(plugins_not_runned) > 0:
+			if len(plugins_not_runned) > 0 or len(additional_plugins_later_not_runned) > 0:
 			
 				doindex = True
 
@@ -110,6 +122,10 @@ class filter_file_not_modified(object):
 						print('Repeating indexing of unchanged file because (additional configured) plugin(s) {} not runned yet: {}'.format(plugins_not_runned, filename) )
 					except:
 						sys.stderr.write( "Repeating indexing of unchanged file because former fail of critical plugin, but exception while printing message (problem with encoding of filename or console? Is console set to old ASCII standard instead of UTF-8?)" )
+
+				if len(plugins_not_runned) == 0:			
+					parameters['only_additional_plugins_later'] = True
+
 			
 			# a critical plugin failed in former ETL
 			elif len(critical_plugins_failed) > 0:

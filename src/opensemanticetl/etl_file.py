@@ -159,13 +159,15 @@ class Connector_File(ETL):
 
 	
 	# Index a file
-	def index_file(self, filename):
+	def index_file(self, filename, additional_plugins=[]):
 	
 		# clean filename (convert filename given as URI to filesystem)
 		filename = self.clean_filename(filename)
 	
 		# fresh parameters / chain for each file (so processing one file will not change config/parameters for next, if directory or multiple files, which would happen if given by reference)
 		parameters = self.config.copy()
+		if additional_plugins:
+			parameters['plugins'].extend(additional_plugins)
 
 		if self.verbose:
 			parameters['verbose'] = True
@@ -191,14 +193,15 @@ if __name__ == "__main__":
 
 	from optparse import OptionParser 
 
-	#get uri or filename from args
+	#get uri or filename and (optional) parameters from args
 
 	parser = OptionParser("etl-file [options] filename")
 	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=None, help="Don\'t print status (filenames) while indexing")
 	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=None, help="Print debug messages")
 	parser.add_option("-f", "--force", dest="force", action="store_true", default=None, help="Force (re)indexing, even if no changes")
 	parser.add_option("-c", "--config", dest="config", default=False, help="Config file")
-	parser.add_option("-p", "--plugins", dest="plugins", default=False, help="Plugins (comma separated and in order)")
+	parser.add_option("-p", "--plugins", dest="plugins", default=False, help="Plugin chain to use instead configured plugins (comma separated and in order)")
+	parser.add_option("-a", "--additional-plugins", dest="additional_plugins", default=False, help="Plugins to add to default/configured plugins (comma separated and in order)")
 	parser.add_option("-w", "--outputfile", dest="outputfile", default=False, help="Output file")
 
 	(options, args) = parser.parse_args()
@@ -219,6 +222,10 @@ if __name__ == "__main__":
 	# set (or if config overwrite) plugin config
 	if options.plugins:
 		connector.config['plugins'] = options.plugins.split(',')
+
+	# add addional plugin
+	if options.additional_plugins:
+		connector.config['plugins'].extend(options.additional_plugins.split(','))
 
 	if options.verbose == False or options.verbose==True:
 		connector.verbose = options.verbose
