@@ -50,7 +50,9 @@ class enhance_extract_text_tika_server(object):
 			headers = { 'X-Tika-OCRLanguage': parameters['ocr_lang'] }
 		
 		if 'ocr' in parameters:
-			if parameters['ocr'] == False:
+			if parameters['ocr']:
+				data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
+			else:
 				headers = { 'X-Tika-OCRTesseractPath': '/False' }
 		
 		#
