@@ -18,15 +18,21 @@ class export_queue_files(object):
 		if not 'only_additional_plugins_later' in parameters:
 			index_file.apply_async( kwargs={ 'filename': parameters['filename'] }, queue='tasks', priority=5 )
 
-		# add file to (lower priorized) ETL queue with additional plugins which should be runned later after all files tasks of standard priorized queue done
+		# add file to (lower priorized) ETL queue with additional plugins or options which should be runned later after all files tasks of standard priorized queue done
 		# to run ETL of the file later again with additional plugins like OCR which need much time/resources while meantime all files are searchable by other plugins which need fewer resources
-		if 'additional_plugins_later' in parameters:
+		if 'additional_plugins_later' in parameters or 'additional_plugins_later_config' in parameters:
+
+			additional_plugins_later = []
+			if 'additional_plugins_later' in parameters:
+				additional_plugins_later = parameters['additional_plugins_later']
 
 			additional_plugins_later_config = {}
 			if 'additional_plugins_later_config' in parameters:
 				additional_plugins_later_config = parameters['additional_plugins_later_config']
+
+			if len(additional_plugins_later) > 0 or len(additional_plugins_later_config) > 0:
 			
-			index_file.apply_async( kwargs={ 'filename': parameters['filename'], 'additional_plugins': parameters['additional_plugins_later'], 'config': additional_plugins_later_config }, queue='tasks', priority=1 )
+				index_file.apply_async( kwargs={ 'filename': parameters['filename'], 'additional_plugins': additional_plugins_later, 'config': additional_plugins_later_config }, queue='tasks', priority=1 )
 			
 		# Since wont be processed further by this ETL run / no export to index in this ETL run but by new ETL worker from queue, we added this file in this plugin
 		parameters['break'] = True
