@@ -75,7 +75,16 @@ class filter_file_not_modified(object):
 			if 'additional_plugins_later' in parameters:
 				for configured_plugin in parameters['additional_plugins_later']:
 					metadatafields.append('etl_' + configured_plugin + '_b')
-			
+
+			# get config option status field for OCR
+			if 'ocr' in parameters:
+				if parameters['ocr']:
+					metadatafields.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
+			if 'additional_plugins_later_config' in parameters:
+				if 'ocr' in parameters['additional_plugins_later_config']:
+					if parameters['additional_plugins_later_config']['ocr']:
+						metadatafields.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
+
 			# read yet indexed metadata, if there
 			indexed_metadata = exporter.get_data(docid=docid, fields=metadatafields)
 			
@@ -105,6 +114,18 @@ class filter_file_not_modified(object):
 				for configured_plugin in parameters['additional_plugins_later']:
 					if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
 						additional_plugins_later_not_runned.append(configured_plugin)
+
+
+			# Tika OCR was enabled in former ETL/their analysis is in index?
+			if 'ocr' in parameters:
+				if parameters['ocr']:
+					if not 'etl_enhance_extract_text_tika_server_ocr_enabled_b' in indexed_metadata:
+						plugins_not_runned.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
+			if 'additional_plugins_later_config' in parameters:
+				if 'ocr' in parameters['additional_plugins_later_config']:
+					if parameters['additional_plugins_later_config']['ocr']:
+						if not 'etl_enhance_extract_text_tika_server_ocr_enabled_b' in indexed_metadata:
+							additional_plugins_later_not_runned.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
 					
 
 			for critical_plugin in self.force_reindex_if_former_etl_plugin_errors:
@@ -119,11 +140,11 @@ class filter_file_not_modified(object):
 				# print status
 				if self.verbose or self.quiet == False:
 					try:
-						print('Repeating indexing of unchanged file because (additional configured) plugin(s) {} not runned yet: {}'.format(plugins_not_runned, filename) )
+						print('Repeating indexing of unchanged file because (additional configured) plugin(s) or options {} not runned yet: {}'.format(plugins_not_runned+additional_plugins_later_not_runned, filename) )
 					except:
 						sys.stderr.write( "Repeating indexing of unchanged file because former fail of critical plugin, but exception while printing message (problem with encoding of filename or console? Is console set to old ASCII standard instead of UTF-8?)" )
 
-				if len(plugins_not_runned) == 0:			
+				if len(plugins_not_runned) == 0:
 					parameters['only_additional_plugins_later'] = True
 
 			
