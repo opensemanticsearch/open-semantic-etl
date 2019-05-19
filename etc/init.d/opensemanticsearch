@@ -14,9 +14,7 @@ start () {
     echo -n "Starting opensemanticsearch daemon..."
 
     # wait for service dependencies
-    /usr/bin/wait_until_tika_is_up
     /usr/bin/wait_until_solr_is_up
-    /usr/bin/wait_until_spacy_is_up
 
     daemon --user=opensemanticetl --command "/usr/bin/etl_tasks" --name=opensemanticsearch --verbose
     RETVAL=$?
