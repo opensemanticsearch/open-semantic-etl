@@ -1,0 +1,12 @@
+[Unit]
+Description=Open Semantic ETL filemonitoring
+After=network.target
+
+[Service]
+Type=simple
+User=opensemanticetl
+ExecStart=/usr/bin/opensemanticsearch-filemonitoring --fromfile /etc/opensemanticsearch/filemonitoring/files
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

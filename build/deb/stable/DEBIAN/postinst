@@ -11,13 +11,16 @@ pip3 install py2neo==3.1.2
 # install warcio
 pip3 install warcio
 
-# start on boot
-update-rc.d opensemanticsearch defaults
-update-rc.d opensemanticsearch-filemonitoring defaults
-
-# start workers after installation (but not the filemonitoring, since no pahts configured yet)
-service opensemanticsearch start
-
 # rights for thumbnail dir
 chown opensemanticetl /var/opensemanticsearch/thumbnails
 chmod o+w /var/opensemanticsearch/thumbnails
+
+# load our additional systemd service config
+systemctl daemon-reload
+
+# start while booting
+systemctl enable opensemanticetl
+systemctl enable opensemanticetl-filemonitoring
+
+# (re)start after installation (or upgrade)
+systemctl restart opensemanticetl
