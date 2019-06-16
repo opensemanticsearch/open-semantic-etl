@@ -17,7 +17,7 @@
 # If index support enhanced analytics for specific languages, we can add/copy data to language specific fields/analyzers
 # Set which languages are configured and shall be used in index for language specific analysis/stemming/synonyms
 # Default / if not set all languages that are supported will be analyzed additionally language specific
-#config['languages'] = ['en','de','fr','hu','it','pt','nl','cz','ro','ar','fa']
+#config['languages'] = ['en','de','fr','hu','it','pt','nl','cz','ro','ru','ar','fa']
 
 # force to language specific analysis additional in this language(s) grammar & synonyms, even if language autodetection detects other language
 #config['languages_force'] = ['en','de']
@@ -55,6 +55,9 @@
 
 # add Romanian
 #config['languages'].append('ro')
+
+# add Russian
+#config['languages'].append('ru')
 
 
 
