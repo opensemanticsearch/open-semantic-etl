@@ -37,7 +37,7 @@ class enhance_warc(object):
 		
 
 		# if this file is a warc file, extract it
-		if ( ("application/warc" in mimetypes) or (filename.lower().endswith('.warcX')) or (filename.lower().endswith('.warc.gzX')) ):
+		if ( ("application/warc" in mimetypes) or (filename.lower().endswith('.warc')) or (filename.lower().endswith('.warc.gz')) ):
 			self.unwarc_and_index_files(warcfilename=filename, parameters=parameters, verbose=verbose)
 	
 		return parameters, data
