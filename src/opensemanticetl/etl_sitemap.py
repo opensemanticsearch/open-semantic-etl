@@ -101,7 +101,8 @@ class Connector_Sitemap(Connector_Web):
 					if self.verbose or self.quiet==False:
 						print ("Adding URL to queue: {}".format(url) )
 
-					result = tasks.index_web.delay(uri=url)
+					result = tasks.index_web.apply_async( kwargs={ 'uri': url }, queue='tasks', priority=5 )
+
 
 				except KeyboardInterrupt:
 					raise KeyboardInterrupt	
