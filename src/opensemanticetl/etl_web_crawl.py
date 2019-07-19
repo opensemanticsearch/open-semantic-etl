@@ -28,7 +28,7 @@ class OpenSemanticETL_Spider(CrawlSpider):
 		self.logger.info('Adding ETL task for downloaded page or file from %s', response.url)
 
 		# add task to index the downloaded file/page by ETL web in Celery task worker
-		index_web.delay(uri = response.url, downloaded_file=filename, downloaded_headers=response.headers)
+		index_web.apply_async( kwargs={ 'uri': response.url, 'downloaded_file': filename, 'downloaded_headers': response.headers }, queue='tasks', priority=5 )
 
 
 def index(uri, crawler_type="PATH"):
@@ -72,7 +72,8 @@ def index(uri, crawler_type="PATH"):
 		process.crawl(OpenSemanticETL_Spider, start_urls=start_urls, allowed_domains=[allowed_domain], rules=rules, name=name)
 
 	# the start URL itselves shall be indexed, too, so add task to index the downloaded file/page by ETL web in Celery task worker
-	index_web.delay(uri = uri)
+	index_web.apply_async( kwargs={ 'uri': uri }, queue='tasks', priority=5 )
+
 
 	process.start() # the script will block here until the crawling is finished
 
