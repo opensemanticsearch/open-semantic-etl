@@ -60,8 +60,8 @@ class EventHandler(pyinotify.ProcessEvent):
 			if self.verbose:
 				print ( "Indexing file {}".format(filename) )
 
-			index_file.delay(filename = filename)
-			
+			index_file.apply_async( kwargs={ 'filename': filename }, queue='tasks', priority=5 )
+
 		elif function == 'delete':
 
 			uri = filename
@@ -71,7 +71,8 @@ class EventHandler(pyinotify.ProcessEvent):
 			if self.verbose:
 				print ( "Deleting from index filename {} with URL {}".format(filename, uri) )
 
-			delete.delay(uri = uri)
+			delete.apply_async( kwargs={ 'uri': uri }, queue='tasks', priority=6 )
+
 
 
 class Filemonitor(ETL):
