@@ -72,7 +72,7 @@ class enhance_xml(object):
         if xmlfilename:
 
             if verbose:
-                print("Reading XML sidecar file ".format(xmlfilename))
+                print("Reading XML sidecar file: {}".format(xmlfilename))
             try:
 
                 # Parse the XML file

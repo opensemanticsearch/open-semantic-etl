@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import etl
 import re
+import etl
 
 
 # clean text for better analysis results
@@ -39,7 +39,7 @@ def regex2facet(data, text, regex, group, facet, verbose=False):
             except BaseException as e:
                 print("Exception while adding value {} from regex {} and group {} to facet {}:".format(
                     value, regex, group, facet))
-                print(e.message)
+                print(e.args[0])
 
 
 # opens a tab with regexes and facets
@@ -72,7 +72,7 @@ def readregexesfromfile(data, text, filename, verbose=False):
         except BaseException as e:
             print("Exception while checking line {} of regexlist {}:".format(
                 line, filename))
-            print(e.message)
+            print(e.args[0])
 
     listfile.close()
 
@@ -82,7 +82,12 @@ def readregexesfromfile(data, text, filename, verbose=False):
 #
 
 class enhance_regex(object):
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:
@@ -122,6 +127,6 @@ class enhance_regex(object):
 
             except BaseException as e:
                 print("Exception while checking regex list {}:".format(regexlistfile))
-                print(e.message)
+                print(e.args[0])
 
         return parameters, data

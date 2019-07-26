@@ -60,7 +60,7 @@ class enhance_xmp(object):
             tags = []
 
             if verbose:
-                print("Reading xmp sidecar file ".format(xmpfilename))
+                print("Reading xmp sidecar file {}".format(xmpfilename))
             try:
 
                 # Parse the xmp file with utf 8 encoding
@@ -78,7 +78,7 @@ class enhance_xmp(object):
 
                 except BaseException as e:
                     sys.stderr.write("Exception while parsing creator from xmp {} {}".format(
-                        xmpfilename, e.message))
+                        xmpfilename, e.args[0]))
 
                 # get headline
                 try:
@@ -90,7 +90,7 @@ class enhance_xmp(object):
 
                 except BaseException as e:
                     sys.stderr.write("Exception while parsing headline from xmp {} {}".format(
-                        xmpfilename, e.message))
+                        xmpfilename, e.args[0]))
 
                 # get location
                 try:
@@ -106,7 +106,7 @@ class enhance_xmp(object):
 
                 except BaseException as e:
                     sys.stderr.write("Exception while parsing location from xmp {} {}".format(
-                        xmpfilename, e.message))
+                        xmpfilename, e.args[0]))
 
                 # get tags (named "subject")
                 try:
@@ -119,13 +119,13 @@ class enhance_xmp(object):
 
                         except BaseException as e:
                             sys.stderr.write("Exception while parsing a tag from xmp {} {}".format(
-                                xmpfilename, e.message))
+                                xmpfilename, e.args[0]))
                 except BaseException as e:
                     sys.stderr.write("Exception while parsing tags from xmp {} {}".format(
-                        xmpfilename, e.message))
+                        xmpfilename, e.args[0]))
 
             except BaseException as e:
                 sys.stderr.write("Exception while parsing xmp {} {}".format(
-                    xmpfilename, e.message))
+                    xmpfilename, e.args[0]))
 
         return parameters, data

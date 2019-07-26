@@ -125,12 +125,12 @@ class enhance_pst(object):
 
                     except BaseException as e:
                         sys.stderr.write("Exception while indexing contained content {} from {} : {}\n".format(
-                            fileName, connector.config['container'], e.message))
+                            fileName, connector.config['container'], e.args[0]))
 
                     os.remove(contained_filename)
 
                 except BaseException as e:
                     sys.stderr.write(
-                        "Exception while indexing file {} : {}\n".format(fileName, e.message))
+                        "Exception while indexing file {} : {}\n".format(fileName, e.args[0]))
 
         shutil.rmtree(temp_dirname)

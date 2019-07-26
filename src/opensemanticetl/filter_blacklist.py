@@ -17,7 +17,7 @@ def is_in_lists(listfiles, value, match=None):
 
         except BaseException as e:
             print("Exception while checking blacklist {}:".format(listfile))
-            print(e.message)
+            print(e.args[0])
 
     return result
 

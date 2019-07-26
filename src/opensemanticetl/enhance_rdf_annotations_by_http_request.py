@@ -1,8 +1,8 @@
 import sys
-import rdflib
-from rdflib import URIRef
 import hashlib
 import urllib
+import rdflib
+from rdflib import URIRef
 
 # Do templating of metaserver url for id
 
@@ -58,7 +58,7 @@ def getmeta_modified(metaservers, docid, verbose=False):
 
     except BaseException as e:
         sys.stderr.write(
-            "Exception while getting metadata modification time: {}\n".format(e.message))
+            "Exception while getting metadata modification time: {}\n".format(e.args[0]))
 
     return moddate
 
@@ -85,7 +85,7 @@ def getmeta_rdf_from_server(metaserver, data, property2facet, docid, verbose=Fal
                 print("{} : {}".format(pred, obj.toPython))
             except BaseException as e:
                 sys.stderr.write(
-                    "Exception while printing triple: {}\n".format(e.message))
+                    "Exception while printing triple: {}\n".format(e.args[0]))
 
     # make solr iteral for each rdf tripple contained in configurated properties
     for facet in property2facet:
@@ -114,11 +114,11 @@ def getmeta_rdf_from_server(metaserver, data, property2facet, docid, verbose=Fal
 
                 except BaseException as e:
                     sys.stderr.write(
-                        "Exception while checking predicate {}{}\n".format(pred, e.message))
+                        "Exception while checking predicate {}{}\n".format(pred, e.args[0]))
 
         except BaseException as e:
             sys.stderr.write(
-                "Exception while checking a part of metadata graph: {}\n".format(e.message))
+                "Exception while checking a part of metadata graph: {}\n".format(e.args[0]))
 
     # if semantic mediawiki modification date field, take this as date
     moddateRef = URIRef(

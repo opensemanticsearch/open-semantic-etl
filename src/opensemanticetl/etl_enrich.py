@@ -18,9 +18,9 @@ import threading
 
 class ETL_Enrich(ETL):
 
-    def __init__(self, 	plugins=[], verbose=False):
+    def __init__(self, plugins=(), verbose=False):
 
-        ETL.__init__(self, plugins=plugins, verbose=verbose)
+        ETL.__init__(self, plugins=list(plugins), verbose=verbose)
 
         self.read_configfile('/etc/etl/config')
         self.read_configfile('/etc/opensemanticsearch/etl')
@@ -337,7 +337,7 @@ if __name__ == "__main__":
         etl.read_configfile(options.config)
         etl.fields = etl.getfieldnames_from_plugins()
 
-    if options.verbose == False or options.verbose == True:
+    if not options.verbose or options.verbose:
         etl.verbose = options.verbose
 
     # set (or if config overwrite) plugin config

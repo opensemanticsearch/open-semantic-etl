@@ -1,4 +1,5 @@
 import sys
+import time
 import requests
 
 # Extract text from filename

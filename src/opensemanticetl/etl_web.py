@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import time
-from email.utils import parsedate
 import urllib.request
 import os
-import tempfile
 from lxml import etree
 from dateutil import parser as dateparser
 

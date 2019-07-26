@@ -1,5 +1,6 @@
-import requests
 import json
+import sys
+import requests
 
 from etl import ETL
 

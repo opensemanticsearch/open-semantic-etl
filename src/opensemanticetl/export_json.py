@@ -18,7 +18,7 @@ class export_json(object):
 
             import io
             with io.open(parameters['outputfile'], 'w', encoding='utf-8') as f:
-                f.write(unicode(json.dumps(data, ensure_ascii=False)))
+                f.write(json.dumps(data, ensure_ascii=False))
         else:  # else print json
             print(json.dumps(data))
 

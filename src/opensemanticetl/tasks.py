@@ -6,6 +6,7 @@
 #
 
 # Queue handler
+import time
 from celery import Celery
 from kombu import Queue, Exchange
 
@@ -104,9 +105,7 @@ def index_web_crawl(uri, crawler_type="PATH"):
 
     import etl_web_crawl
 
-    result = etl_web_crawl.index(uri, crawler_type)
-
-    return result
+    etl_web_crawl.index(uri, crawler_type)
 
 
 #
