@@ -2,59 +2,65 @@ import sys
 import requests
 
 # Extract text from filename
+
+
 class enhance_detect_language_tika_server(object):
 
-	def process (self, parameters={}, data={} ):
+    def process(self, parameters={}, data={}):
 
-		verbose = False
-		if 'verbose' in parameters:
-			if parameters['verbose']:	
-				verbose = True
-	
-		if 'tika_server' in parameters:
-			tika_server = parameters['tika_server']
-		else:
-			tika_server = 'http://localhost:9998'
+        verbose = False
+        if 'verbose' in parameters:
+            if parameters['verbose']:
+                verbose = True
 
-		uri = tika_server + '/language/string'
+        if 'tika_server' in parameters:
+            tika_server = parameters['tika_server']
+        else:
+            tika_server = 'http://localhost:9998'
 
-		analyse_fields = ['title_txt','content_txt','description_txt','ocr_t','ocr_descew_t']
+        uri = tika_server + '/language/string'
 
-		text = ''
-		for field in analyse_fields:
-			if field in data:
-				text = "{}{}\n".format(text, data[field])
+        analyse_fields = ['title_txt', 'content_txt',
+                          'description_txt', 'ocr_t', 'ocr_descew_t']
 
-		if verbose:
-			print ("Calling Tika server for language detection from {}".format(uri) )
+        text = ''
+        for field in analyse_fields:
+            if field in data:
+                text = "{}{}\n".format(text, data[field])
 
-		retries = 0
-		retrytime = 1
-		retrytime_max = 120 # wait time until next retry will be doubled until reaching maximum of 120 seconds (2 minutes) until next retry
-		no_connection = True
-		
-		while no_connection:
-			try:
-				if retries > 0:
-					print('Retrying to connect to Tika server in {} second(s).'.format(retrytime))
-					time.sleep(retrytime)
-					retrytime = retrytime * 2
-					if retrytime > retrytime_max:
-						retrytime = retrytime_max
+        if verbose:
+            print("Calling Tika server for language detection from {}".format(uri))
 
-				r = requests.put(uri, data=text.encode('utf-8'))
+        retries = 0
+        retrytime = 1
+        # wait time until next retry will be doubled until reaching maximum of 120 seconds (2 minutes) until next retry
+        retrytime_max = 120
+        no_connection = True
 
-				no_connection = False
+        while no_connection:
+            try:
+                if retries > 0:
+                    print(
+                        'Retrying to connect to Tika server in {} second(s).'.format(retrytime))
+                    time.sleep(retrytime)
+                    retrytime = retrytime * 2
+                    if retrytime > retrytime_max:
+                        retrytime = retrytime_max
 
-			except requests.exceptions.ConnectionError as e:
-				retries += 1
-				sys.stderr.write( "Connection to Tika server (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e) )
+                r = requests.put(uri, data=text.encode('utf-8'))
 
-		language = r.content.decode('utf-8')
+                no_connection = False
 
-		if verbose:
-			print ( "Detected language: {}".format(language) )
+            except requests.exceptions.ConnectionError as e:
+                retries += 1
+                sys.stderr.write(
+                    "Connection to Tika server (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e))
 
-		data['language_s'] = language
-	
-		return parameters, data
+        language = r.content.decode('utf-8')
+
+        if verbose:
+            print("Detected language: {}".format(language))
+
+        data['language_s'] = language
+
+        return parameters, data
