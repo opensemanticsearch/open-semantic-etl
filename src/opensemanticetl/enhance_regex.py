@@ -1,78 +1,80 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import etl
 import re
+import etl
 
 
 # clean text for better analysis results
 def cleantext(text):
 
-	# delete newlines so a phrase will be found even if part of phrase in new line
-	text=text.replace("\n", " ")
-	text=text.replace("\r", " ")
-	
-	# clean too much free spaces
-	text=text.replace("  ", " ")
+    # delete newlines so a phrase will be found even if part of phrase in new line
+    text = text.replace("\n", " ")
+    text = text.replace("\r", " ")
 
-	return text
+    # clean too much free spaces
+    text = text.replace("  ", " ")
+
+    return text
 
 
 def regex2facet(data, text, regex, group, facet, verbose=False):
 
-	if verbose:
-		print ("Checking regex {} for facet {}".format(regex, facet))	
-	
-	matches = re.finditer(regex, text, re.IGNORECASE)
+    if verbose:
+        print("Checking regex {} for facet {}".format(regex, facet))
 
-	if matches:
-		for match in matches:
+    matches = re.finditer(regex, text, re.IGNORECASE)
 
-			try:
-				value = match.group(group)
-				if verbose:
-					print ("Found regex {} with value {} for facet {}".format(regex, value, facet))
+    if matches:
+        for match in matches:
 
-				etl.append(data, facet, value)
+            try:
+                value = match.group(group)
+                if verbose:
+                    print("Found regex {} with value {} for facet {}".format(
+                        regex, value, facet))
 
-			except BaseException as e:
-				print ( "Exception while adding value {} from regex {} and group {} to facet {}:".format(value, regex, group, facet) )
-				print ( e.message )
+                etl.append(data, facet, value)
+
+            except BaseException as e:
+                print("Exception while adding value {} from regex {} and group {} to facet {}:".format(
+                    value, regex, group, facet))
+                print(e.args[0])
 
 
 # opens a tab with regexes and facets
 def readregexesfromfile(data, text, filename, verbose=False):
-	listfile = open(filename)
+    listfile = open(filename)
 
-	# search all the lines
-	for line in listfile:
-		try:
-			line = line.strip()
-			
-			# ignore empty lines and comment lines (starting with #)
-			if line and not line.startswith("#"):
-				facet = 'tag_ss'
-				columns = line.split("\t")
-	
-				regex = columns[0]
+    # search all the lines
+    for line in listfile:
+        try:
+            line = line.strip()
 
-				if len(columns) > 1:
-					facet = columns[1]
-	
-				if len(columns) > 2:
-					group = int( columns[2] )
-				else:
-					group = 0
+            # ignore empty lines and comment lines (starting with #)
+            if line and not line.startswith("#"):
+                facet = 'tag_ss'
+                columns = line.split("\t")
 
-				regex2facet(data=data, text=text, regex=regex, group=group, facet=facet, verbose=verbose)
+                regex = columns[0]
 
-		except BaseException as e:
-				print ( "Exception while checking line {} of regexlist {}:".format(line, filename) )
-				print ( e.message )
-	
+                if len(columns) > 1:
+                    facet = columns[1]
 
+                if len(columns) > 2:
+                    group = int(columns[2])
+                else:
+                    group = 0
 
-	listfile.close()
+                regex2facet(data=data, text=text, regex=regex,
+                            group=group, facet=facet, verbose=verbose)
+
+        except BaseException as e:
+            print("Exception while checking line {} of regexlist {}:".format(
+                line, filename))
+            print(e.args[0])
+
+    listfile.close()
 
 
 #
@@ -80,51 +82,51 @@ def readregexesfromfile(data, text, filename, verbose=False):
 #
 
 class enhance_regex(object):
-	def process (self, parameters={}, data={} ):
-		
-	
-		verbose = False
-		if 'verbose' in parameters:
-			if parameters['verbose']:	
-				verbose = True
-	
-	
-		regexlists = {}
-	
-		if 'regex_lists' in parameters:
-			regexlists = parameters['regex_lists']
-	
-	
-		text = ''
-		if 'text' in parameters:
-			text = parameters['text']
+    def process(self, parameters=None, data=None):
 
-		# build text from textfields
-		else:
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
-			if 'title_txt' in data:
-				text = data['title_txt']
-			elif 'title_txt' in parameters:
-				text = parameters['title_txt']
-				
-			if 'content_txt' in data:
-				text = text + ' ' + data['content_txt']
-			elif 'content_txt' in parameters:
-				text = text + ' ' + parameters['content_txt']
-		
-		text = cleantext(text)
-	
-		for regexlistfile in regexlists:
-	
-			try:
-	
-					readregexesfromfile(data=data, text=text, filename=regexlistfile, verbose=verbose)
-	
-			except BaseException as e:
-					print ( "Exception while checking regex list {}:".format(regexlistfile) )
-					print ( e.message )
-	
-	
-		
-	
-		return parameters, data
+        verbose = False
+        if 'verbose' in parameters:
+            if parameters['verbose']:
+                verbose = True
+
+        regexlists = {}
+
+        if 'regex_lists' in parameters:
+            regexlists = parameters['regex_lists']
+
+        text = ''
+        if 'text' in parameters:
+            text = parameters['text']
+
+        # build text from textfields
+        else:
+
+            if 'title_txt' in data:
+                text = data['title_txt']
+            elif 'title_txt' in parameters:
+                text = parameters['title_txt']
+
+            if 'content_txt' in data:
+                text = text + ' ' + data['content_txt']
+            elif 'content_txt' in parameters:
+                text = text + ' ' + parameters['content_txt']
+
+        text = cleantext(text)
+
+        for regexlistfile in regexlists:
+
+            try:
+
+                readregexesfromfile(data=data, text=text,
+                                    filename=regexlistfile, verbose=verbose)
+
+            except BaseException as e:
+                print("Exception while checking regex list {}:".format(regexlistfile))
+                print(e.args[0])
+
+        return parameters, data

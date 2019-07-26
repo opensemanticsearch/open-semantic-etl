@@ -15,234 +15,246 @@ from etl_web import Connector_Web
 
 import export_solr
 
+
 class Connector_Hypothesis(ETL):
 
-	verbose = False
+    verbose = False
 
-	documents = True
-	
-	token = None
-	
-	api = 'https://hypothes.is/api/'
-	
-	# how many annotations to download at once / per page
-	limit = 10
-	
-	# initialize Open Semantic ETL
-	etl = ETL()
-	etl.read_configfile ('/etc/etl/config')
-	etl.read_configfile ('/etc/opensemanticsearch/etl')
-	etl.read_configfile ('/etc/opensemanticsearch/hypothesis')
-	etl.verbose = verbose
+    documents = True
 
-	exporter = export_solr.export_solr()
+    token = None
 
+    api = 'https://hypothes.is/api/'
 
-	#
-	# index the annotated document, if not yet in index
-	#
-	
-	def etl_document(self, uri):
-	
-		result = True
-		doc_mtime = self.exporter.get_lastmodified(docid=uri)
-	
-		if doc_mtime:
-	
-			if self.verbose:
-				print ("Annotated document in search index. No new indexing of {}".format(uri))
-	
-		else:
-			# Download and Index the new or updated uri
-	
-			if self.verbose:
-				print ("Annotated document not in search index. Start indexing of {}".format(uri))
-		
-			try:
-				etl = Connector_Web()
-				etl.index(uri=uri)
-			except KeyboardInterrupt:
-				raise KeyboardInterrupt	
-			except BaseException as e:
-				sys.stderr.write( "Exception while getting {} : {}".format(uri, e) )
-				result = False
-		return result
+    # how many annotations to download at once / per page
+    limit = 10
 
+    # initialize Open Semantic ETL
+    etl = ETL()
+    etl.read_configfile('/etc/etl/config')
+    etl.read_configfile('/etc/opensemanticsearch/etl')
+    etl.read_configfile('/etc/opensemanticsearch/hypothesis')
+    etl.verbose = verbose
 
-	#
-	# import an annotation
-	#
-	
-	def etl_annotation(self, annotation):	
+    exporter = export_solr.export_solr()
 
-		parameters = {}
-		parameters['plugins'] = ['enhance_multilingual']
-	
-		# since there can be multiple annotations for same URI,
-		# do not overwrite but add value to existent values of the facet/field/property
-		parameters['add'] = True
-		data = {}
+    #
+    # index the annotated document, if not yet in index
+    #
 
-		# id/uri of the annotated document, not the annotation id
-		parameters['id'] = annotation['uri']
+    def etl_document(self, uri):
 
-		# first index / etl the webpage / document that has been annotated if not yet in index
-		if self.documents:
-			result = self.etl_document(uri=annotation['uri'])
-		if not result:
-			data['etl_error_hypothesis_ss'] = "Error while indexing the document that has been annotated"
+        result = True
+        doc_mtime = self.exporter.get_lastmodified(docid=uri)
 
-		# annotation id
-		data['annotation_id_ss'] = annotation['id']
+        if doc_mtime:
 
-		data['annotation_text_txt'] = annotation['text']
+            if self.verbose:
+                print(
+                    "Annotated document in search index. No new indexing of {}".format(uri))
 
-		tags = []
-		if 'tags' in annotation:
+        else:
+            # Download and Index the new or updated uri
 
-			if self.verbose:
-				print ( "Tags: {}".format(annotation['tags']) )
+            if self.verbose:
+                print(
+                    "Annotated document not in search index. Start indexing of {}".format(uri))
 
-			for tag in annotation['tags']:
-				tags.append(tag)
-		data['annotation_tag_ss'] = tags
+            try:
+                etl = Connector_Web()
+                etl.index(uri=uri)
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt
+            except BaseException as e:
+                sys.stderr.write(
+                    "Exception while getting {} : {}".format(uri, e))
+                result = False
+        return result
 
+    #
+    # import an annotation
+    #
 
-		# write annotation to database or index
-		self.etl.process(parameters=parameters, data=data)
+    def etl_annotation(self, annotation):
 
-	
-	#
-	# import all annotations since last imported annotation
-	#
-	
-	def etl_annotations(self, last_update="", user=None, group=None, tag=None, uri=None):
+        parameters = {}
+        parameters['plugins'] = ['enhance_multilingual']
 
-		newest_update = last_update
-	
-		if not self.api.endswith('/'):
-			self.api = self.api + '/'
-		
-		searchurl = '{}search?limit={}&sort=updated&order=desc'.format(self.api, self.limit)
+        # since there can be multiple annotations for same URI,
+        # do not overwrite but add value to existent values of the facet/field/property
+        parameters['add'] = True
+        data = {}
 
-		if user:
-			searchurl += "&user={}".format(user)
+        # id/uri of the annotated document, not the annotation id
+        parameters['id'] = annotation['uri']
 
-		if group:
-			searchurl += "&group={}".format(group)
+        # first index / etl the webpage / document that has been annotated if not yet in index
+        if self.documents:
+            result = self.etl_document(uri=annotation['uri'])
+        if not result:
+            data['etl_error_hypothesis_ss'] = "Error while indexing the document that has been annotated"
 
-		if tag:
-			searchurl += "&tag={}".format(tag)
+        # annotation id
+        data['annotation_id_ss'] = annotation['id']
 
-		if uri:
-			searchurl += "&uri={}".format(uri)
+        data['annotation_text_txt'] = annotation['text']
 
+        tags = []
+        if 'tags' in annotation:
 
-		# Authorization	
-		headers = {'user-agent': 'Open Semantic Search'}
-		
-		if self.token:
-			headers['Authorization'] = 'Bearer ' + self.token
+            if self.verbose:
+                print("Tags: {}".format(annotation['tags']))
 
-		# stats
-		stat_downloaded_annotations = 0
-		stat_imported_annotations = 0
-		stat_pages = 0
-	
-		offset = 0
-		last_page = False
+            for tag in annotation['tags']:
+                tags.append(tag)
+        data['annotation_tag_ss'] = tags
 
-		while not last_page:
-			
-			searchurl_paged = searchurl + "&offset={}".format(offset)
-	
-			# Call API / download annotations
-			if self.verbose:
-				print ( "Calling hypothesis API {}".format(searchurl_paged) )
-		
-			request = requests.get(searchurl_paged, headers=headers)
-		
-			result = json.loads(request.content.decode('utf-8'))
+        # write annotation to database or index
+        self.etl.process(parameters=parameters, data=data)
 
-			stat_pages += 1
+    #
+    # import all annotations since last imported annotation
+    #
 
-			if len(result['rows']) < self.limit:
-				last_page = True
-			
-			# import annotations
-			for annotation in result['rows']:
-		
-				stat_downloaded_annotations += 1
-		
-				if annotation['updated'] > last_update:
-					
-					if self.verbose:
-						print ( "Importing new annotation {}annotations/{}".format(self.api, annotation['id']) )
-						print (annotation['text'])
-					
-					stat_imported_annotations += 1
-		
-					# save update time from newest annotation/edit
-					if annotation['updated'] > newest_update:
-						newest_update = annotation['updated']
-			
-					self.etl_annotation(annotation)
+    def etl_annotations(self, last_update="", user=None, group=None, tag=None, uri=None):
 
-				else:
-				
-					last_page = True
+        newest_update = last_update
 
-			offset += self.limit
+        if not self.api.endswith('/'):
+            self.api = self.api + '/'
 
+        searchurl = '{}search?limit={}&sort=updated&order=desc'.format(
+            self.api, self.limit)
 
-		# commit to index, if yet buffered
-		self.etl.commit()
-	
-		if self.verbose:
-			print ("Downloaded annotations: {}".format(stat_downloaded_annotations))
-			print ("Imported new annotations: {}".format(stat_imported_annotations))
-	
-		return newest_update
+        if user:
+            searchurl += "&user={}".format(user)
+
+        if group:
+            searchurl += "&group={}".format(group)
+
+        if tag:
+            searchurl += "&tag={}".format(tag)
+
+        if uri:
+            searchurl += "&uri={}".format(uri)
+
+        # Authorization
+        headers = {'user-agent': 'Open Semantic Search'}
+
+        if self.token:
+            headers['Authorization'] = 'Bearer ' + self.token
+
+        # stats
+        stat_downloaded_annotations = 0
+        stat_imported_annotations = 0
+        stat_pages = 0
+
+        offset = 0
+        last_page = False
+
+        while not last_page:
+
+            searchurl_paged = searchurl + "&offset={}".format(offset)
+
+            # Call API / download annotations
+            if self.verbose:
+                print("Calling hypothesis API {}".format(searchurl_paged))
+
+            request = requests.get(searchurl_paged, headers=headers)
+
+            result = json.loads(request.content.decode('utf-8'))
+
+            stat_pages += 1
+
+            if len(result['rows']) < self.limit:
+                last_page = True
+
+            # import annotations
+            for annotation in result['rows']:
+
+                stat_downloaded_annotations += 1
+
+                if annotation['updated'] > last_update:
+
+                    if self.verbose:
+                        print(
+                            "Importing new annotation {}annotations/{}".format(self.api, annotation['id']))
+                        print(annotation['text'])
+
+                    stat_imported_annotations += 1
+
+                    # save update time from newest annotation/edit
+                    if annotation['updated'] > newest_update:
+                        newest_update = annotation['updated']
+
+                    self.etl_annotation(annotation)
+
+                else:
+
+                    last_page = True
+
+            offset += self.limit
+
+        # commit to index, if yet buffered
+        self.etl.commit()
+
+        if self.verbose:
+            print("Downloaded annotations: {}".format(
+                stat_downloaded_annotations))
+            print("Imported new annotations: {}".format(
+                stat_imported_annotations))
+
+        return newest_update
 
 
 #
 # Read command line arguments and start
 #
 
-#if running (not imported to use its functions), run main function
+# if running (not imported to use its functions), run main function
 if __name__ == "__main__":
 
-	from optparse import OptionParser 
+    from optparse import OptionParser
 
-	#get uri or filename from args
+    # get uri or filename from args
 
-	parser = OptionParser("etl-file [options] filename")
-	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=None, help="Print debug messages")
-	parser.add_option("-a", "--api", dest="api", default="https://hypothes.is/api/", help="API URL")
-	parser.add_option("-p", "--token", dest="token", default=None, help="API token for authorization")
-	parser.add_option("-d", "--documents", dest="documents", action="store_true", default=True, help="Index content of annotated document(s), too")
-	parser.add_option("-f", "--force", dest="force", action="store_true", default=None, help="Force (re)indexing, even if no changes")
-	parser.add_option("-c", "--config", dest="config", default=False, help="Config file")
-	parser.add_option("-t", "--tag", dest="tag", default=None, help="Filter for a tag")
-	parser.add_option("-u", "--user", dest="user", default=None, help="Filter for an user")
-	parser.add_option("-g", "--group", dest="group", default=None, help="Filter for a group")
+    parser = OptionParser("etl-file [options] filename")
+    parser.add_option("-v", "--verbose", dest="verbose",
+                      action="store_true", default=None, help="Print debug messages")
+    parser.add_option("-a", "--api", dest="api",
+                      default="https://hypothes.is/api/", help="API URL")
+    parser.add_option("-p", "--token", dest="token",
+                      default=None, help="API token for authorization")
+    parser.add_option("-d", "--documents", dest="documents", action="store_true",
+                      default=True, help="Index content of annotated document(s), too")
+    parser.add_option("-f", "--force", dest="force", action="store_true",
+                      default=None, help="Force (re)indexing, even if no changes")
+    parser.add_option("-c", "--config", dest="config",
+                      default=False, help="Config file")
+    parser.add_option("-t", "--tag", dest="tag",
+                      default=None, help="Filter for a tag")
+    parser.add_option("-u", "--user", dest="user",
+                      default=None, help="Filter for an user")
+    parser.add_option("-g", "--group", dest="group",
+                      default=None, help="Filter for a group")
 
-	(options, args) = parser.parse_args()
+    (options, args) = parser.parse_args()
 
-	connector = Connector_Hypothesis()
+    connector = Connector_Hypothesis()
 
-	# add optional config parameters
-	if options.config:
-		connector.read_configfile(options.config)
+    # add optional config parameters
+    if options.config:
+        connector.read_configfile(options.config)
 
-	if options.verbose == False or options.verbose==True:
-		connector.verbose = options.verbose
-		
-	connector.documents = options.documents
+    if options.verbose == False or options.verbose == True:
+        connector.verbose = options.verbose
 
-	if options.token:
-		connector.token = options.token
+    connector.documents = options.documents
 
-	connector.api = options.api
+    if options.token:
+        connector.token = options.token
 
-	connector.etl_annotations(last_update="", user=options.user, group=options.group, tag=options.tag)
+    connector.api = options.api
+
+    connector.etl_annotations(
+        last_update="", user=options.user, group=options.group, tag=options.tag)

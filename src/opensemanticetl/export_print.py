@@ -1,17 +1,18 @@
 import pprint
 
+
 class export_print(object):
-	
-	def __init__(self, config = {'verbose': False} ):
-		
-		self.config = config	
 
-	#
-	# Print data
-	#
+    def __init__(self, config={'verbose': False}):
 
-	def process (self, parameters={}, data={} ):
+        self.config = config
 
-		pprint.pprint(data)
-	
-		return parameters, data
+    #
+    # Print data
+    #
+
+    def process(self, parameters={}, data={}):
+
+        pprint.pprint(data)
+
+        return parameters, data

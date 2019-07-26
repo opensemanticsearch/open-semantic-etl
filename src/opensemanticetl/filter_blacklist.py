@@ -3,22 +3,23 @@
 
 import re
 
+
 def is_in_lists(listfiles, value, match=None):
-	
-	result = False
 
-	for listfile in listfiles:
-		
-		try:
-			if is_in_list(filename=listfile, value=value, match=match):
-				result = True
-				break
-		
-		except BaseException as e:
-			print ("Exception while checking blacklist {}:".format(listfile))
-			print (e.message)
+    result = False
 
-	return result
+    for listfile in listfiles:
+
+        try:
+            if is_in_list(filename=listfile, value=value, match=match):
+                result = True
+                break
+
+        except BaseException as e:
+            print("Exception while checking blacklist {}:".format(listfile))
+            print(e.args[0])
+
+    return result
 
 
 #
@@ -26,43 +27,38 @@ def is_in_lists(listfiles, value, match=None):
 #
 def is_in_list(filename, value, match=None):
 
-	result = False
-	listfile = open(filename)
+    result = False
+    listfile = open(filename)
 
-	# search all the lines
-	for line in listfile:
-			line = line.strip()
+    # search all the lines
+    for line in listfile:
+        line = line.strip()
 
-			
-			# ignore empty lines and comment lines (starting with #)
-			if line and not line.startswith("#"):
+        # ignore empty lines and comment lines (starting with #)
+        if line and not line.startswith("#"):
 
-				if match=='prefix':
-					if value.startswith(line):
-						result = True
-				elif match=='suffix':
-					if value.endswith(line):
-						result = True
-				elif match=='regex':
-					if re.search(line, value):
-						result = True
+            if match == 'prefix':
+                if value.startswith(line):
+                    result = True
+            elif match == 'suffix':
+                if value.endswith(line):
+                    result = True
+            elif match == 'regex':
+                if re.search(line, value):
+                    result = True
 
-				else:
-					if line == value:
-						result = True		
-						
-				if result:
-					
-					# we dont have to check rest of list
-					break
-		
+            else:
+                if line == value:
+                    result = True
 
-	listfile.close()
+            if result:
 
-	return result
+                # we dont have to check rest of list
+                break
 
+    listfile.close()
 
-
+    return result
 
 
 #
@@ -71,65 +67,59 @@ def is_in_list(filename, value, match=None):
 
 class filter_blacklist(object):
 
-	def process (self, parameters={}, data={} ):
-		
-		blacklisted = False
-		
-		verbose = False
-		if 'verbose' in parameters:
-			if parameters['verbose']:	
-				verbose = True
+    def process(self, parameters={}, data={}):
 
-		uri = parameters['id']
-	
-		#if blacklist type configurated in parameters, check this blacklists for URI
-	
-		if 'blacklist_prefix' in parameters:
+        blacklisted = False
 
-			if is_in_lists(listfiles=parameters['blacklist_prefix'], value=uri, match="prefix"):
-				blacklisted = True
+        verbose = False
+        if 'verbose' in parameters:
+            if parameters['verbose']:
+                verbose = True
 
-	
-		if not blacklisted and 'blacklist_suffix' in parameters:
+        uri = parameters['id']
 
-			if is_in_lists(listfiles=parameters['blacklist_suffix'], value=uri, match="suffix"):
-				blacklisted = True
+        # if blacklist type configurated in parameters, check this blacklists for URI
 
-		if not blacklisted and 'blacklist_regex' in parameters:
+        if 'blacklist_prefix' in parameters:
 
-			if is_in_lists(listfiles=parameters['blacklist_regex'], value=uri, match="regex"):
-				blacklisted = True
+            if is_in_lists(listfiles=parameters['blacklist_prefix'], value=uri, match="prefix"):
+                blacklisted = True
 
-		if not blacklisted and 'blacklist' in parameters:
+        if not blacklisted and 'blacklist_suffix' in parameters:
 
-			if is_in_lists(listfiles=parameters['blacklist'], value=uri):
-				blacklisted = True
+            if is_in_lists(listfiles=parameters['blacklist_suffix'], value=uri, match="suffix"):
+                blacklisted = True
 
+        if not blacklisted and 'blacklist_regex' in parameters:
 
+            if is_in_lists(listfiles=parameters['blacklist_regex'], value=uri, match="regex"):
+                blacklisted = True
 
+        if not blacklisted and 'blacklist' in parameters:
 
-		# check whitelists for URI, if blacklisted
-		
-		if blacklisted and 'whitelist_prefix' in parameters:
-			if is_in_lists(listfiles=parameters['whitelist_prefix'], value=uri, match="prefix"):
-				blacklisted = False
-	
-		if blacklisted and 'whitelist_suffix' in parameters:
-			if is_in_lists(listfiles=parameters['whitelist_suffix'], value=uri, match="suffix"):
-				blacklisted = False
+            if is_in_lists(listfiles=parameters['blacklist'], value=uri):
+                blacklisted = True
 
-		if blacklisted and 'whitelist_regex' in parameters:
-			if is_in_lists(listfiles=parameters['whitelist_regex'], value=uri, match="regex"):
-				blacklisted = False
+        # check whitelists for URI, if blacklisted
 
-		if blacklisted and 'whitelist' in parameters:
-			if is_in_lists(listfiles=parameters['whitelist'], value=uri):
-				blacklisted = False
+        if blacklisted and 'whitelist_prefix' in parameters:
+            if is_in_lists(listfiles=parameters['whitelist_prefix'], value=uri, match="prefix"):
+                blacklisted = False
 
+        if blacklisted and 'whitelist_suffix' in parameters:
+            if is_in_lists(listfiles=parameters['whitelist_suffix'], value=uri, match="suffix"):
+                blacklisted = False
 
-		# if blacklisted and not matched whitelist, return parameter break, so no further processing
-		if blacklisted:
-			parameters['break'] = True
-			
-	
-		return parameters, data
+        if blacklisted and 'whitelist_regex' in parameters:
+            if is_in_lists(listfiles=parameters['whitelist_regex'], value=uri, match="regex"):
+                blacklisted = False
+
+        if blacklisted and 'whitelist' in parameters:
+            if is_in_lists(listfiles=parameters['whitelist'], value=uri):
+                blacklisted = False
+
+        # if blacklisted and not matched whitelist, return parameter break, so no further processing
+        if blacklisted:
+            parameters['break'] = True
+
+        return parameters, data

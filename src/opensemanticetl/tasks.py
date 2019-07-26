@@ -6,6 +6,7 @@
 #
 
 # Queue handler
+import time
 from celery import Celery
 from kombu import Queue, Exchange
 
@@ -22,7 +23,8 @@ quiet = False
 
 app = Celery('etl.tasks')
 
-app.conf.CELERY_QUEUES = [Queue('tasks', Exchange('tasks'), routing_key='tasks', queue_arguments={'x-max-priority': 10})]
+app.conf.CELERY_QUEUES = [Queue('tasks', Exchange(
+    'tasks'), routing_key='tasks', queue_arguments={'x-max-priority': 10})]
 
 app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
 app.conf.CELERYD_PREFETCH_MULTIPLIER = 1
@@ -39,7 +41,7 @@ etl_rss = Connector_RSS()
 
 @app.task(name='etl.delete')
 def delete(uri):
-	etl_delete.delete(uri=uri)
+    etl_delete.delete(uri=uri)
 
 
 #
@@ -49,32 +51,34 @@ def delete(uri):
 @app.task(name='etl.index_file')
 def index_file(filename, additional_plugins=[], wait=0, config=None):
 
-	if wait:
-		time.sleep(wait)
+    if wait:
+        time.sleep(wait)
 
-	etl_file = Connector_File()
+    etl_file = Connector_File()
 
-	# set alternate config options (will overwrite config options from config file)
-	if config:
-		for option in config:
-			etl_file.config[option] = config[option]
+    # set alternate config options (will overwrite config options from config file)
+    if config:
+        for option in config:
+            etl_file.config[option] = config[option]
 
-	etl_file.index_file(filename=filename, additional_plugins=additional_plugins)
+    etl_file.index_file(filename=filename,
+                        additional_plugins=additional_plugins)
 
 #
 # Index file directory
 #
 
+
 @app.task(name='etl.index_filedirectory')
 def index_filedirectory(filename):
 
-	from etl_filedirectory import Connector_Filedirectory
+    from etl_filedirectory import Connector_Filedirectory
 
-	connector_filedirectory = Connector_Filedirectory()
+    connector_filedirectory = Connector_Filedirectory()
 
-	result = connector_filedirectory.index(filename)
+    result = connector_filedirectory.index(filename)
 
-	return result
+    return result
 
 
 #
@@ -83,12 +87,13 @@ def index_filedirectory(filename):
 @app.task(name='etl.index_web')
 def index_web(uri, wait=0, downloaded_file=False, downloaded_headers=[]):
 
-	if wait:
-		time.sleep(wait)
+    if wait:
+        time.sleep(wait)
 
-	result = etl_web.index(uri, downloaded_file=downloaded_file, downloaded_headers=downloaded_headers)
+    result = etl_web.index(uri, downloaded_file=downloaded_file,
+                           downloaded_headers=downloaded_headers)
 
-	return result
+    return result
 
 
 #
@@ -98,11 +103,9 @@ def index_web(uri, wait=0, downloaded_file=False, downloaded_headers=[]):
 @app.task(name='etl.index_web_crawl')
 def index_web_crawl(uri, crawler_type="PATH"):
 
-	import etl_web_crawl
+    import etl_web_crawl
 
-	result = etl_web_crawl.index(uri, crawler_type)
-
-	return result
+    etl_web_crawl.index(uri, crawler_type)
 
 
 #
@@ -112,13 +115,13 @@ def index_web_crawl(uri, crawler_type="PATH"):
 @app.task(name='etl.index_sitemap')
 def index_sitemap(uri):
 
-	from etl_sitemap import Connector_Sitemap
+    from etl_sitemap import Connector_Sitemap
 
-	connector_sitemap = Connector_Sitemap()
+    connector_sitemap = Connector_Sitemap()
 
-	result = connector_sitemap.index(uri)
+    result = connector_sitemap.index(uri)
 
-	return result
+    return result
 
 
 #
@@ -128,9 +131,9 @@ def index_sitemap(uri):
 @app.task(name='etl.index_rss')
 def index_rss(uri):
 
-	result = etl_rss.index(uri)
+    result = etl_rss.index(uri)
 
-	return result
+    return result
 
 
 #
@@ -139,54 +142,56 @@ def index_rss(uri):
 
 @app.task(name='etl.enrich')
 def enrich(plugins, uri, wait=0):
-	
-	if wait:
-		time.sleep(wait)
-	
-	etl = ETL()
-	etl.read_configfile('/etc/opensemanticsearch/etl')
-	etl.read_configfile('/etc/opensemanticsearch/enhancer-rdf')
-	
-	etl.config['plugins'] = plugins.split(',')
 
-	filename = uri
+    if wait:
+        time.sleep(wait)
 
-	# if exist delete protocoll prefix file://
-	if filename.startswith("file://"):
-		filename = filename.replace("file://", '', 1)
-	
-	parameters = etl.config.copy()
-			
-	parameters['id'] = uri
-	parameters['filename'] = filename
-	
-	parameters, data = etl.process (parameters=parameters, data={})
+    etl = ETL()
+    etl.read_configfile('/etc/opensemanticsearch/etl')
+    etl.read_configfile('/etc/opensemanticsearch/enhancer-rdf')
 
-	return data
-	
+    etl.config['plugins'] = plugins.split(',')
+
+    filename = uri
+
+    # if exist delete protocoll prefix file://
+    if filename.startswith("file://"):
+        filename = filename.replace("file://", '', 1)
+
+    parameters = etl.config.copy()
+
+    parameters['id'] = uri
+    parameters['filename'] = filename
+
+    parameters, data = etl.process(parameters=parameters, data={})
+
+    return data
+
 
 #
 # Read command line arguments and start
 #
 
-#if running (not imported to use its functions), run main function
+# if running (not imported to use its functions), run main function
 if __name__ == "__main__":
 
-	from optparse import OptionParser 
+    from optparse import OptionParser
 
-	parser = OptionParser("etl-tasks [options]")
-	parser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=False, help="Don\'t print status (filenames) while indexing")
-	parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print debug messages")
+    parser = OptionParser("etl-tasks [options]")
+    parser.add_option("-q", "--quiet", dest="quiet", action="store_true",
+                      default=False, help="Don\'t print status (filenames) while indexing")
+    parser.add_option("-v", "--verbose", dest="verbose",
+                      action="store_true", default=False, help="Print debug messages")
 
-	(options, args) = parser.parse_args()
+    (options, args) = parser.parse_args()
 
-	if options.verbose == False or options.verbose==True:
-		verbose = options.verbose
-		etl_delete.verbose = options.verbose
-		etl_web.verbose = options.verbose
-		etl_rss.verbose = options.verbose
-		
-	if options.quiet == False or options.quiet==True:
-		quiet = options.quiet
+    if options.verbose == False or options.verbose == True:
+        verbose = options.verbose
+        etl_delete.verbose = options.verbose
+        etl_web.verbose = options.verbose
+        etl_rss.verbose = options.verbose
 
-	app.worker_main()
+    if options.quiet == False or options.quiet == True:
+        quiet = options.quiet
+
+    app.worker_main()
