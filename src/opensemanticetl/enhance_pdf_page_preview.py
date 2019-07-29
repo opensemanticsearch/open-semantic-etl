@@ -2,7 +2,6 @@ import sys
 import subprocess
 from pathlib import Path
 import hashlib
-from Crypto.Hash.MD5 import MD5Hash
 
 
 # generate single page PDF for each page of the full PDF for preview so client has not to load full pdf for previewing a page
