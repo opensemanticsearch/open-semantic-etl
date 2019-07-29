@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import json
 import feedparser
 import sys
-import urllib
 
 from etl_web import Connector_Web
 
