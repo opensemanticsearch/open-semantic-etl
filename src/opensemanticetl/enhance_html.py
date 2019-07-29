@@ -2,9 +2,6 @@
 # Extracts text within configured HTML tags / XML tags
 #
 
-import os.path
-import sys
-
 from lxml import etree
 
 
