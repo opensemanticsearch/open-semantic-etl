@@ -4,7 +4,6 @@
 
 
 import requests
-import json
 import etl
 import sys
 import time
