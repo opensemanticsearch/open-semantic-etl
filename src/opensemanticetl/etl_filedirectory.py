@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import os.path
-import sys
-
 from etl_file import Connector_File
 
 #
