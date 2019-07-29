@@ -4,8 +4,6 @@
 import sys
 import urllib.request
 import xml.etree.ElementTree as ElementTree
-from dateutil import parser as dateparser
-import re
 
 from etl_web import Connector_Web
 import tasks
