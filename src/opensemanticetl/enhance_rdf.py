@@ -1,13 +1,10 @@
 import sys
 import logging
 import rdflib
-from rdflib import Graph
-from rdflib import RDFS
-from rdflib import Namespace
 
 # define used ontologies / standards / properties
-skos = Namespace('http://www.w3.org/2004/02/skos/core#')
-owl = Namespace('http://www.w3.org/2002/07/owl#')
+skos = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
+owl = rdflib.Namespace('http://www.w3.org/2002/07/owl#')
 
 import etl
 from etl import ETL
