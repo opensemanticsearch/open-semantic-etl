@@ -185,6 +185,7 @@ class Connector_File(ETL):
 
         parameters, data = self.process(parameters=parameters, data=data)
 
+        return parameters, data
 
 #
 # Read command line arguments and start
