@@ -32,7 +32,9 @@ class Test_ETL_file(unittest.TestCase):
         self.assertTrue('TestPDFOCRImage1Content2' in data['ocr_t'])
         self.assertTrue('TestPDFOCRImage2Content1' in data['ocr_t'])
         self.assertTrue('TestPDFOCRImage2Content2' in data['ocr_t'])
-       
+
+        # check if a plugin threw an exception
+        self.assertEqual(len(data['etl_error_plugins_ss']), 0)
 
 if __name__ == '__main__':
     unittest.main()
