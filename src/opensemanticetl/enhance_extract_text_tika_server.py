@@ -1,8 +1,8 @@
 import os
 import tempfile
-import requests
 import sys
 import time
+import requests
 
 
 # Extract text from file(name)
@@ -15,17 +15,17 @@ class enhance_extract_text_tika_server(object):
         'title': 'title_txt',
     }
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:
             if parameters['verbose']:
                 verbose = True
-
-        debug = False
-        if 'debug' in parameters:
-            if parameters['debug']:
-                debug = True
 
         filename = parameters['filename']
 
