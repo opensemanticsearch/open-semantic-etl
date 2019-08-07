@@ -219,7 +219,11 @@ class enhance_multilingual(object):
 
     exclude_fields_map = {}
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         if 'verbose' in parameters:
             self.verbose = parameters['verbose']

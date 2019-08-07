@@ -11,7 +11,9 @@ import urllib.parse
 
 class export_solr(object):
 
-    def __init__(self, config={}):
+    def __init__(self, config=None):
+        if config is None:
+            config = {}
 
         self.config = config
 
@@ -33,7 +35,11 @@ class export_solr(object):
     # Write data to Solr
     #
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         # if not there, set config defaults
         if 'verbose' in parameters:
@@ -68,7 +74,7 @@ class export_solr(object):
 
     # update document in index, set fields in data to updated or new values or add new/additional values
     # if no document yet, it will be added
-    def update(self, data, add=False, fields_set=[]):
+    def update(self, data, add=False, fields_set=()):
 
         update_fields = {}
 
@@ -87,7 +93,9 @@ class export_solr(object):
 
         self.post(data=update_fields)
 
-    def post(self, data=[], docid=None, commit=None):
+    def post(self, data=None, docid=None, commit=None):
+        if data is None:
+            data = {}
 
         solr_uri = self.solr + self.core + '/update'
 
@@ -115,7 +123,9 @@ class export_solr(object):
             sys.stderr.write('Error while posting data to Solr: {}'.format(e))
 
     # tag a document by adding new value to field
-    def tag(self, docid=None, field=None, value=None, data={}):
+    def tag(self, docid=None, field=None, value=None, data=None):
+        if data is None:
+            data = {}
 
         data_merged = data.copy()
 
@@ -137,7 +147,9 @@ class export_solr(object):
         return result
 
     # search for documents with query and without tag and update them with the tag
-    def update_by_query(self, query, field=None, value=None, data={}, queryparameters=None):
+    def update_by_query(self, query, field=None, value=None, data=None, queryparameters=None):
+        if data is None:
+            data = {}
 
         import pysolr
 

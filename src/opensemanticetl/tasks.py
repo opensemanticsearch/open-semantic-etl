@@ -49,7 +49,7 @@ def delete(uri):
 #
 
 @app.task(name='etl.index_file')
-def index_file(filename, additional_plugins=[], wait=0, config=None):
+def index_file(filename, additional_plugins=(), wait=0, config=None):
 
     if wait:
         time.sleep(wait)
@@ -85,7 +85,7 @@ def index_filedirectory(filename):
 # Index a webpage
 #
 @app.task(name='etl.index_web')
-def index_web(uri, wait=0, downloaded_file=False, downloaded_headers=[]):
+def index_web(uri, wait=0, downloaded_file=False, downloaded_headers=None):
 
     if wait:
         time.sleep(wait)

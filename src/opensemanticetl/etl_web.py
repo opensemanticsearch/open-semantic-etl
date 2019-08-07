@@ -122,7 +122,9 @@ class Connector_Web(Connector_File):
 
         return mtime
 
-    def index(self, uri, last_modified=False, downloaded_file=False, downloaded_headers=[]):
+    def index(self, uri, last_modified=False, downloaded_file=False, downloaded_headers=None):
+        if downloaded_headers is None:
+            downloaded_headers = {}
 
         parameters = self.config.copy()
 

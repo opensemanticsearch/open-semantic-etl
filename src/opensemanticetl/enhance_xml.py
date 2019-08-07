@@ -40,7 +40,11 @@ class enhance_xml(object):
 
         return xmlfilename
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:

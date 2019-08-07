@@ -18,13 +18,13 @@ import filter_blacklist
 
 class ETL(object):
 
-    def __init__(self, plugins=[], verbose=False):
+    def __init__(self, plugins=(), verbose=False):
 
         self.verbose = verbose
 
         self.config = {}
 
-        self.config['plugins'] = plugins
+        self.config['plugins'] = list(plugins)
 
         self.set_configdefaults()
 
@@ -169,7 +169,11 @@ class ETL(object):
 
         return blacklisted
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         if 'plugins' in parameters:
             plugins = parameters['plugins']

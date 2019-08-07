@@ -82,7 +82,11 @@ class enhance_ocr_descew(object):
     # (since we marked documents which were OCRd with ocr_b = true
     query = "content_type_ss: image\/* AND NOT enhance_ocr_descew_b:true"
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:

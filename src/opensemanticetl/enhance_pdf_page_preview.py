@@ -8,7 +8,11 @@ import hashlib
 
 class enhance_pdf_page_preview(object):
 
-    def segment_pdf_to_pages(self, parameters={}, data={}):
+    def segment_pdf_to_pages(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:
@@ -49,7 +53,11 @@ class enhance_pdf_page_preview(object):
 
         return parameters, data
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:

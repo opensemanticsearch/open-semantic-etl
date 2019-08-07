@@ -43,7 +43,11 @@ class enhance_contenttype_group(object):
         '.csv': "Spreadsheet",
     }
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         content_types = data['content_type_ss']
 

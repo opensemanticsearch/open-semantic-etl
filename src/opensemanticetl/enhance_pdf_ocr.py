@@ -90,7 +90,11 @@ def pdfimages2text(filename, lang='eng', verbose=False, pdf_ocr=True, pdf_ocr_de
     return ocr_txt, ocr_descew_txt
 
 
-def enrich_pdf(parameters={}, data={}):
+def enrich_pdf(parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
     verbose = False
     if 'verbose' in parameters:
@@ -168,7 +172,11 @@ class enhance_pdf_ocr(object):
     # (since we marked documents which were OCRd with ocr_b = true
     query = "(content_type:application\/pdf*) AND NOT (etl_enhance_pdf_ocr_b:true)"
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:

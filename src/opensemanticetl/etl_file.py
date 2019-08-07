@@ -163,7 +163,7 @@ class Connector_File(ETL):
                             "Exception while processing a file and exception while printing error message (maybe problem with encoding of filename on console or converting the exception to string?)\n")
 
     # Index a file
-    def index_file(self, filename, additional_plugins=[]):
+    def index_file(self, filename, additional_plugins=()):
 
         # clean filename (convert filename given as URI to filesystem)
         filename = self.clean_filename(filename)
@@ -190,6 +190,7 @@ class Connector_File(ETL):
 #
 # Read command line arguments and start
 #
+
 
 # if running (not imported to use its functions), run main function
 if __name__ == "__main__":

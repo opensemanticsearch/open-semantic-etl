@@ -10,7 +10,11 @@ from etl_file import Connector_File
 
 class enhance_warc(object):
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:
@@ -41,7 +45,9 @@ class enhance_warc(object):
         return parameters, data
 
     # extract content of responses to tempfile and index content file
-    def unwarc_and_index_files(self, warcfilename, parameters={}, verbose=False):
+    def unwarc_and_index_files(self, warcfilename, parameters=None, verbose=False):
+        if parameters is None:
+            parameters = {}
 
         # create temp dir where to unwarc the archive
         if 'tmp' in parameters:

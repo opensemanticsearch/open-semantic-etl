@@ -47,7 +47,11 @@ def taxonomy2fields(field, data, separator="\t", field_suffix="_ss"):
 
 class enhance_entity_linking(object):
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:

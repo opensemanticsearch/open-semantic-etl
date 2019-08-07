@@ -1,7 +1,11 @@
 # Extract text from filename
 class enhance_extract_hashtags(object):
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         minimallenght = 3
 

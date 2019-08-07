@@ -9,7 +9,11 @@ from etl_file import Connector_File
 
 class enhance_zip(object):
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:
@@ -31,7 +35,9 @@ class enhance_zip(object):
         return parameters, data
 
     # unzip all content and index each file with literal filename of the zip file in field container
-    def unzip_and_index_files(self, zipfilename, parameters={}, verbose=False):
+    def unzip_and_index_files(self, zipfilename, parameters=None, verbose=False):
+        if parameters is None:
+            parameters = {}
 
         # create temp dir where to unzip the archive
 

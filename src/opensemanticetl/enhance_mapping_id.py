@@ -8,7 +8,11 @@
 
 class enhance_mapping_id(object):
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         if 'mappings' in parameters:
             parameters['id'] = mapping(
@@ -18,7 +22,9 @@ class enhance_mapping_id(object):
 
 
 # Change value with best/deepest mapping
-def mapping(value, mappings={}):
+def mapping(value, mappings=None):
+    if mapping is None:
+        mappings = {}
 
     best_match_count = -1
 

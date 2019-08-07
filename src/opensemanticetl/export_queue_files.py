@@ -7,11 +7,16 @@ from tasks import index_file
 
 class export_queue_files(object):
 
-    def __init__(self, config={'verbose': False}):
-
+    def __init__(self, config=None):
+        if config is None:
+            config = {'verbose': False}
         self.config = config
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         # add file to ETL queue with standard priorizazion
         # but don't if only plugins not runned that should be runned later with lower priority (which will be added to queue in step below)

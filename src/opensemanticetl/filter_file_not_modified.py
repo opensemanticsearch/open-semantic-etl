@@ -22,7 +22,11 @@ class filter_file_not_modified(object):
         self.force_reindex_if_former_etl_plugin_errors = [
             'enhance_extract_text_tika_server']
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         if 'verbose' in parameters:
             if parameters['verbose']:

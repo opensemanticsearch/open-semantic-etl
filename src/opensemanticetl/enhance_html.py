@@ -37,7 +37,11 @@ class enhance_html(object):
 
         return data
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         self.verbose = False
         if 'verbose' in parameters:

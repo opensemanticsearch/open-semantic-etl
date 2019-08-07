@@ -374,7 +374,11 @@ class enhance_csv(object):
 
         return rownumber
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         docid = parameters['id']
 

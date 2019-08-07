@@ -3,7 +3,9 @@ import pprint
 
 class export_print(object):
 
-    def __init__(self, config={'verbose': False}):
+    def __init__(self, config=None):
+        if config is None:
+            config = {'verbose': False}
 
         self.config = config
 
@@ -11,7 +13,11 @@ class export_print(object):
     # Print data
     #
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         pprint.pprint(data)
 

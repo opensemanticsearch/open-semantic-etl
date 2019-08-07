@@ -16,7 +16,6 @@ class enhance_extract_text_tika_server(object):
     }
 
     def process(self, parameters=None, data=None):
-
         if parameters is None:
             parameters = {}
         if data is None:

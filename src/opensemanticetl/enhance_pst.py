@@ -9,7 +9,11 @@ from etl_file import Connector_File
 
 class enhance_pst(object):
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:
@@ -46,7 +50,9 @@ class enhance_pst(object):
         return parameters, data
 
     # extract all mails and attachments and index each file with id of container
-    def pst2email(self, pstfilename, parameters={}, verbose=False):
+    def pst2email(self, pstfilename, parameters=None, verbose=False):
+        if parameters is None:
+            parameters = {}
 
         # we build temp dirname ourselfes instead of using system_temp_dirname so we can use configurable / external tempdirs
 

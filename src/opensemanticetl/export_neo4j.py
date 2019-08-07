@@ -7,11 +7,16 @@ from py2neo import Graph, Node, Relationship
 
 class export_neo4j(object):
 
-    def __init__(self, config={'verbose': False}):
-
+    def __init__(self, config=None):
+        if config is None:
+            config = {'verbose': False}
         self.config = config
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         if 'verbose' in parameters:
             self.config['verbose'] = parameters['verbose']

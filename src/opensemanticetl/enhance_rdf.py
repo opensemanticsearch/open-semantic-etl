@@ -263,14 +263,20 @@ class enhance_rdf(object):
             # index triple
             etl_processor.process(part_parameters, part_data)
 
-    def etl_graph_file(self, docid, filename, parameters={}):
+    def etl_graph_file(self, docid, filename, parameters=None):
+        if parameters is None:
+            parameters = {}
 
         self.graph = rdflib.Graph()
         self.graph.parse(filename)
 
         self.etl_graph(parameters=parameters)
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         verbose = False
         if 'verbose' in parameters:

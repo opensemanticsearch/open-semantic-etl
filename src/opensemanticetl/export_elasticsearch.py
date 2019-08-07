@@ -5,7 +5,9 @@ from elasticsearch import Elasticsearch
 
 class export_elasticsearch(object):
 
-    def __init__(self, config={}):
+    def __init__(self, config=None):
+        if config is None:
+            config = {}
 
         self.config = config
 
@@ -19,7 +21,11 @@ class export_elasticsearch(object):
     # Write data to Elastic Search
     #
 
-    def process(self, parameters={}, data={}):
+    def process(self, parameters=None, data=None):
+        if parameters is None:
+            parameters = {}
+        if data is None:
+            data = {}
 
         self.config = parameters
 
@@ -29,7 +35,11 @@ class export_elasticsearch(object):
         return parameters, data
 
     # send the updated field data to Elastic Search
-    def update(self, docid=None, data={}, parameters={}):
+    def update(self, docid=None, data=None, parameters=None):
+        if data is None:
+            data = {}
+        if parameters is None:
+            parameters = {}
 
         if docid:
             parameters['id'] = docid
@@ -43,7 +53,9 @@ class export_elasticsearch(object):
         return result
 
     # get last modified date for document
-    def get_lastmodified(self, docid, parameters={}):
+    def get_lastmodified(self, docid, parameters=None):
+        if parameters is None:
+            parameters = {}
 
         es = Elasticsearch()
 
