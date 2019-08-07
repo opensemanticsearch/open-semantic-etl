@@ -35,6 +35,21 @@ Testdata
 
 Test documents located in subdirectory "test":
 
+
 test.pdf
 --------
+
 A test PDF with two pages with text content to test content extraction and embedded images to test OCR.
+
+
+Test_OCR_Image1.png
+-------------------
+
+PNG image with content "TestOCRImage1Content1" and "TestOCRImage1Content2" to test OCR.
+
+
+Test_OCR_Image2.jpg
+-------------------
+
+JPEG image with content "TestOCRImage2Content1" and "TestOCRImage2Content2" to test OCR.
+
