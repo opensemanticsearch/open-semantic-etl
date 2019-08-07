@@ -91,10 +91,10 @@ def pdfimages2text(filename, lang='eng', verbose=False, pdf_ocr=True, pdf_ocr_de
 
 
 def enrich_pdf(parameters=None, data=None):
-        if parameters is None:
-            parameters = {}
-        if data is None:
-            data = {}
+    if parameters is None:
+        parameters = {}
+    if data is None:
+        data = {}
 
     verbose = False
     if 'verbose' in parameters:
