@@ -15,7 +15,6 @@ class Test_enhance_ner_spacy(unittest.TestCase):
         data = { 'content_txt': "Some years ago, Mr. Barack Obama, a member of Democratic Party, was president of the USA." }
 
         parameters, data = enhancer.process(parameters=parameters, data=data)
-        print (data)
 
         self.assertTrue('Barack Obama' in data['person_ss'])
         self.assertTrue('Democratic Party' in data['organization_ss'])
@@ -30,7 +29,6 @@ class Test_enhance_ner_spacy(unittest.TestCase):
         data = { 'content_txt': "Frau Dr. Angela Merkel, Mitglied der CDU, wurde Kanzlerin in Deutschland." }
 
         parameters, data = enhancer.process(parameters=parameters, data=data)
-        print (data)
 
         self.assertTrue('Angela Merkel' in data['person_ss'])
         self.assertTrue('CDU' in data['organization_ss'])
