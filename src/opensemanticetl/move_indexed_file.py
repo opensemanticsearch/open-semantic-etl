@@ -34,7 +34,27 @@ def move_files(host: str, moves: dict, prefix=""):
     post(host, request_payload)
 
 
-def change_path(prefix):
+def move_dir(host: str, src: str, dest: str, prefix=""):
+    """Moves directories within the index (not physically).
+
+    Example of usage:
+    host = "http://solr:8983/solr/opensemanticsearch/"
+    move_dir(host, src=/docs/a/, dest=/docs/b, prefix="file://")
+
+
+    :host: Url to the solr instance
+    :src: Source directory
+    :dest: Destination directory
+    """
+    indexed_data = get_files_in_dir(host, src)
+    moved_data = map(change_dir(prefix, src=src, dest=dest),
+                     indexed_data)
+    request_payload = prepare_payload(
+        moved_data, (d["id"] for d in indexed_data))
+    post(host, request_payload)
+
+
+def change_path(prefix: str):
     """Returns a mapping function to be used with starmap
     """
     def change(data: dict, dest: str) -> dict:
@@ -43,20 +63,59 @@ def change_path(prefix):
         :data: The indexed metadata of the moved file
         :dest: The destination path
         """
-        _, *path_components, base_name = dest.split("/")
-        moved_data = data.copy()
-        del moved_data["_version_"]
-        moved_data["id"] = prefix + dest
-        moved_data.update({"path{}_s".format(i): component
-                           for i, component in enumerate(path_components)})
-        moved_data["path_basename_s"] = base_name
-        n = len(path_components)
-        while True:
-            if moved_data.pop("path{}_s".format(n), None) is None:
-                break
-            n += 1
-        return moved_data
+        dest_components = dest.strip("/").split("/")
+        return _change_path(data, dest_components, prefix=prefix)
     return change
+
+
+def change_dir(prefix: str, src: str, dest: str):
+    """Returns a mapping function to be used with map
+    """
+    dest_components = dest.strip("/").split("/")
+    src_path_components = src.strip("/").split("/")
+
+    def change(data: dict) -> dict:
+        """Creates a modified version of data
+
+        :data: The indexed metadata of the moved file
+        :dest: The destination path
+        """
+        indexed_components = extract_path_components(data)
+        # Attention: zip consumes the generator up to the number
+        # of elements in indexed_components. If you switch the two
+        # arguments of zip, an additional element will be consumed
+        # from indexed_components, as zip will perform a next on
+        # its first argument to see if the iterable is exhausted.
+        for idx_component, src_component in zip(src_path_components,
+                                                indexed_components):
+            if idx_component != src_component:
+                raise ValueError(
+                    "Path component of file and input file differs: '"
+                    + idx_component + "' <-> '" + src_component + "'")
+        return _change_path(data, dest_components + list(indexed_components),
+                            prefix=prefix)
+    return change
+
+
+def _change_path(data: dict, dest_components: tuple, prefix: str = "") -> dict:
+    """Creates a modified version of data
+
+    :data: The indexed metadata of the moved file
+    :dest_components: The destination path split into components
+    """
+    moved_data = data.copy()
+    del moved_data["_version_"]
+    moved_data["id"] = prefix + "/" + "/".join(dest_components)
+    *dest_dir_components, base_name = dest_components
+    moved_data.update({"path{}_s".format(i): component
+                       for i, component in enumerate(dest_dir_components)})
+    moved_data["path_basename_s"] = base_name
+    n = len(dest_dir_components)
+    while True:
+        if moved_data.pop("path{}_s".format(n), None) is None:
+            break
+        n += 1
+    return moved_data
 
 
 def prepare_payload(adds, delete_ids):
@@ -112,12 +171,39 @@ def append_prefix(prefix: str):
 
 def get_files(host: str, ids: list) -> list:
     """Queries solr, searches for files whose id is in :ids:"""
-    response = urllib.request.urlopen(
-        host + "select?q="
-        + urllib.parse.quote("(" + ", ".join(
-            map('id:"{}"'.format, ids)) + ")"))
-    data = json.loads(response.read().decode())
-    return data["response"]["docs"]
+    return get(host,
+               "(" + ", ".join(
+                   map('id:"{}"'.format, ids)) + ")"
+               )
+
+
+def get_files_in_dir(host: str, path: str) -> list:
+    """Queries solr, searches for files in the folder :path:"""
+    path_components = path.strip("/").split("/")
+    return get(host,
+               " AND ".join(
+                   starmap(
+                       'path{}_s:"{}"'.format, enumerate(path_components)
+                   )))
+
+
+def get(host: str, query: str) -> list:
+    return sum(get_pages(host, query), [])
+
+
+def get_pages(host: str, query: str, limit=50):
+    """An iterator over the pages of a solr request response"""
+    start = 0
+    n_docs = limit
+    query_url_template = host + "select?start={}&rows={}&q={}".format(
+        "{}", limit, urllib.parse.quote(query))
+    while start < n_docs:
+        response = urllib.request.urlopen(
+            query_url_template.format(start))
+        data = json.loads(response.read().decode())["response"]
+        n_docs = data["numFound"]
+        start += limit
+        yield data["docs"]
 
 
 def post(host: str, data: dict):

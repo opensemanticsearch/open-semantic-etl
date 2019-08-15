@@ -11,7 +11,7 @@ from tasks import delete
 from etl import ETL
 from enhance_mapping_id import mapping
 
-from move_indexed_file import move_files
+from move_indexed_file import move_files, move_dir
 
 
 class EventHandler(pyinotify.ProcessEvent):
@@ -31,7 +31,10 @@ class EventHandler(pyinotify.ProcessEvent):
         if self.verbose:
             print("Move: {} -> {}".format(event.src_pathname, event.pathname))
 
-        self.move_file(src=event.src_pathname, dest=event.pathname)
+        if event.dir:
+            self.move_dir(src=event.src_pathname, dest=event.pathname)
+        else:
+            self.move_file(src=event.src_pathname, dest=event.pathname)
 
     def process_IN_DELETE(self, event):
 
@@ -51,6 +54,14 @@ class EventHandler(pyinotify.ProcessEvent):
         if not solr_uri.endswith("/"):
             solr_uri += "/"
         move_files(solr_uri, moves={src: dest}, prefix="file://")
+
+    def move_dir(self, src, dest):
+        if self.verbose:
+            print("Moving dir from {} to {}".format(src, dest))
+        solr_uri = self.config["solr"] + self.config["index"]
+        if not solr_uri.endswith("/"):
+            solr_uri += "/"
+        move_dir(solr_uri, src=src, dest=dest, prefix="file://")
 
     def index_file(self, filename):
         if self.verbose:
@@ -81,7 +92,21 @@ class Filemonitor(ETL):
 
         self.read_configfiles()
 
-        self.mask = pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM  # watched events
+        # Watched events
+        #
+        # We need IN_MOVE_SELF to track moved folder paths
+        # pyinotify-internally. If omitted, the os instructions
+        # mv /docs/src /docs/dest; touch /docs/dest/doc.pdf
+        # will produce a IN_MOVED_TO pathname=/docs/dest/ followed by
+        # IN_CLOSE_WRITE pathname=/docs/src/doc.pdf
+        # where we would like a IN_CLOSE_WRITE pathname=/docs/dest/doc.pdf
+        self.mask = (
+            pyinotify.IN_DELETE
+            | pyinotify.IN_CLOSE_WRITE
+            | pyinotify.IN_MOVED_TO
+            | pyinotify.IN_MOVED_FROM
+            | pyinotify.IN_MOVE_SELF
+        )
 
         self.watchmanager = pyinotify.WatchManager()  # Watch Manager
 
