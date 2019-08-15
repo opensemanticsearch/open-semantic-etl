@@ -11,11 +11,13 @@ from tasks import delete
 from etl import ETL
 from enhance_mapping_id import mapping
 
+from move_indexed_file import move_files
+
 
 class EventHandler(pyinotify.ProcessEvent):
 
     def __init__(self):
-
+        super().__init__()
         self.verbose = False
         self.config = {}
 
@@ -23,52 +25,50 @@ class EventHandler(pyinotify.ProcessEvent):
         if self.verbose:
             print("Close_write: {}".format(event.pathname))
 
-        self.process(filename=event.pathname, function="index-file")
+        self.index_file(filename=event.pathname)
 
     def process_IN_MOVED_TO(self, event):
         if self.verbose:
-            print("Moved_to: {}".format(event.pathname))
+            print("Move: {} -> {}".format(event.src_pathname, event.pathname))
 
-        self.process(filename=event.pathname, function="index-file")
-
-    def process_IN_MOVED_FROM(self, event):
-        if self.verbose:
-            print("Moved_from: {}".format(event.pathname))
-
-        self.process(filename=event.pathname, function="delete")
+        self.move_file(src=event.src_pathname, dest=event.pathname)
 
     def process_IN_DELETE(self, event):
 
         if self.verbose:
             print("Delete {}:".format(event.pathname))
 
-        self.process(filename=event.pathname, function="delete")
+        self.delete_file(filename=event.pathname)
 
     #
     # write to queue
     #
 
-    def process(self, filename, function):
+    def move_file(self, src, dest):
+        if self.verbose:
+            print("Moving file from {} to {}".format(src, dest))
+        solr_uri = self.config["solr"] + self.config["index"]
+        if not solr_uri.endswith("/"):
+            solr_uri += "/"
+        move_files(solr_uri, moves={src: dest}, prefix="file://")
 
-        if function == 'index-file':
+    def index_file(self, filename):
+        if self.verbose:
+            print("Indexing file {}".format(filename))
 
-            if self.verbose:
-                print("Indexing file {}".format(filename))
+        index_file.apply_async(
+            kwargs={'filename': filename}, queue='tasks', priority=5)
 
-            index_file.apply_async(
-                kwargs={'filename': filename}, queue='tasks', priority=5)
+    def delete_file(self, filename):
+        uri = filename
+        if 'mappings' in self.config:
+            uri = mapping(value=uri, mappings=self.config['mappings'])
 
-        elif function == 'delete':
+        if self.verbose:
+            print("Deleting from index filename {} with URL {}".format(
+                filename, uri))
 
-            uri = filename
-            if 'mappings' in self.config:
-                uri = mapping(value=uri, mappings=self.config['mappings'])
-
-            if self.verbose:
-                print("Deleting from index filename {} with URL {}".format(
-                    filename, uri))
-
-            delete.apply_async(kwargs={'uri': uri}, queue='tasks', priority=6)
+        delete.apply_async(kwargs={'uri': uri}, queue='tasks', priority=6)
 
 
 class Filemonitor(ETL):
@@ -102,7 +102,8 @@ class Filemonitor(ETL):
         self.watchmanager.add_watch(
             filename, self.mask, rec=True, auto_add=True)
 
-    def add_watches_from_file(self, filename):
+    @staticmethod
+    def add_watches_from_file(filename):
         listfile = open(filename)
         for line in listfile:
             filename = line.strip()
@@ -132,8 +133,8 @@ filemonitor = Filemonitor(verbose=options.verbose)
 
 
 # add watches for every file/dir given as command line parameter
-for filename in args:
-    filemonitor.add_watch(filename)
+for _filename in args:
+    filemonitor.add_watch(_filename)
 
 
 # add watches for every file/dir in list file
