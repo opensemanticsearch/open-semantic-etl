@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import pyinotify
+from argparse import ArgumentParser
 
-from optparse import OptionParser
+import pyinotify
 
 from tasks import index_file
 from tasks import delete
@@ -121,25 +121,28 @@ class Filemonitor(ETL):
 
 
 # parse command line options
-parser = OptionParser("etl-filemonitor [options] filename")
-parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true", default=False, help="Print debug messages")
-parser.add_option("-f", "--fromfile", dest="fromfile",
-                  default=False, help="File names config")
-(options, args) = parser.parse_args()
+parser = ArgumentParser(description="etl-filemonitor")
+parser.add_argument("-v", "--verbose", dest="verbose",
+                    action="store_true", default=False,
+                    help="Print debug messages")
+parser.add_argument("-f", "--fromfile", dest="fromfile",
+                    default=None, help="File names config")
+parser.add_argument("watchfiles", nargs="*",
+                    default=(), help="Files / directories to watch")
+args = parser.parse_args()
 
 
-filemonitor = Filemonitor(verbose=options.verbose)
+filemonitor = Filemonitor(verbose=args.verbose)
 
 
 # add watches for every file/dir given as command line parameter
-for _filename in args:
+for _filename in args.watchfiles:
     filemonitor.add_watch(_filename)
 
 
 # add watches for every file/dir in list file
-if options.fromfile:
-    filemonitor.add_watches_from_file(options.fromfile)
+if args.fromfile is not None:
+    filemonitor.add_watches_from_file(args.fromfile)
 
 
 # start watching
