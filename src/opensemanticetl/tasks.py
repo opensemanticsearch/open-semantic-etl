@@ -63,6 +63,7 @@ def index_file(filename, additional_plugins=(), wait=0, config=None):
 
     etl_file.index_file(filename=filename,
                         additional_plugins=additional_plugins)
+    etl_file.commit()
 
 #
 # Index file directory
@@ -77,6 +78,7 @@ def index_filedirectory(filename):
     connector_filedirectory = Connector_Filedirectory()
 
     result = connector_filedirectory.index(filename)
+    connector_filedirectory.commit()
 
     return result
 
