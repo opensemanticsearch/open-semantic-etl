@@ -68,7 +68,7 @@ class filter_file_not_modified(object):
             export = parameters['export']
             module = importlib.import_module(export)
             objectreference = getattr(module, export)
-            exporter = objectreference()
+            exporter = objectreference(parameters)
 
             # get modtime and ETL errors from document saved in index
             metadatafields = ['file_modified_dt', 'etl_error_plugins_ss']
