@@ -205,57 +205,60 @@ class Connector_File(ETL):
 # if running (not imported to use its functions), run main function
 if __name__ == "__main__":
 
-    from optparse import OptionParser
+    from argparse import ArgumentParser
 
     # get uri or filename and (optional) parameters from args
 
-    parser = OptionParser("etl-file [options] filename")
-    parser.add_option("-q", "--quiet", dest="quiet", action="store_true",
-                      default=None, help="Don\'t print status (filenames) while indexing")
-    parser.add_option("-v", "--verbose", dest="verbose",
-                      action="store_true", default=None, help="Print debug messages")
-    parser.add_option("-f", "--force", dest="force", action="store_true",
-                      default=None, help="Force (re)indexing, even if no changes")
-    parser.add_option("-c", "--config", dest="config",
-                      default=False, help="Config file")
-    parser.add_option("-p", "--plugins", dest="plugins", default=False,
-                      help="Plugin chain to use instead configured plugins (comma separated and in order)")
-    parser.add_option("-a", "--additional-plugins", dest="additional_plugins", default=False,
-                      help="Plugins to add to default/configured plugins (comma separated and in order)")
-    parser.add_option("-w", "--outputfile", dest="outputfile",
-                      default=False, help="Output file")
+    def key_val(s):
+        return s.split("=")
 
-    (options, args) = parser.parse_args()
+    parser = ArgumentParser("etl-file")
+    parser.add_argument("-q", "--quiet",
+                        action="store_true",
+                        default=None,
+                        help="Don\'t print status (filenames) while indexing")
+    parser.add_argument("-v", "--verbose", dest="verbose",
+                        action="store_true",
+                        default=None, help="Print debug messages")
+    parser.add_argument("-f", "--force", dest="force", action="store_true",
+                        default=None,
+                        help="Force (re)indexing, even if no changes")
+    parser.add_argument("-c", "--config",
+                        help="Config file")
+    parser.add_argument("-p", "--plugins",
+                        type=lambda s: s.split(","),
+                        help="Plugin chain to use instead configured "
+                        "plugins (comma separated and in order)")
+    parser.add_argument("-a", "--additional-plugins",
+                        dest="additional_plugins",
+                        type=lambda s: s.split(","),
+                        help="Plugins to add to default/configured plugins"
+                        " (comma separated and in order)")
+    parser.add_argument("-w", "--outputfile", dest="outputfile",
+                        help="Output file")
+    parser.add_argument("args", nargs="+", help="Input files")
 
-    if len(args) < 1:
-        parser.error("No filename given")
+    options = {key: val for key, val in vars(parser.parse_args()).items()
+               if val is not None}
+
+    args = options.pop("args")
 
     connector = Connector_File()
 
     # add optional config parameters
-    if options.config:
-        connector.read_configfile(options.config)
+    config = options.pop("config", None)
+    if config:
+        connector.read_configfile(config)
 
-    if options.outputfile:
-        connector.config['outputfile'] = options.outputfile
+    plugins = options.pop("plugins", []) + \
+        options.pop("additional_plugins", [])
 
     # set (or if config overwrite) plugin config
-    if options.plugins:
-        connector.config['plugins'] = options.plugins.split(',')
+    if plugins:
+        connector.config['plugins'] = plugins
 
-    # add addional plugin
-    if options.additional_plugins:
-        connector.config['plugins'].extend(
-            options.additional_plugins.split(','))
 
-    if options.verbose == False or options.verbose == True:
-        connector.verbose = options.verbose
-
-    if options.quiet == False or options.quiet == True:
-        connector.quiet = options.quiet
-
-    if options.force == False or options.force == True:
-        connector.config['force'] = options.force
+    connector.config.update(options)
 
     # index each filename
     for filename in args:
