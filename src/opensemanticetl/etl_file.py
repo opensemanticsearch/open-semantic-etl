@@ -23,7 +23,9 @@ class Connector_File(ETL):
         #
         # Standard config
         #
-        # Do not edit config here! Overwrite options in /etc/etl/ or /etc/opensemanticsearch/connector-files
+        # Do not edit config here!
+        # Overwrite options in /etc/etl/
+        # or /etc/opensemanticsearch/connector-files
         #
 
         ETL.set_configdefaults(self)
@@ -33,8 +35,9 @@ class Connector_File(ETL):
         # filename to URI mapping
         self.config['mappings'] = {"/": "file:///"}
 
-        self.config['facet_path_strip_prefix'] = ["file://",
-                                                  "http://www.", "https://www.", "http://", "https://"]
+        self.config['facet_path_strip_prefix'] = [
+            "file://",
+            "http://www.", "https://www.", "http://", "https://"]
 
         self.config['plugins'] = [
             'enhance_mapping_id',
@@ -134,7 +137,8 @@ class Connector_File(ETL):
     # walk trough all sub directories and call index_file for each file
     def index_dir(self, rootDir, followlinks=False):
 
-        for dirName, subdirList, fileList in os.walk(rootDir, followlinks=followlinks):
+        for dirName, subdirList, fileList in os.walk(rootDir,
+                                                     followlinks=followlinks):
 
             if self.verbose:
                 print("Scanning directory: {}".format(dirName))
@@ -156,11 +160,15 @@ class Connector_File(ETL):
                     raise KeyboardInterrupt
                 except BaseException as e:
                     try:
-                        sys.stderr.write("Exception while processing file {}{}{} : {}\n".format(
-                            dirName, os.path.sep, fileName, e))
-                    except:
                         sys.stderr.write(
-                            "Exception while processing a file and exception while printing error message (maybe problem with encoding of filename on console or converting the exception to string?)\n")
+                            "Exception while processing file {}{}{} : {}\n"
+                            .format(dirName, os.path.sep, fileName, e))
+                    except BaseException:
+                        sys.stderr.write(
+                            "Exception while processing a file and exception "
+                            "while printing error message (maybe problem with"
+                            " encoding of filename on console or converting "
+                            "the exception to string?)\n")
 
     # Index a file
     def index_file(self, filename, additional_plugins=()):
@@ -168,7 +176,9 @@ class Connector_File(ETL):
         # clean filename (convert filename given as URI to filesystem)
         filename = self.clean_filename(filename)
 
-        # fresh parameters / chain for each file (so processing one file will not change config/parameters for next, if directory or multiple files, which would happen if given by reference)
+        # fresh parameters / chain for each file (so processing one file will
+        # not change config/parameters for next, if directory or multiple
+        # files, which would happen if given by reference)
         parameters = self.config.copy()
         if additional_plugins:
             parameters['plugins'].extend(additional_plugins)
