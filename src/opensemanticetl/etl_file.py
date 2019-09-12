@@ -236,6 +236,10 @@ if __name__ == "__main__":
                         " (comma separated and in order)")
     parser.add_argument("-w", "--outputfile", dest="outputfile",
                         help="Output file")
+    parser.add_argument("--param", action="append",
+                        type=key_val,
+                        help="Set a config parameter (key=value). "
+                        "Can be specified multiple times")
     parser.add_argument("args", nargs="+", help="Input files")
 
     options = {key: val for key, val in vars(parser.parse_args()).items()
@@ -257,6 +261,7 @@ if __name__ == "__main__":
     if plugins:
         connector.config['plugins'] = plugins
 
+    connector.config.update(dict(options.pop("param", {})))
 
     connector.config.update(options)
 

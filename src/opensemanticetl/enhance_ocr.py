@@ -117,7 +117,8 @@ class enhance_ocr(object):
                       .format(mimetype))
 
             ocr_txt = image2text(filename=filename, lang=lang,
-                                 verbose=verbose)
+                                 verbose=verbose,
+                                 cache=parameters.get("ocr_cache"))
 
             if ocr_txt:
                 data['ocr_t'] = ocr_txt

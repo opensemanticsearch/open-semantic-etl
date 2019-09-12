@@ -1,7 +1,9 @@
 import os.path
 import sys
 import subprocess
+import hashlib
 import tempfile
+import json
 import enhance_ocr
 import enhance_ocr_descew
 
@@ -14,6 +16,12 @@ def pdfimages2text(filename, lang='eng', verbose=False,
                    cache=None):
     ocr_txt = {}
     ocr_descew_txt = {}
+    if cache is not None:
+        try:
+            return load_cache(filename, cache, lang, pdf_ocr, pdf_ocr_descew)
+        except (FileNotFoundError, KeyError):
+            if verbose:
+                print('Not in OCR cache, starting OCR for {}'.format(filename))
 
     ocr_temp_dirname = tempfile.mkdtemp(prefix="opensemanticetl_pdf_ocr_")
 
@@ -80,6 +88,22 @@ def pdfimages2text(filename, lang='eng', verbose=False,
     return ocr_txt, ocr_descew_txt
 
 
+def load_cache(filename, cache, lang='eng',
+               pdf_ocr=True, pdf_ocr_descew=False):
+    md5hash = hashlib.md5(open(filename, 'rb').read()).hexdigest()
+    ocr_cache_filename = cache + os.path.sep + \
+        "{}-{}.json".format(lang, md5hash)
+    with open(ocr_cache_filename) as f:
+        dct = json.load(f)
+        ocr_txt = None
+        ocr_descew_txt = None
+        if pdf_ocr:
+            ocr_txt = dict(enumerate(dct["ocr_txt"], 1))
+        if pdf_ocr_descew:
+            ocr_descew_txt = dict(enumerate(dct["ocr_descew_txt"], 1))
+        return ocr_txt, ocr_descew_txt
+
+
 def append_page(dct, n, page):
     if n in dct:
         dct[n] += '\n' + page
@@ -110,7 +134,8 @@ def enrich_pdf(parameters=None, data=None):
     try:
         ocr_txt, ocr_optimized_txt = pdfimages2text(
             filename=filename, lang=lang, verbose=verbose,
-            pdf_ocr=True, pdf_ocr_descew=pdf_ocr_descew)
+            pdf_ocr=True, pdf_ocr_descew=pdf_ocr_descew,
+            cache=parameters.get("ocr_cache"))
     except BaseException as e:
         sys.stderr.write(
             "Exception while OCR the PDF {} - {}\n".format(filename, e))
