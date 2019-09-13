@@ -14,7 +14,7 @@ from entity_linking.entity_linker import Entity_Linker
 #
 # split a taxonomy entry to separated index fields
 #
-def taxonomy2fields(field, data, separator="\t", field_suffix="_ss"):
+def taxonomy2fields(taxonomy, field, separator="\t", subfields_suffix="_ss"):
 
     result = {}
 
@@ -22,13 +22,13 @@ def taxonomy2fields(field, data, separator="\t", field_suffix="_ss"):
     if not isinstance(data, list):
         data = [data]
 
-    for taxonomy_entry in data:
+    for taxonomy_entry in taxonomy:
 
         i = 0
         path = ''
         for taxonomy_entry_part in taxonomy_entry.split(separator):
 
-            taxonomy_fieldname = field + '_taxonomy_' + str(i) + field_suffix
+            taxonomy_fieldname = field + '_taxonomy_' + str(i) + subfields_suffix
 
             if not taxonomy_fieldname in result:
                 result[taxonomy_fieldname] = []
@@ -218,7 +218,7 @@ class enhance_entity_linking(object):
                             for taxonomy_field in taxonomy_fields:
                                 if taxonomy_field in candidate:
                                     separated_taxonomy_fields = taxonomy2fields(
-                                        field=facet, data=candidate[taxonomy_field])
+                                        taxonomy=candidate[taxonomy_field], field=facet)
                                     for separated_taxonomy_field in separated_taxonomy_fields:
                                         etl.append(
                                             data, separated_taxonomy_field, separated_taxonomy_fields[separated_taxonomy_field])
