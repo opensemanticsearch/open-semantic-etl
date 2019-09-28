@@ -19,8 +19,8 @@ def taxonomy2fields(taxonomy, field, separator="\t", subfields_suffix="_ss"):
     result = {}
 
     # if not multivalued field, convert to used list/array strucutre
-    if not isinstance(data, list):
-        data = [data]
+    if not isinstance(taxonomy, list):
+        taxonomy = [taxonomy]
 
     for taxonomy_entry in taxonomy:
 
