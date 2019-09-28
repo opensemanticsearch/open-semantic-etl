@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import pyinotify
+from argparse import ArgumentParser
 
-from optparse import OptionParser
+import pyinotify
 
 from tasks import index_file
 from tasks import delete
@@ -11,11 +11,13 @@ from tasks import delete
 from etl import ETL
 from enhance_mapping_id import mapping
 
+from move_indexed_file import move_files, move_dir
+
 
 class EventHandler(pyinotify.ProcessEvent):
 
     def __init__(self):
-
+        super().__init__()
         self.verbose = False
         self.config = {}
 
@@ -23,52 +25,61 @@ class EventHandler(pyinotify.ProcessEvent):
         if self.verbose:
             print("Close_write: {}".format(event.pathname))
 
-        self.process(filename=event.pathname, function="index-file")
+        self.index_file(filename=event.pathname)
 
     def process_IN_MOVED_TO(self, event):
         if self.verbose:
-            print("Moved_to: {}".format(event.pathname))
+            print("Move: {} -> {}".format(event.src_pathname, event.pathname))
 
-        self.process(filename=event.pathname, function="index-file")
-
-    def process_IN_MOVED_FROM(self, event):
-        if self.verbose:
-            print("Moved_from: {}".format(event.pathname))
-
-        self.process(filename=event.pathname, function="delete")
+        if event.dir:
+            self.move_dir(src=event.src_pathname, dest=event.pathname)
+        else:
+            self.move_file(src=event.src_pathname, dest=event.pathname)
 
     def process_IN_DELETE(self, event):
 
         if self.verbose:
             print("Delete {}:".format(event.pathname))
 
-        self.process(filename=event.pathname, function="delete")
+        self.delete_file(filename=event.pathname)
 
     #
     # write to queue
     #
 
-    def process(self, filename, function):
+    def move_file(self, src, dest):
+        if self.verbose:
+            print("Moving file from {} to {}".format(src, dest))
+        solr_uri = self.config["solr"] + self.config["index"]
+        if not solr_uri.endswith("/"):
+            solr_uri += "/"
+        move_files(solr_uri, moves={src: dest}, prefix="file://")
 
-        if function == 'index-file':
+    def move_dir(self, src, dest):
+        if self.verbose:
+            print("Moving dir from {} to {}".format(src, dest))
+        solr_uri = self.config["solr"] + self.config["index"]
+        if not solr_uri.endswith("/"):
+            solr_uri += "/"
+        move_dir(solr_uri, src=src, dest=dest, prefix="file://")
 
-            if self.verbose:
-                print("Indexing file {}".format(filename))
+    def index_file(self, filename):
+        if self.verbose:
+            print("Indexing file {}".format(filename))
 
-            index_file.apply_async(
-                kwargs={'filename': filename}, queue='tasks', priority=5)
+        index_file.apply_async(
+            kwargs={'filename': filename}, queue='tasks', priority=5)
 
-        elif function == 'delete':
+    def delete_file(self, filename):
+        uri = filename
+        if 'mappings' in self.config:
+            uri = mapping(value=uri, mappings=self.config['mappings'])
 
-            uri = filename
-            if 'mappings' in self.config:
-                uri = mapping(value=uri, mappings=self.config['mappings'])
+        if self.verbose:
+            print("Deleting from index filename {} with URL {}".format(
+                filename, uri))
 
-            if self.verbose:
-                print("Deleting from index filename {} with URL {}".format(
-                    filename, uri))
-
-            delete.apply_async(kwargs={'uri': uri}, queue='tasks', priority=6)
+        delete.apply_async(kwargs={'uri': uri}, queue='tasks', priority=6)
 
 
 class Filemonitor(ETL):
@@ -81,7 +92,21 @@ class Filemonitor(ETL):
 
         self.read_configfiles()
 
-        self.mask = pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM  # watched events
+        # Watched events
+        #
+        # We need IN_MOVE_SELF to track moved folder paths
+        # pyinotify-internally. If omitted, the os instructions
+        # mv /docs/src /docs/dest; touch /docs/dest/doc.pdf
+        # will produce a IN_MOVED_TO pathname=/docs/dest/ followed by
+        # IN_CLOSE_WRITE pathname=/docs/src/doc.pdf
+        # where we would like a IN_CLOSE_WRITE pathname=/docs/dest/doc.pdf
+        self.mask = (
+            pyinotify.IN_DELETE
+            | pyinotify.IN_CLOSE_WRITE
+            | pyinotify.IN_MOVED_TO
+            | pyinotify.IN_MOVED_FROM
+            | pyinotify.IN_MOVE_SELF
+        )
 
         self.watchmanager = pyinotify.WatchManager()  # Watch Manager
 
@@ -102,7 +127,8 @@ class Filemonitor(ETL):
         self.watchmanager.add_watch(
             filename, self.mask, rec=True, auto_add=True)
 
-    def add_watches_from_file(self, filename):
+    @staticmethod
+    def add_watches_from_file(filename):
         listfile = open(filename)
         for line in listfile:
             filename = line.strip()
@@ -120,25 +146,28 @@ class Filemonitor(ETL):
 
 
 # parse command line options
-parser = OptionParser("etl-filemonitor [options] filename")
-parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true", default=False, help="Print debug messages")
-parser.add_option("-f", "--fromfile", dest="fromfile",
-                  default=False, help="File names config")
-(options, args) = parser.parse_args()
+parser = ArgumentParser(description="etl-filemonitor")
+parser.add_argument("-v", "--verbose", dest="verbose",
+                    action="store_true", default=False,
+                    help="Print debug messages")
+parser.add_argument("-f", "--fromfile", dest="fromfile",
+                    default=None, help="File names config")
+parser.add_argument("watchfiles", nargs="*",
+                    default=(), help="Files / directories to watch")
+args = parser.parse_args()
 
 
-filemonitor = Filemonitor(verbose=options.verbose)
+filemonitor = Filemonitor(verbose=args.verbose)
 
 
 # add watches for every file/dir given as command line parameter
-for filename in args:
-    filemonitor.add_watch(filename)
+for _filename in args.watchfiles:
+    filemonitor.add_watch(_filename)
 
 
 # add watches for every file/dir in list file
-if options.fromfile:
-    filemonitor.add_watches_from_file(options.fromfile)
+if args.fromfile is not None:
+    filemonitor.add_watches_from_file(args.fromfile)
 
 
 # start watching
