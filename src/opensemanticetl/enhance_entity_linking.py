@@ -28,7 +28,7 @@ def taxonomy2fields(taxonomy, field, separator="\t", subfields_suffix="_ss"):
         path = ''
         for taxonomy_entry_part in taxonomy_entry.split(separator):
 
-            taxonomy_fieldname = field + '_taxonomy_' + str(i) + subfields_suffix
+            taxonomy_fieldname = field + '_taxonomy' + str(i) + subfields_suffix
 
             if not taxonomy_fieldname in result:
                 result[taxonomy_fieldname] = []
