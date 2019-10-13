@@ -261,7 +261,6 @@ class enhance_rdf(object):
 
             # index subject
             etl_processor.process(part_parameters, part_data)
-            print (part_data)
 
     def etl_graph_file(self, docid, filename, parameters=None):
         if parameters is None:
