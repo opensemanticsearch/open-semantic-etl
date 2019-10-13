@@ -34,7 +34,7 @@ class enhance_rdf(object):
 
         # get all labels for this obj
         for label in self.graph.objects(subject=subject, predicate=rdflib.RDFS.label):
-            labels.append(label)
+            labels.append(str(label))
 
         #
         # append SKOS labels
@@ -43,15 +43,15 @@ class enhance_rdf(object):
         # append SKOS prefLabel
         skos = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
         for label in self.graph.objects(subject=subject, predicate=skos['prefLabel']):
-            labels.append(label)
+            labels.append(str(label))
 
         # append SKOS altLabels
         for label in self.graph.objects(subject=subject, predicate=skos['altLabel']):
-            labels.append(label)
+            labels.append(str(label))
 
         # append SKOS hiddenLabels
         for label in self.graph.objects(subject=subject, predicate=skos['hiddenLabel']):
-            labels.append(label)
+            labels.append(str(label))
 
         return labels
 
@@ -76,10 +76,10 @@ class enhance_rdf(object):
                 if self.verbose:
                     print("No label for this object, using URI {}".format(obj))
 
-                values = obj
+                values = str(obj)
 
         elif type(obj) == rdflib.term.Literal:
-            values = obj
+            values = str(obj)
 
         # if no values or labels, use the object / URI
         if not values:
@@ -87,7 +87,7 @@ class enhance_rdf(object):
                 print("No label or URI for this object, using object {}".format(obj))
                 print("Data type of RDF object: {}".format(type(obj)))
 
-            values = obj
+            values = str(obj)
 
         return values
 
@@ -116,7 +116,7 @@ class enhance_rdf(object):
         else:
             preferred_label = subject
 
-        return preferred_label
+        return str(preferred_label)
 
     #
     # ETL knowledge graph to full text search index
@@ -176,7 +176,7 @@ class enhance_rdf(object):
 
             part_data['content_type_group_ss'] = 'Knowledge graph'
             # subject as URI/ID
-            part_parameters['id'] = subj
+            part_parameters['id'] = str(subj)
 
             preferred_label = self.get_preferred_label(subject=subj)
             part_data['title_txt'] = preferred_label
@@ -208,8 +208,7 @@ class enhance_rdf(object):
                             if class_facet in parameters['facets']:
                                 part_data['content_type_ss'] = 'Knowledge graph class {}'.format(
                                     parameters['facets'][class_facet]['label'])
-                        etl.append(data=part_data, facet=class_facet,
-                                   values=preferred_label)
+                                etl.append(data=part_data, facet=class_facet, values=preferred_label)
 
                     #
                     # Predicate/property to facet/field
@@ -217,7 +216,7 @@ class enhance_rdf(object):
 
                     # set Solr datatype strings so facets not available yet in Solr schema can be inserted automatically (dynamic fields) with right datatype
 
-                    facet = pred + '_ss'
+                    facet = str(pred) + '_ss'
                     facet_uri = facet + '_uri_ss'
                     facet_preferred_label_and_uri = facet + '_preflabel_and_uri_ss'
 
@@ -238,13 +237,13 @@ class enhance_rdf(object):
                     # if object is reference/URI append URI
                     if type(obj) == rdflib.URIRef:
 
-                        uri = obj
+                        uri = str(obj)
 
                         etl.append(data=part_data, facet=facet_uri, values=uri)
 
                         # append mixed field with preferred label and URI of the object for disambiguation of different Entities/IDs/URIs with same names/labels in faceted search
                         preferredlabel_and_uri = "{} <{}>".format(
-                            self.get_preferred_label(subject=obj), obj)
+                            self.get_preferred_label(subject=obj), str(obj))
 
                     else:
                         preferredlabel_and_uri = self.get_preferred_label(
@@ -260,8 +259,9 @@ class enhance_rdf(object):
                     sys.stderr.write("Exception while triple {} of subject {}: {}\n".format(
                         count_subject_triple, subj, e))
 
-            # index triple
+            # index subject
             etl_processor.process(part_parameters, part_data)
+            print (part_data)
 
     def etl_graph_file(self, docid, filename, parameters=None):
         if parameters is None:
