@@ -177,7 +177,7 @@ class Connector_Web(Connector_File):
                 if self.verbose:
                     print("HTTP Header Last-modified: {}".format(last_modified))
 
-                mtime = dateparser.parse(mtimestring)
+                mtime = dateparser.parse(last_modified)
                 # convert datetime to time
                 mtime = mtime.timetuple()
 
