@@ -24,8 +24,8 @@ class enhance_ner_spacy(object):
             if parameters['verbose']:
                 verbose = True
 
-        if 'spacy_ner_spacy' in parameters:
-            mapping = parameters['spacy_ner_spacy']
+        if 'spacy_ner_mapping' in parameters:
+            mapping = parameters['spacy_ner_mapping']
         else:
             mapping = {
                 'ORG': 'organization_ss',
