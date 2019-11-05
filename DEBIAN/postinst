@@ -2,14 +2,8 @@
 
 adduser --system --disabled-password opensemanticetl
 
-# install Scrapy
-pip3 install scrapy
-
-# install py2neo
-pip3 install py2neo==3.1.2
-
-# install warcio
-pip3 install warcio
+# install dependencies
+pip3 install -r /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
 
 # rights for thumbnail dir
 chown opensemanticetl /var/opensemanticsearch/thumbnails
