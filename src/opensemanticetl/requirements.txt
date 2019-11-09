@@ -1,3 +1,13 @@
 py2neo==3.1.2
 scrapy
 warcio
+tika
+pycurl
+rdflib
+requests
+pysolr
+python-dateutil
+lxml
+feedparser
+celery
+pyinotify
