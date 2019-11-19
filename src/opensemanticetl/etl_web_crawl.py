@@ -28,9 +28,15 @@ class OpenSemanticETL_Spider(CrawlSpider):
         self.logger.info(
             'Adding ETL task for downloaded page or file from %s', response.url)
 
+        downloaded_headers = {}
+        if 'date' in response.headers:
+                downloaded_headers['date'] = response.headers['date'].decode("utf-8", errors="ignore")
+        if 'last-modified' in response.headers:
+                downloaded_headers['last-modified'] = response.headers['last-modified'].decode("utf-8", errors="ignore")
+
         # add task to index the downloaded file/page by ETL web in Celery task worker
         index_web.apply_async(kwargs={'uri': response.url, 'downloaded_file': filename,
-                                      'downloaded_headers': response.headers}, queue='tasks', priority=5)
+                                      'downloaded_headers': downloaded_headers}, queue='tasks', priority=5)
 
 
 def index(uri, crawler_type="PATH"):
