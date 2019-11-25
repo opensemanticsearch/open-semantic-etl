@@ -5,7 +5,7 @@
 # Queue tasks for batch processing and parallel processing
 #
 
-# Queue handler
+import os
 import time
 from celery import Celery
 from kombu import Queue, Exchange
@@ -21,7 +21,11 @@ from etl_rss import Connector_RSS
 verbose = True
 quiet = False
 
-app = Celery('etl.tasks')
+broker = 'amqp://localhost'
+if os.getenv('OPEN_SEMANTIC_ETL_MQ_BROKER'):
+    broker = os.getenv('OPEN_SEMANTIC_ETL_MQ_BROKER')
+
+app = Celery('etl.tasks', broker=broker)
 
 app.conf.CELERY_QUEUES = [Queue('tasks', Exchange(
     'tasks'), routing_key='tasks', queue_arguments={'x-max-priority': 10})]
