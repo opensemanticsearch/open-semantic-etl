@@ -4,6 +4,7 @@ warcio
 tika
 pycurl
 rdflib
+SPARQLWrapper
 requests
 pysolr
 python-dateutil
