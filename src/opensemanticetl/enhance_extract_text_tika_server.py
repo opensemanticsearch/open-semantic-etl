@@ -38,7 +38,9 @@ class enhance_extract_text_tika_server(object):
 
         tika.TikaClientOnly = True
 
-        if 'tika_server' in parameters:
+        if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER'):
+            tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER')
+        elif 'tika_server' in parameters:
             tika_server = parameters['tika_server']
         else:
             tika_server = 'http://localhost:9998'

@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import requests
@@ -18,10 +19,13 @@ class enhance_detect_language_tika_server(object):
             if parameters['verbose']:
                 verbose = True
 
-        if 'tika_server' in parameters:
+        if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER'):
+            tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER')
+        elif 'tika_server' in parameters:
             tika_server = parameters['tika_server']
         else:
             tika_server = 'http://localhost:9998'
+
 
         uri = tika_server + '/language/string'
 
