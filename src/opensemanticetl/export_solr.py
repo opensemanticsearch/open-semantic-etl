@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import os
 import requests
 import json
 import urllib.request
@@ -16,6 +17,9 @@ class export_solr(object):
             config = {}
 
         self.config = config
+
+        if os.getenv('OPEN_SEMANTIC_ETL_SOLR'):
+            self.config['solr'] = os.getenv('OPEN_SEMANTIC_ETL_SOLR')
 
         if not 'solr' in self.config:
             self.config['solr'] = 'http://localhost:8983/solr/'
