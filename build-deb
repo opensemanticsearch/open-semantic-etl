@@ -18,7 +18,7 @@ cp -a usr ${BUILDDIR}/
 mkdir -p ${BUILDDIR}/usr/lib/python3/dist-packages
 cp -a src/* ${BUILDDIR}/usr/lib/python3/dist-packages/
 
-mkdir -p ${BUILDDIR}/var/opensemanticsearch/thumbnails
+mkdir -p ${BUILDDIR}/var/opensemanticsearch/media/thumbnails
 
 # Build standard package (preconfigured for Solr)
 dpkg -b ${BUILDDIR} ${PACKAGE}
