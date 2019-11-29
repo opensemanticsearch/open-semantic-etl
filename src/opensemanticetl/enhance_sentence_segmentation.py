@@ -49,8 +49,8 @@ class enhance_sentence_segmentation(object):
 
         # extract sentences from text
         url = "http://localhost:8080/sents"
-        if os.getenv('OPEN_SEMANTIC_ETL_SPACY_NER'):
-                url = os.getenv('OPEN_SEMANTIC_ETL_SPACY_NER') + '/sents'
+        if os.getenv('OPEN_SEMANTIC_ETL_SPACY_SERVER'):
+            url = os.getenv('OPEN_SEMANTIC_ETL_SPACY_SERVER') + '/sents'
 
         headers = {'content-type': 'application/json'}
         d = {'text': text, 'model': classifier}
