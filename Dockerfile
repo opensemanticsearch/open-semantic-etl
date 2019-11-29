@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
     file \
     libssl-dev \
     libffi-dev \
+    librabbitmq4 \
     poppler-utils \
     pst-utils \
     python3-pycurl \
@@ -24,9 +25,12 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
     python3-dev \
     scantailor \
     tesseract-ocr \
-    tesseract-ocr-all
+#    tesseract-ocr-all \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY ./src /usr/lib/python3/dist-packages/
+
+COPY ./src/opensemanticetl /usr/lib/python3/dist-packages/opensemanticetl
+COPY ./src/open-semantic-entity-search-api/src/entity_linking /usr/lib/python3/dist-packages/entity_linking
 
 COPY ./etc/opensemanticsearch /etc/
 
