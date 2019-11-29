@@ -1,3 +1,4 @@
+import os
 import sys
 import hashlib
 import urllib
@@ -158,19 +159,18 @@ class enhance_rdf_annotations_by_http_request(object):
         docid = parameters['id']
 
         metaserver = parameters['metaserver']
+        if os.getenv('OPEN_SEMANTIC_ETL_METADATA_SERVER'):
+            metaserver = os.getenv('OPEN_SEMANTIC_ETL_METADATA_SERVER')
+
         property2facet = parameters['property2facet']
 
-        # if only one server
         if isinstance(metaserver, str):
             # get metadata
+            metaserver=[metaserver]
+ 
+        for server in metaserver:
+            # get and add metadata
             data = getmeta_rdf_from_server(
-                metaserver=metaserver, data=data, property2facet=property2facet, docid=docid, verbose=verbose)
-        else:
-
-            # list of servers
-            for server in metaserver:
-                # get and add metadata
-                data = getmeta_rdf_from_server(
-                    metaserver=server, data=data, property2facet=property2facet, docid=docid, verbose=verbose)
+                metaserver=server, data=data, property2facet=property2facet, docid=docid, verbose=verbose)
 
         return parameters, data
