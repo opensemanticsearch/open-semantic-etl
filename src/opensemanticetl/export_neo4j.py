@@ -1,3 +1,5 @@
+import os
+
 from py2neo import Graph, Node, Relationship
 
 #
@@ -28,6 +30,8 @@ class export_neo4j(object):
         host = 'localhost'
         if 'neo4j_host' in parameters:
             host = parameters['neo4j_host']
+        if os.getenv('OPEN_SEMANTIC_ETL_NEO4J_HOST'):
+                host = os.getenv('OPEN_SEMANTIC_ETL_NEO4J_HOST')
 
         user = 'neo4j'
         if 'neo4j_user' in parameters:
