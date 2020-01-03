@@ -12,3 +12,4 @@ lxml
 feedparser
 celery
 pyinotify
+twint
