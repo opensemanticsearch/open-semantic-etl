@@ -174,6 +174,15 @@ def enrich(plugins, uri, wait=0):
     return data
 
 
+@app.task(name='etl.index_twitter_scraper')
+def index_twitter_scraper(search=None, username=None, Profile_full=False, limit=None, Index_Linked_Webpages=False):
+
+    import opensemanticetl.etl_twitter_scraper
+
+    opensemanticetl.etl_twitter_scraper.index(username=username, search=search, limit=limit, Index_Linked_Webpages=Index_Linked_Webpages)
+
+
+
 #
 # Read command line arguments and start
 #

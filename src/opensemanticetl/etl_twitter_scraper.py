@@ -63,7 +63,7 @@ def index_tweet(obj, config):
 module.Json = index_tweet
 
 
-def index(search=None, username=None, Profile_full=False, limit=None, Index_Linked_Webpages = False):
+def index(search=None, username=None, Profile_full=False, limit=None, Index_Linked_Webpages=False):
 
     c = twint.Config()
     c.Hide_output = True
@@ -77,14 +77,11 @@ def index(search=None, username=None, Profile_full=False, limit=None, Index_Link
         c.Search = search
 
     c.Profile_full = Profile_full
-  
+
     if limit:
         c.Limit = limit
 
     c.Index_Linked_Webpages = Index_Linked_Webpages
-
-#c.User_full = True
-#c.Since = "2019-11-20"
 
     twint.run.Search(c)
 
@@ -93,7 +90,7 @@ def index(search=None, username=None, Profile_full=False, limit=None, Index_Link
 
 
 #
-# If runned (not importet for functions) get parameters and start
+# If running from command line (not imported as library) get parameters and start
 #
 
 if __name__ == "__main__":
