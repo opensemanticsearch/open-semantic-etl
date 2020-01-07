@@ -21,6 +21,7 @@ class enhance_extract_email_domain(object):
 
             for email in emails:
                 domain = email.split('@')[1]
-                data['email_domain_ss'].append(domain)
+                if not domain in data['email_domain_ss']:
+                    data['email_domain_ss'].append(domain)
 
         return parameters, data
