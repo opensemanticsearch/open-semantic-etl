@@ -28,9 +28,10 @@ class enhance_warc(object):
             if not 'container_s' in data:
                 data['container_s'] = parameters['container']
 
+        mimetypes = []
         if 'content_type_ss' in data:
             mimetypes = data['content_type_ss']
-        else:
+        elif 'content_type_ss' in parameters:
             mimetypes = parameters['content_type_ss']
 
         # if connector returns a list, use only first value (which is the only entry of the list)
