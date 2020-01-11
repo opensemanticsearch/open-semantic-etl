@@ -23,6 +23,10 @@ class Connector_Filedirectory(Connector_File):
             'enhance_mapping_id',
             'filter_blacklist',
             'filter_file_not_modified',
+            'enhance_file_mtime',
+            'enhance_path',
+            'enhance_entity_linking',
+            'enhance_multilingual',
             'export_queue_files',
         ]
 

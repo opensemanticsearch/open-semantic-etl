@@ -188,6 +188,9 @@ class Connector_File(ETL):
 
         data = {}
 
+        # add this connector name to ETL status
+        data['etl_file_b'] = True
+
         if not 'id' in parameters:
             parameters['id'] = filename
 
