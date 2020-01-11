@@ -192,9 +192,10 @@ class enhance_pdf_ocr:
 
         filename = parameters['filename']
 
+        mimetype = ''
         if 'content_type_ss' in data:
             mimetype = data['content_type_ss']
-        else:
+        elif 'content_type_ss' in parameters:
             mimetype = parameters['content_type_ss']
 
         # if connector returns a list, use only first value
