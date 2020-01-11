@@ -41,7 +41,4 @@ class export_queue_files(object):
                 index_file.apply_async(kwargs={
                                        'filename': parameters['filename'], 'additional_plugins': additional_plugins_later, 'config': additional_plugins_later_config}, queue='tasks', priority=1)
 
-        # Since wont be processed further by this ETL run / no export to index in this ETL run but by new ETL worker from queue, we added this file in this plugin
-        parameters['break'] = True
-
         return parameters, data
