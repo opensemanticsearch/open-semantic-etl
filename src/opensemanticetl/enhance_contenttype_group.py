@@ -49,7 +49,9 @@ class enhance_contenttype_group(object):
         if data is None:
             data = {}
 
-        content_types = data['content_type_ss']
+        content_types = []
+        if 'content_type_ss' in data:
+            content_types = data['content_type_ss']
 
         if not isinstance(content_types, list):
             content_types = [content_types]
