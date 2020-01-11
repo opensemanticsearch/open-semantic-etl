@@ -148,9 +148,10 @@ class enhance_pdf_page(object):
 
         filename = parameters['filename']
 
+        mimetype = ''
         if 'content_type_ss' in data:
             mimetype = data['content_type_ss']
-        else:
+        elif 'content_type_ss' in parameters:
             mimetype = parameters['content_type_ss']
 
         # if connector returns a list, use only first value (which is the only entry of the list)
