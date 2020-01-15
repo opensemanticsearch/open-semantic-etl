@@ -4,20 +4,6 @@
 import re
 import etl
 
-
-# clean text for better analysis results
-def cleantext(text):
-
-    # delete newlines so a phrase will be found even if part of phrase in new line
-    text = text.replace("\n", " ")
-    text = text.replace("\r", " ")
-
-    # clean too much free spaces
-    text = text.replace("  ", " ")
-
-    return text
-
-
 def regex2facet(data, text, regex, group, facet, verbose=False):
 
     if verbose:
@@ -112,11 +98,13 @@ class enhance_regex(object):
                 text = parameters['title_txt']
 
             if 'content_txt' in data:
-                text = text + ' ' + data['content_txt']
+                if text:
+                    text += "\n"
+                text += data['content_txt']
             elif 'content_txt' in parameters:
-                text = text + ' ' + parameters['content_txt']
-
-        text = cleantext(text)
+                if text:
+                    text += "\n"
+                text += parameters['content_txt']
 
         for regexlistfile in regexlists:
 
