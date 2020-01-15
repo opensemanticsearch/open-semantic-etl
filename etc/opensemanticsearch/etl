@@ -153,8 +153,22 @@ config['ocr_lang'] = 'eng+deu'
 # Enable Regex plugin
 config['plugins'].append('enhance_regex')
 
-# Email extraction
-config['regex_lists'].append('/etc/opensemanticsearch/regex/email.tsv')
+# Regex config for email address extraction
+# this example Regex config is deactivated here, since email address extraction is done in more powerful way by plugin enhance_extract_email (see below)
+
+#config['regex_lists'].append('/etc/opensemanticsearch/regex/email.tsv')
+
+
+#
+# Email address and email domain extraction
+#
+config['plugins'].append('enhance_extract_email')
+
+
+#
+# Phone number extraction
+#
+config['plugins'].append('enhance_extract_phone')
 
 
 #
