@@ -62,6 +62,7 @@ class filter_file_not_modified(object):
         critical_plugins_failed = []
         plugins_not_runned = []
         additional_plugins_later_not_runned = []
+        do_not_reindex_because_plugin_yet_not_processed = []
 
         # use abstracted function from exporter module to get last modification time of file in index
         if 'export' in parameters:
@@ -92,6 +93,9 @@ class filter_file_not_modified(object):
                         metadatafields.append(
                             'etl_enhance_extract_text_tika_server_ocr_enabled_b')
 
+            if 'do_not_reindex_because_plugin_yet_not_processed' in parameters:
+                do_not_reindex_because_plugin_yet_not_processed=parameters['do_not_reindex_because_plugin_yet_not_processed']
+
             # read yet indexed metadata, if there
             indexed_metadata = exporter.get_data(
                 docid=docid, fields=metadatafields)
@@ -114,16 +118,18 @@ class filter_file_not_modified(object):
             # Doc was found in index and field moddate of solr doc same as files mtime
             # so file was indexed before and is unchanged
 
-            # all now configured plugins runned in former ETL/their analysis is in index?
+            # all now configured plugins processed in former ETL/their analysis is in index?
             for configured_plugin in parameters['plugins']:
                 if not configured_plugin == 'export_queue_files':
                     if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
-                        plugins_not_runned.append(configured_plugin)
+                        if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
+                            plugins_not_runned.append(configured_plugin)
             if 'additional_plugins_later' in parameters:
                 for configured_plugin in parameters['additional_plugins_later']:
                     if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
-                        additional_plugins_later_not_runned.append(
-                            configured_plugin)
+                        if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
+                            additional_plugins_later_not_runned.append(
+                                configured_plugin)
 
             # Tika OCR was enabled in former ETL/their analysis is in index?
             if 'ocr' in parameters:
