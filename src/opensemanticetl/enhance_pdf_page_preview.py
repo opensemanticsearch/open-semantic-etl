@@ -26,7 +26,7 @@ class enhance_pdf_page_preview(object):
 
         filename = parameters['filename']
 
-        thumbnail_dir = '/var/opensemanticsearch/thumbnails'
+        thumbnail_dir = '/var/opensemanticsearch/media/thumbnails'
 
         # generate thumbnail directory
         md5hash = hashlib.md5(docid.encode('utf-8')).hexdigest()
