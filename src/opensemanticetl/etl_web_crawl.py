@@ -41,6 +41,12 @@ class OpenSemanticETL_Spider(CrawlSpider):
 
 def index(uri, crawler_type="PATH"):
 
+    configfile = '/etc/opensemanticsearch/connector-web'
+
+    # read config file
+    config = {}
+    exec(open(configfile).read(), locals())
+
     name = "Open Semantic ETL {}".format(uri)
 
     start_urls = [uri]
@@ -53,7 +59,7 @@ def index(uri, crawler_type="PATH"):
         # crawl only the path
         filter_regex = re.escape(uri) + '*'
         rules = (
-            Rule(LinkExtractor(allow=filter_regex), callback='parse_item'),
+            Rule(LinkExtractor(allow=filter_regex, deny_extensions=config['webcrawler_deny_extensions']), callback='parse_item'),
         )
         process.crawl(OpenSemanticETL_Spider,
                       start_urls=start_urls, rules=rules, name=name)
@@ -76,7 +82,7 @@ def index(uri, crawler_type="PATH"):
         allowed_domain = allowed_domain.split("/")[0]
 
         rules = (
-            Rule(LinkExtractor(), callback='parse_item'),
+            Rule(LinkExtractor(deny_extensions=config['webcrawler_deny_extensions']), callback='parse_item'),
         )
         process.crawl(OpenSemanticETL_Spider, start_urls=start_urls,
                       allowed_domains=[allowed_domain], rules=rules, name=name)

@@ -1,5 +1,5 @@
 Package: open-semantic-etl
-Version: 19.11.04
+Version: 20.01.17
 Section: misc
 Priority: optional
 Architecture: all
@@ -7,8 +7,8 @@ Depends: tika-server(>=0), python3-tika(>=0), curl(>=0), python3-pycurl(>=0), py
 Installed-Size: 100
 Maintainer: Markus Mandalka <debian@mandalka.name>
 Homepage: https://opensemanticsearch.org/
-Description: Crawler to index files and directories with Solr
- Index your files to solr.
+Description: Crawler to index files and directories to Solr
+ Index your files to Solr.
  If tesseract-ocr installed there will be character recognition on images.
  Hint: install ocr language files like tesseract-ocr-deu for german texts.
  If poppler-utils installed there will be ocr for images inside pdf, too.

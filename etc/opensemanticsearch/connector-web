@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+
+#
+# Config for opensemanticsearch-index-web-crawl
+#
+
+#
+# common file extensions that are not followed if they occur in links
+#
+
+config['webcrawler_deny_extensions'] = [
+    # archives
+    '7z', '7zip', 'bz2', 'rar', 'tar', 'tar.gz', 'xz', 'zip',
+
+    # images
+    'mng', 'pct', 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pst', 'psp', 'tif',
+    'tiff', 'ai', 'drw', 'dxf', 'eps', 'ps', 'svg', 'cdr', 'ico',
+
+    # audio
+    'mp3', 'wma', 'ogg', 'wav', 'ra', 'aac', 'mid', 'au', 'aiff',
+
+    # video
+    '3gp', 'asf', 'asx', 'avi', 'mov', 'mp4', 'mpg', 'qt', 'rm', 'swf', 'wmv',
+    'm4a', 'm4v', 'flv', 'webm',
+
+    # office suites (commented, since we want to index office documents)
+    #'xls', 'xlsx', 'ppt', 'pptx', 'pps', 'doc', 'docx', 'odt', 'ods', 'odg',
+    #'odp', 'pdf',
+
+    # other
+    'css', 'exe', 'bin', 'rss', 'dmg', 'iso', 'apk'
+]
+
+
+# Uncomment, if you do not want to exclude file extensions
+# Warning: You might not want to download Gigabytes or Terabytes of archives, videos, CD-ROM/DVD ISOs and so on...
+
+#config['webcrawler_deny_extensions'] = []

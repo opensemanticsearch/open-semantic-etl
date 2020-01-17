@@ -1,6 +1,7 @@
 /etc/opensemanticsearch/etl
 /etc/opensemanticsearch/filemonitoring/files
 /etc/opensemanticsearch/connector-files
+/etc/opensemanticsearch/connector-web
 /etc/opensemanticsearch/enhancer-rdf
 /etc/opensemanticsearch/blacklist/blacklist-url
 /etc/opensemanticsearch/blacklist/blacklist-url-prefix
