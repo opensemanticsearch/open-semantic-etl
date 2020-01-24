@@ -28,7 +28,7 @@ if os.getenv('OPEN_SEMANTIC_ETL_MQ_BROKER'):
 app = Celery('etl.tasks', broker=broker)
 
 app.conf.CELERY_QUEUES = [Queue('tasks', Exchange(
-    'tasks'), routing_key='tasks', queue_arguments={'x-max-priority': 10})]
+    'tasks'), routing_key='tasks', queue_arguments={'x-max-priority': 70})]
 
 app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
 app.conf.CELERYD_PREFETCH_MULTIPLIER = 1
@@ -53,7 +53,7 @@ def delete(uri):
 #
 
 @app.task(name='etl.index_file')
-def index_file(filename, additional_plugins=(), wait=0, config=None):
+def index_file(filename, additional_plugins=(), wait=0, commit=False, config=None):
 
     if wait:
         time.sleep(wait)
@@ -67,7 +67,9 @@ def index_file(filename, additional_plugins=(), wait=0, config=None):
 
     etl_file.index_file(filename=filename,
                         additional_plugins=additional_plugins)
-    etl_file.commit()
+
+    if commit:
+        etl_file.commit()
 
 #
 # Index file directory
@@ -75,14 +77,19 @@ def index_file(filename, additional_plugins=(), wait=0, config=None):
 
 
 @app.task(name='etl.index_filedirectory')
-def index_filedirectory(filename):
+def index_filedirectory(filename, config=None):
 
     from etl_filedirectory import Connector_Filedirectory
 
-    connector_filedirectory = Connector_Filedirectory()
+    etl_filedirectory = Connector_Filedirectory()
 
-    result = connector_filedirectory.index(filename)
-    connector_filedirectory.commit()
+    # set alternate config options (will overwrite config options from config file)
+    if config:
+        for option in config:
+            etl_filedirectory.config[option] = config[option]
+
+    result = etl_filedirectory.index(filename)
+    etl_filedirectory.commit()
 
     return result
 
@@ -179,7 +186,7 @@ def index_twitter_scraper(search=None, username=None, Profile_full=False, limit=
 
     import opensemanticetl.etl_twitter_scraper
 
-    opensemanticetl.etl_twitter_scraper.index(username=username, search=search, limit=limit, Index_Linked_Webpages=Index_Linked_Webpages)
+    opensemanticetl.etl_twitter_scraper.index(username=username, search=search, limit=limit, Profile_full=Profile_full, Index_Linked_Webpages=Index_Linked_Webpages)
 
 
 

@@ -76,14 +76,17 @@ def index(search=None, username=None, Profile_full=False, limit=None, Index_Link
     if search:
         c.Search = search
 
-    c.Profile_full = Profile_full
-
     if limit:
         c.Limit = limit
 
     c.Index_Linked_Webpages = Index_Linked_Webpages
 
-    twint.run.Search(c)
+    c.Profile_full = Profile_full
+
+    if Profile_full:
+        twint.run.Profile(c)
+    else:
+        twint.run.Search(c)
 
     etl.commit()
 
