@@ -34,6 +34,15 @@ app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
 app.conf.CELERYD_PREFETCH_MULTIPLIER = 1
 app.conf.CELERY_ACKS_LATE = True
 
+
+# Max parallel tasks (Default: Use as many parallel ETL tasks as CPUs available).
+# Warning: Some tools called by ETL plugins use multithreading, too,
+# so used CPUs/threads can be more than that setting!
+
+if os.getenv('OPEN_SEMANTIC_ETL_CONCURRENCY'):
+    app.conf.CELERYD_CONCURRENCY = os.getenv('OPEN_SEMANTIC_ETL_CONCURRENCY')
+
+
 etl_delete = Delete()
 etl_web = Connector_Web()
 etl_rss = Connector_RSS()
