@@ -5,6 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=opensemanticetl
+Environment=OMP_THREAD_LIMIT=1
 ExecStart=/usr/bin/etl_tasks
 Restart=always
 
