@@ -52,6 +52,8 @@ class Connector_RSS(Connector_Web):
 
         feed = feedparser.parse(uri)
 
+        new_items = 0
+
         for item in feed.entries:
 
             articleuri = item.link
@@ -78,11 +80,16 @@ class Connector_RSS(Connector_Web):
                     partresult = Connector_Web.index(self, uri=articleuri)
                     if partresult == False:
                         result = False
+                    new_items += 1
+
                 except KeyboardInterrupt:
                     raise KeyboardInterrupt
                 except BaseException as e:
                     sys.stderr.write(
                         "Exception while getting {} : {}".format(articleuri, e))
+
+        if new_items:
+            exporter.commit()
 
         return result
 
