@@ -4,7 +4,7 @@
 import importlib
 
 from etl import ETL
-
+import enhance_mapping_id
 
 class Delete(ETL):
     def __init__(self, verbose=False, quiet=True):
@@ -43,12 +43,17 @@ class Delete(ETL):
 
         # Windows style filenames
         self.read_configfile('conf\\opensemanticsearch-etl')
+        self.read_configfile('conf\\opensemanticsearch-connector-files')
 
         # Linux style filenames
         self.read_configfile('/etc/opensemanticsearch/etl')
+        self.read_configfile('/etc/opensemanticsearch/connector-files')
 
     def delete(self, uri):
 
+        if 'mappings' in self.config:
+            uri = enhance_mapping_id.mapping(value=uri, mappings=self.config['mappings'])
+        
         if self.verbose:
             print("Deleting from index {}".format(uri))
 
