@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-import requests
 import json
+import requests
+import sys
+import time
+
 import urllib.request
 import urllib.parse
 
@@ -116,15 +119,58 @@ class export_solr(object):
             print("Sending update request to {}".format(solr_uri))
             print(datajson)
 
-        try:
 
-            requests.post(solr_uri, data=datajson, params=params,
-                          headers={'Content-Type': 'application/json'})
+        retries = 0
+        retrytime = 1
+        # wait time until next retry will be doubled until reaching maximum of 120 seconds (2 minutes) until next retry
+        retrytime_max = 120
+        no_connection = True
 
-        except BaseException as e:
+        while no_connection:
+            try:
+                if retries > 0:
+                    print('Will retry to connect to Solr in {} second(s).'.format(retrytime))
+                    time.sleep(retrytime)
+                    retrytime = retrytime * 2
+                    if retrytime > retrytime_max:
+                        retrytime = retrytime_max
 
-            import sys
-            sys.stderr.write('Error while posting data to Solr: {}'.format(e))
+                r = requests.post(solr_uri, data=datajson, params=params, headers={'Content-Type': 'application/json'})
+
+                # if bad status code, raise exception
+                r.raise_for_status()
+
+                if retries > 0:
+                    print('Successfull retried to connect Solr.')
+
+                no_connection = False
+
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt
+
+            except requests.exceptions.ConnectionError as e:
+
+                    retries += 1
+
+                    sys.stderr.write("Connection to Solr failed (will retry in {} seconds). Exception: {}\n".format(retrytime, e))
+
+            except requests.exceptions.HTTPError as e:
+                if e.response.status_code == 503:
+
+                    retries += 1
+
+                    sys.stderr.write("Solr temporary unavailable (HTTP status code 503). Will retry in {} seconds). Exception: {}\n".format(retrytime, e))
+
+                else:
+                    no_connection = False
+
+                    sys.stderr.write('Error while posting data to Solr: {}'.format(e))
+
+            except BaseException as e:
+                no_connection = False
+
+                sys.stderr.write('Error while posting data to Solr: {}'.format(e))
+
 
     # tag a document by adding new value to field
     def tag(self, docid=None, field=None, value=None, data=None):
