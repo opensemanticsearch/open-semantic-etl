@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import os
 
 import enhance_pdf_ocr
 
@@ -12,7 +13,7 @@ class Test_enhance_pdf_ocr(unittest.TestCase):
 
         enhancer = enhance_pdf_ocr.enhance_pdf_ocr()
 
-        parameters = {'filename': 'test/test.pdf', 'content_type_ss': 'application/pdf','plugins':[]}
+        parameters = {'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf', 'content_type_ss': 'application/pdf','plugins':[]}
 
         parameters, data = enhancer.process(parameters=parameters)
 

@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import os
 
 from etl_file import Connector_File
+from etl_delete import Delete
 
 class Test_ETL_file(unittest.TestCase):
 
@@ -11,8 +13,14 @@ class Test_ETL_file(unittest.TestCase):
 
         etl_file = Connector_File()
 
+        filename = os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'
+
         # run ETL of test.pdf with configured plugins and PDF OCR (result of etl_file.py)
-        parameters, data = etl_file.index_file(filename='test/test.pdf', additional_plugins=['enhance_pdf_ocr'])
+        parameters, data = etl_file.index_file(filename = filename, additional_plugins=['enhance_pdf_ocr'])
+
+        # delete from search index
+        etl_delete = Delete()
+        etl_delete.delete(filename)
 
         # check extracted content type
         self.assertEqual(data['content_type_ss'], 'application/pdf')

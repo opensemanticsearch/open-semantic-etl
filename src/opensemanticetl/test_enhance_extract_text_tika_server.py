@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import os
 
 import enhance_extract_text_tika_server
 
@@ -11,7 +12,7 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
-        parameters = {'filename': 'test/test.pdf'}
+        parameters = {'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -30,7 +31,7 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
-        parameters = {'ocr': True, 'filename': 'test/Test_OCR_Image1.png'}
+        parameters = {'ocr': True, 'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/Test_OCR_Image1.png'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -46,7 +47,7 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
-        parameters = {'ocr': True, 'filename': 'test/Test_OCR_Image2.jpg'}
+        parameters = {'ocr': True, 'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/Test_OCR_Image2.jpg'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -62,7 +63,7 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
-        parameters = {'ocr': False, 'filename': 'test/Test_OCR_Image1.png'}
+        parameters = {'ocr': False, 'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/Test_OCR_Image1.png'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
