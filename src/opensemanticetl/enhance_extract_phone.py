@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-import etl
+import etl_plugin_core
 
 #
 # normalize phone number (remove all non-numeric chars except leading +)
@@ -35,14 +35,12 @@ class enhance_extract_phone(object):
         if data is None:
             data = {}
 
-        # todo: use all data fields for analysis
-        text = ''
-        if 'content_txt' in data:
-            text = data['content_txt']
+        # collect/copy to be analyzed text from all fields
+        text = etl_plugin_core.get_text(data=data)
 
         for match in re.finditer('[\+\(]?[1-9][0-9 .\-\(\)]{8,}[0-9]', text, re.IGNORECASE):
             value = match.group(0)
-            etl.append(data, 'phone_ss', value)
+            etl_plugin_core.append(data, 'phone_ss', value)
 
 
         # if extracted phone number(s), normalize to format that can be used for aggregation/filters
@@ -55,6 +53,6 @@ class enhance_extract_phone(object):
 
             for phone in phones:
                 phone_normalized = normalize_phonenumber(phone)
-                etl.append(data, 'phone_normalized_ss', phone_normalized)
+                etl_plugin_core.append(data, 'phone_normalized_ss', phone_normalized)
 
         return parameters, data
