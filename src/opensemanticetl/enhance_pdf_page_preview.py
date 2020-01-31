@@ -3,12 +3,19 @@ import subprocess
 from pathlib import Path
 import hashlib
 
+import etl_plugin_core
+
 
 # generate single page PDF for each page of the full PDF for preview so client has not to load full pdf for previewing a page
 
-class enhance_pdf_page_preview(object):
+class enhance_pdf_page_preview(etl_plugin_core.Plugin):
+    
+    # process plugin, if one of the filters matches
+    filter_filename_suffixes = ['.pdf']
+    filter_mimetype_prefixes = ['application/pdf']
 
-    def segment_pdf_to_pages(self, parameters=None, data=None):
+
+    def process(self, parameters=None, data=None):
         if parameters is None:
             parameters = {}
         if data is None:
@@ -18,6 +25,9 @@ class enhance_pdf_page_preview(object):
         if 'verbose' in parameters:
             if parameters['verbose']:
                 verbose = True
+
+        if verbose:
+            print('Mimetype or filename suffix is PDF, extracting single pages for preview')
 
         if 'id' in data:
             docid = data['id']
@@ -52,34 +62,4 @@ class enhance_pdf_page_preview(object):
                 "Exception while genarating single page PDFs by pdftk burst\n")
 
         return parameters, data
-
-    def process(self, parameters=None, data=None):
-        if parameters is None:
-            parameters = {}
-        if data is None:
-            data = {}
-
-        verbose = False
-        if 'verbose' in parameters:
-            if parameters['verbose']:
-                verbose = True
-
-        filename = parameters['filename']
-
-        if 'content_type_ss' in data:
-            mimetype = data['content_type_ss']
-        else:
-            mimetype = parameters['content_type_ss']
-
-        # if connector returns a list, use only first value (which is the only entry of the list)
-        if isinstance(mimetype, list):
-            mimetype = mimetype[0]
-
-        if "application/pdf" in mimetype.lower() or filename.lower().endswith('.pdf'):
-            if verbose:
-                print('Mimetype or filename suffix is PDF ({}), extracting single pages for segmentation)'.format(
-                    mimetype))
-
-            parameters, data = self.segment_pdf_to_pages(parameters, data)
-
-        return parameters, data
+    
