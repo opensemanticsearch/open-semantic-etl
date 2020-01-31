@@ -4,10 +4,18 @@ import tempfile
 import os
 import shutil
 import subprocess
+
+import etl_plugin_core
 from etl_file import Connector_File
 
+#
+# Extract emails from Outlook PST file
+#
 
-class enhance_pst(object):
+class enhance_pst(etl_plugin_core.Plugin):
+    # process plugin, if one of the filters matches
+    filter_filename_suffixes = ['.pst']
+    filter_mimetype_prefixes = ['application/vnd.ms-outlook-pst']
 
     def process(self, parameters=None, data=None):
         if parameters is None:
@@ -20,39 +28,15 @@ class enhance_pst(object):
             if parameters['verbose']:
                 verbose = True
 
-        filename = parameters['filename']
+        # no further processing, if plugin filters like for content type do not match
+        if self.filter(parameters, data):
+            return parameters, data
 
-        # if the processed file was extracted from a PST (parameter container was set), write container setting in data, so the link of the id/content can be set to the PST file
-        if 'container' in parameters:
-            if not 'container_s' in data:
-                data['container_s'] = parameters['container']
+        if verbose:
+            print("Mimetype or file ending seems Outlook PST file, starting extraction of emails")
 
-        if 'content_type_ss' in data:
-            mimetype = data['content_type_ss']
-        elif 'content_type_ss' in parameters:
-            mimetype = parameters['content_type_ss']
-        else:
-            mimetype = 'Unknown'
 
-        # if connector returns a list, use only first value (which is the only entry of the list)
-        if isinstance(mimetype, list):
-            mimetype = mimetype[0]
-
-        # if content type or file ending is PST mailbox start indexing
-        if mimetype.lower().startswith('application/vnd.ms-outlook-pst') or filename.lower().endswith('.pst'):
-            if verbose:
-                print("Mimetype ({}) or file ending seems Outlook PST file, starting extraction of emails".format(
-                    mimetype))
-
-            self.pst2email(pstfilename=filename,
-                           parameters=parameters, verbose=verbose)
-
-        return parameters, data
-
-    # extract all mails and attachments and index each file with id of container
-    def pst2email(self, pstfilename, parameters=None, verbose=False):
-        if parameters is None:
-            parameters = {}
+        pstfilename = parameters['filename']
 
         # we build temp dirname ourselfes instead of using system_temp_dirname so we can use configurable / external tempdirs
 
@@ -140,3 +124,5 @@ class enhance_pst(object):
                         "Exception while indexing file {} : {}\n".format(fileName, e.args[0]))
 
         shutil.rmtree(temp_dirname)
+
+        return parameters, data
