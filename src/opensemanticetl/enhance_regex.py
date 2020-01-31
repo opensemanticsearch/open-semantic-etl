@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import re
-import etl
+import etl_plugin_core
+
 
 def regex2facet(data, text, regex, group, facet, verbose=False):
 
@@ -20,7 +21,7 @@ def regex2facet(data, text, regex, group, facet, verbose=False):
                     print("Found regex {} with value {} for facet {}".format(
                         regex, value, facet))
 
-                etl.append(data, facet, value)
+                etl_plugin_core.append(data, facet, value)
 
             except BaseException as e:
                 print("Exception while adding value {} from regex {} and group {} to facet {}:".format(
@@ -85,26 +86,8 @@ class enhance_regex(object):
         if 'regex_lists' in parameters:
             regexlists = parameters['regex_lists']
 
-        text = ''
-        if 'text' in parameters:
-            text = parameters['text']
-
-        # build text from textfields
-        else:
-
-            if 'title_txt' in data:
-                text = data['title_txt']
-            elif 'title_txt' in parameters:
-                text = parameters['title_txt']
-
-            if 'content_txt' in data:
-                if text:
-                    text += "\n"
-                text += data['content_txt']
-            elif 'content_txt' in parameters:
-                if text:
-                    text += "\n"
-                text += parameters['content_txt']
+        # collect/copy to be analyzed text from all fields
+        text = etl_plugin_core.get_text(data=data)
 
         for regexlistfile in regexlists:
 
