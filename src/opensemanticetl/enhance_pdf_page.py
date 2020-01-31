@@ -3,6 +3,8 @@ import sys
 import subprocess
 import tempfile
 import hashlib
+
+import etl_plugin_core
 from etl import ETL
 
 #
@@ -10,7 +12,11 @@ from etl import ETL
 #
 
 
-class enhance_pdf_page(object):
+class enhance_pdf_page(etl_plugin_core.Plugin):
+
+    # process plugin, if one of the filters matches
+    filter_filename_suffixes = ['.pdf']
+    filter_mimetype_prefixes = ['application/pdf']
 
     # how to find uris which are not enriched yet?
     # (if not enhanced on indexing but later)
@@ -22,7 +28,7 @@ class enhance_pdf_page(object):
     # (since we marked documents which were OCRd with ocr_b = true
     query = "content_type: application\/pdf* AND NOT enhance_pdf_page_b:true"
 
-    def segment_pdf_to_pages(self, parameters=None, data=None):
+    def process(self, parameters=None, data=None):
         if parameters is None:
             parameters = {}
         if data is None:
@@ -32,6 +38,13 @@ class enhance_pdf_page(object):
         if 'verbose' in parameters:
             if parameters['verbose']:
                 verbose = True
+
+        # no further processing, if plugin filters like for content type do not match
+        if self.filter(parameters, data):
+            return parameters, data
+
+        if verbose:
+            print('Mimetype or filename suffix is PDF, extracting single pages for segmentation')
 
         if 'id' in data:
             docid = data['id']
@@ -132,37 +145,5 @@ class enhance_pdf_page(object):
                     "Exception adding PDF page {} : {}".format(pagenumber, e))
 
         data['pages_i'] = pages
-
-        return parameters, data
-
-    def process(self, parameters=None, data=None):
-        if parameters is None:
-            parameters = {}
-        if data is None:
-            data = {}
-
-        verbose = False
-        if 'verbose' in parameters:
-            if parameters['verbose']:
-                verbose = True
-
-        filename = parameters['filename']
-
-        mimetype = ''
-        if 'content_type_ss' in data:
-            mimetype = data['content_type_ss']
-        elif 'content_type_ss' in parameters:
-            mimetype = parameters['content_type_ss']
-
-        # if connector returns a list, use only first value (which is the only entry of the list)
-        if isinstance(mimetype, list):
-            mimetype = mimetype[0]
-
-        if "application/pdf" in mimetype.lower() or filename.lower().endswith('.pdf'):
-            if verbose:
-                print('Mimetype or filename suffix is PDF ({}), extracting single pages for segmentation)'.format(
-                    mimetype))
-
-            parameters, data = self.segment_pdf_to_pages(parameters, data)
 
         return parameters, data
