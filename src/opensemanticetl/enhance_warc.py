@@ -1,14 +1,21 @@
-from warcio.archiveiterator import ArchiveIterator
 import hashlib
 import tempfile
 import os
 import sys
 import shutil
 import time
+
+from warcio.archiveiterator import ArchiveIterator
+
+import etl_plugin_core
 from etl_file import Connector_File
 
 
-class enhance_warc(object):
+class enhance_warc(etl_plugin_core.Plugin):
+
+    # process plugin, if one of the filters matches
+    filter_filename_suffixes = ['.warc', '.warc.gz']
+    filter_mimetype_prefixes = ['application/warc']
 
     def process(self, parameters=None, data=None):
         if parameters is None:
@@ -21,34 +28,11 @@ class enhance_warc(object):
             if parameters['verbose']:
                 verbose = True
 
-        filename = parameters['filename']
+        # no further processing, if plugin filters like for content type do not match
+        if self.filter(parameters, data):
+            return parameters, data
 
-        # if the processed file was extracted from a zip (parameter container was set), write container setting in data, so the link of the id/content can be set to the zip file
-        if 'container' in parameters:
-            if not 'container_s' in data:
-                data['container_s'] = parameters['container']
-
-        mimetypes = []
-        if 'content_type_ss' in data:
-            mimetypes = data['content_type_ss']
-        elif 'content_type_ss' in parameters:
-            mimetypes = parameters['content_type_ss']
-
-        # if connector returns a list, use only first value (which is the only entry of the list)
-        if not isinstance(mimetypes, list):
-            mimetypes = [mimetypes]
-
-        # if this file is a warc file, extract it
-        if (("application/warc" in mimetypes) or (filename.lower().endswith('.warc')) or (filename.lower().endswith('.warc.gz'))):
-            self.unwarc_and_index_files(
-                warcfilename=filename, parameters=parameters, verbose=verbose)
-
-        return parameters, data
-
-    # extract content of responses to tempfile and index content file
-    def unwarc_and_index_files(self, warcfilename, parameters=None, verbose=False):
-        if parameters is None:
-            parameters = {}
+        warcfilename = parameters['filename']
 
         # create temp dir where to unwarc the archive
         if 'tmp' in parameters:
@@ -120,3 +104,5 @@ class enhance_warc(object):
                     os.remove(tempfilename)
 
         shutil.rmtree(temp_dirname)
+
+        return parameters, data
