@@ -2,13 +2,13 @@
 # Named Entity Extraction by Open Semantic Entity Search API dictionary
 #
 
-
 import requests
-import etl
 import sys
 import time
 
 from entity_linking.entity_linker import Entity_Linker
+import etl
+import etl_plugin_core
 
 
 #
@@ -45,7 +45,7 @@ def taxonomy2fields(taxonomy, field, separator="\t", subfields_suffix="_ss"):
     return result
 
 
-class enhance_entity_linking(object):
+class enhance_entity_linking(etl_plugin_core.Plugin):
 
     def process(self, parameters=None, data=None):
         if parameters is None:
@@ -82,17 +82,7 @@ class enhance_entity_linking(object):
         taxonomy_fields = ['skos_broader_taxonomy_prefLabel_ss']
 
         # collect/copy to be analyzed text from all fields
-        text = ''
-        for field in data:
-
-            values = data[field]
-
-            if not isinstance(values, list):
-                values = [values]
-
-            for value in values:
-                if value:
-                    text = "{}{}\n".format(text, value)
+        text = etl_plugin_core.get_text(data=data)
 
         # tag all entities (by different taggers for different analyzers/stemmers)
         for entity_linking_tagger in entity_linking_taggers:
@@ -204,15 +194,15 @@ class enhance_entity_linking(object):
                                     '_stemming_force_', '_stemming_')
                                 facet = facet + entity_linking_tagger_withoutforceoption + '_ss'
 
-                            etl.append(data, facet, candidate['name'])
-                            etl.append(data, facet + '_uri_ss',
+                            etl_plugin_core.append(data, facet, candidate['name'])
+                            etl_plugin_core.append(data, facet + '_uri_ss',
                                        candidate['id'])
-                            etl.append(data, facet + '_preflabel_and_uri_ss',
+                            etl_plugin_core.append(data, facet + '_preflabel_and_uri_ss',
                                        candidate['name'] + ' <' + candidate['id'] + '>')
 
                             if 'matchtext' in candidate:
                                 for matchtext in candidate['matchtext']:
-                                    etl.append(
+                                    etl_plugin_core.append(
                                         data, facet + '_matchtext_ss', candidate['id'] + "\t" + matchtext)
 
                             for taxonomy_field in taxonomy_fields:
@@ -220,10 +210,7 @@ class enhance_entity_linking(object):
                                     separated_taxonomy_fields = taxonomy2fields(
                                         taxonomy=candidate[taxonomy_field], field=facet)
                                     for separated_taxonomy_field in separated_taxonomy_fields:
-                                        etl.append(
+                                        etl_plugin_core.append(
                                             data, separated_taxonomy_field, separated_taxonomy_fields[separated_taxonomy_field])
-
-        # mark the document, that it was analyzed by this plugin yet
-        data['etl_enhance_entity_linking_b'] = "true"
 
         return parameters, data
