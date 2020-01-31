@@ -4,6 +4,8 @@ import subprocess
 import hashlib
 import tempfile
 import json
+
+import etl_plugin_core
 import enhance_ocr
 import enhance_ocr_descew
 
@@ -110,62 +112,17 @@ def append_page(dct, n, page):
     else:
         dct[n] = page
 
-
-def enrich_pdf(parameters=None, data=None):
-    if parameters is None:
-        parameters = {}
-    if data is None:
-        data = {}
-
-    verbose = parameters.get('verbose', False)
-
-    filename = parameters['filename']
-
-    pdf_ocr_descew = ('enhance_ocr_descew' in parameters['plugins'])
-
-    if 'ocr_lang' in parameters:
-        lang = parameters['ocr_lang']
-    else:
-        lang = 'eng'
-
-    ocr_txt = {}
-    ocr_optimized_txt = {}
-
-    try:
-        ocr_txt, ocr_optimized_txt = pdfimages2text(
-            filename=filename, lang=lang, verbose=verbose,
-            pdf_ocr=True, pdf_ocr_descew=pdf_ocr_descew,
-            cache=parameters.get("ocr_cache"))
-    except BaseException as e:
-        sys.stderr.write(
-            "Exception while OCR the PDF {} - {}\n".format(filename, e))
-
-    parameters['enhance_pdf_ocr'] = ocr_txt
-    parameters['enhance_pdf_ocr_descew'] = ocr_optimized_txt
-
-    # create text field ocr_t with all OCR results of all pages
-    pages_content = [value for (key, value) in sorted(ocr_txt.items())]
-    data['ocr_t'] = "\n".join(pages_content)
-
-
-    if pdf_ocr_descew:
-        pages_content = [value for (key, value) in sorted(
-            ocr_optimized_txt.items())]
-        data['ocr_descew_t'] = "\n".join(pages_content)
-
-    # Mark document to enhanced with this plugin
-    data['etl_enhance_pdf_ocr_b'] = True
-
-    return parameters, data
-
-
 #
 # Process plugin
 #
 # check if content type PDF, if so start enrich pdf process for OCR
 #
 
-class enhance_pdf_ocr:
+class enhance_pdf_ocr(etl_plugin_core.Plugin):
+
+    # process plugin, if one of the filters matches
+    filter_filename_suffixes = ['.pdf']
+    filter_mimetype_prefixes = ['application/pdf']
 
     # how to find uris which are not enriched yet?
     # (if not enhanced on indexing but later)
@@ -185,31 +142,50 @@ class enhance_pdf_ocr:
         if data is None:
             data = {}
 
-        verbose = False
-        if 'verbose' in parameters:
-            if parameters['verbose']:
-                verbose = True
+        verbose = parameters.get('verbose', False)
 
+        # no further processing, if plugin filters like for content type do not match
+        if self.filter(parameters, data):
+            return parameters, data
+
+        if verbose:
+            print('Mimetype is PDF or file ending is .pdf, starting OCR of embedded images')
+    
         filename = parameters['filename']
-
-        mimetype = ''
-        if 'content_type_ss' in data:
-            mimetype = data['content_type_ss']
-        elif 'content_type_ss' in parameters:
-            mimetype = parameters['content_type_ss']
-
-        # if connector returns a list, use only first value
-        # (which is the only entry of the list)
-        if isinstance(mimetype, list):
-            mimetype = mimetype[0]
-
-        if "application/pdf" in mimetype.lower() \
-           or filename.lower().endswith('.pdf'):
-            if verbose:
-                print('Mimetype is PDF ({}) or file ending is PDF, '
-                      'starting OCR of embedded images'.format(
-                          mimetype))
-
-            parameters, data = enrich_pdf(parameters, data)
-
+    
+        pdf_ocr_descew = ('enhance_ocr_descew' in parameters['plugins'])
+    
+        if 'ocr_lang' in parameters:
+            lang = parameters['ocr_lang']
+        else:
+            lang = 'eng'
+    
+        ocr_txt = {}
+        ocr_optimized_txt = {}
+    
+        try:
+            ocr_txt, ocr_optimized_txt = pdfimages2text(
+                filename=filename, lang=lang, verbose=verbose,
+                pdf_ocr=True, pdf_ocr_descew=pdf_ocr_descew,
+                cache=parameters.get("ocr_cache"))
+        except BaseException as e:
+            sys.stderr.write(
+                "Exception while OCR the PDF {} - {}\n".format(filename, e))
+    
+        parameters['enhance_pdf_ocr'] = ocr_txt
+        parameters['enhance_pdf_ocr_descew'] = ocr_optimized_txt
+    
+        # create text field ocr_t with all OCR results of all pages
+        pages_content = [value for (key, value) in sorted(ocr_txt.items())]
+        data['ocr_t'] = "\n".join(pages_content)
+    
+    
+        if pdf_ocr_descew:
+            pages_content = [value for (key, value) in sorted(
+                ocr_optimized_txt.items())]
+            data['ocr_descew_t'] = "\n".join(pages_content)
+    
+        # Mark document to enhanced with this plugin
+        data['etl_enhance_pdf_ocr_b'] = True
+    
         return parameters, data
