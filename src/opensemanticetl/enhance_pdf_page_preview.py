@@ -26,6 +26,10 @@ class enhance_pdf_page_preview(etl_plugin_core.Plugin):
             if parameters['verbose']:
                 verbose = True
 
+        # no further processing, if plugin filters like for content type do not match
+        if self.filter(parameters, data):
+            return parameters, data
+
         if verbose:
             print('Mimetype or filename suffix is PDF, extracting single pages for preview')
 
