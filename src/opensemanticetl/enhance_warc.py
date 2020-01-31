@@ -86,8 +86,10 @@ class enhance_warc(etl_plugin_core.Plugin):
                             tempfilename, connector.config['container'], e))
 
                     # set id (URL and WARC Record ID)
-                    connector.config['id'] = record.rec_headers.get_header(
-                        'WARC-Target-URI') + '/' + record.rec_headers.get_header('WARC-Record-ID')
+                    uri = record.rec_headers.get_header('WARC-Target-URI')
+                    if not uri.endswith('/'):
+                        uri += '/'
+                    connector.config['id'] = uri + record.rec_headers.get_header('WARC-Record-ID')
 
                     # index the extracted file
                     try:
