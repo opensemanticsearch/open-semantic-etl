@@ -1,3 +1,5 @@
+import etl_plugin_core
+
 # Extract text from filename
 class enhance_extract_hashtags(object):
 
@@ -9,9 +11,10 @@ class enhance_extract_hashtags(object):
 
         minimallenght = 3
 
-        if 'content_txt' in data:
-            if data['content_txt']:
-                data['hashtag_ss'] = [word for word in data['content_txt'].split() if (
-                    word.startswith("#") and len(word) > minimallenght)]
+        # collect/copy to be analyzed text from all fields
+        text = etl_plugin_core.get_text(data=data)
+
+        data['hashtag_ss'] = [word for word in text.split() if (
+            word.startswith("#") and len(word) > minimallenght)]
 
         return parameters, data
