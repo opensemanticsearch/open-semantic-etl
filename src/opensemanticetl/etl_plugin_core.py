@@ -84,19 +84,27 @@ def get_text(data):
     text = ''
 
     for field in data:
-        if text:
-            text += "\n"
-        text += str(data[field])
+
+        if not field.startswith('etl_'):
+    
+            values = data[field]
+    
+            if not isinstance(values, list):
+                values = [values]
+    
+            for value in values:
+                if value:
+                    text = "{}{}\n".format(text, value)
         
     return text
 
 # append values (i.e. from an enhancer) to data structure
 def append(data, facet, values):
 
-        # if facet there yet, append/extend the values, else set values to facet
+    # if facet there yet, append/extend the values, else set values to facet
     if facet in data:
 
-            # if new value(s) single value instead of list convert to list
+        # if new value(s) single value instead of list convert to list
         if not isinstance(values, list):
             values = [values]
 
