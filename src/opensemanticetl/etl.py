@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import datetime
 import importlib
-import sys
 import os
+import sys
+
 import filter_blacklist
 
 #
@@ -177,6 +179,8 @@ class ETL(object):
             parameters = {}
         if data is None:
             data = {}
+        
+        time_start = datetime.datetime.now()
 
         if 'plugins' in parameters:
             plugins = parameters['plugins']
@@ -209,6 +213,7 @@ class ETL(object):
             if self.verbose:
                 print("Starting plugin {}".format(plugin))
 
+            time_plugin_start = datetime.datetime.now()
             try:
                 module = importlib.import_module(plugin)
 
@@ -244,11 +249,20 @@ class ETL(object):
                 if self.config['raise_pluginexception']:
                     raise
 
+            time_plugin_end = datetime.datetime.now()
+            time_plugin_delta = time_plugin_end - time_plugin_start
+            data['etl_' + plugin + '_time_millis_i'] = int(time_plugin_delta.total_seconds() * 1000)
+
+
             # Abort plugin chain if plugin set parameters['break'] to True
             # (used for example by blacklist or exclusion plugins)
             if 'break' in parameters:
                 if parameters['break']:
                     break
+
+        time_end = datetime.datetime.now()
+        time_delta = time_end - time_start
+        data['etl_time_millis_i'] = int(time_delta.total_seconds() * 1000)
 
         # if processing aborted (f.e. by blacklist filter or file modification time did not change)
         abort = False
