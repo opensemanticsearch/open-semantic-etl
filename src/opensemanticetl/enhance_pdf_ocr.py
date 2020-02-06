@@ -6,8 +6,8 @@ import tempfile
 import json
 
 import etl_plugin_core
-import enhance_ocr
 import enhance_ocr_descew
+from tesseract_cache import tesseract_cache
 
 # Extract text from all extracted images from pdf
 # if splitpages is off, return one txt instead of page based list of texts
@@ -23,7 +23,7 @@ def pdfimages2text(filename, lang='eng', verbose=False,
             return load_cache(filename, cache, lang, pdf_ocr, pdf_ocr_descew)
         except (FileNotFoundError, KeyError):
             if verbose:
-                print('Not in OCR cache, starting OCR for {}'.format(filename))
+                print('Not in PDF OCR cache, starting OCR for {}'.format(filename))
 
     ocr_temp_dirname = tempfile.mkdtemp(prefix="opensemanticetl_pdf_ocr_")
 
@@ -51,8 +51,7 @@ def pdfimages2text(filename, lang='eng', verbose=False,
         if pdf_ocr:
 
             try:
-                result = enhance_ocr.image2text(
-                    filename=imagefilename, lang=lang, verbose=verbose)
+                result = tesseract_cache.get_ocr_text(filename=imagefilename, lang=lang, cache_dir=cache, verbose=verbose)
 
                 if result:
                     # extract page number from extracted image
@@ -69,13 +68,14 @@ def pdfimages2text(filename, lang='eng', verbose=False,
 
             try:
                 result = enhance_ocr_descew.optimized_image2text(
-                    imagefilename, lang, verbose=verbose)
+                    filename=imagefilename, lang=lang, cache_dir=cache,
+                    verbose=verbose)
 
                 if result:
                     # extract page number from extracted image
                     # filename (image-pagenumber-imagenumber.jpg)
                     pagenumber = int(image.split('-')[1])
-                    append_page(enhance_ocr_descew, pagenumber, result)
+                    append_page(ocr_descew_txt, pagenumber, result)
 
             except BaseException as e:
 
@@ -92,7 +92,9 @@ def pdfimages2text(filename, lang='eng', verbose=False,
 
 def load_cache(filename, cache, lang='eng',
                pdf_ocr=True, pdf_ocr_descew=False):
-    md5hash = hashlib.md5(open(filename, 'rb').read()).hexdigest()
+    pdffile = open(filename, 'rb')
+    md5hash = hashlib.md5(pdffile.read()).hexdigest()
+    pdffile.close()
     ocr_cache_filename = cache + os.path.sep + \
         "{}-{}.json".format(lang, md5hash)
     with open(ocr_cache_filename) as f:
@@ -155,10 +157,7 @@ class enhance_pdf_ocr(etl_plugin_core.Plugin):
     
         pdf_ocr_descew = ('enhance_ocr_descew' in parameters['plugins'])
     
-        if 'ocr_lang' in parameters:
-            lang = parameters['ocr_lang']
-        else:
-            lang = 'eng'
+        lang = parameters.get('ocr_lang', 'eng')
     
         ocr_txt = {}
         ocr_optimized_txt = {}
@@ -184,8 +183,5 @@ class enhance_pdf_ocr(etl_plugin_core.Plugin):
             pages_content = [value for (key, value) in sorted(
                 ocr_optimized_txt.items())]
             data['ocr_descew_t'] = "\n".join(pages_content)
-    
-        # Mark document to enhanced with this plugin
-        data['etl_enhance_pdf_ocr_b'] = True
-    
+        
         return parameters, data

@@ -5,6 +5,10 @@ adduser --system --disabled-password opensemanticetl
 # install dependencies
 pip3 install -r /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
 
+
+# rights for OCR cache
+chown opensemanticetl /var/cache/tesseract
+
 # rights for thumbnail dir
 chown opensemanticetl /var/opensemanticsearch/media/thumbnails
 chmod o+w /var/opensemanticsearch/media/thumbnails

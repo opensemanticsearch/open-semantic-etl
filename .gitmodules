@@ -2,3 +2,6 @@
 	path = src/open-semantic-entity-search-api
 	url = https://github.com/opensemanticsearch/open-semantic-entity-search-api.git
 	branch = master
+[submodule "src/tesseract-ocr-cache"]
+	path = src/tesseract-ocr-cache
+	url = https://github.com/opensemanticsearch/tesseract-ocr-cache.git

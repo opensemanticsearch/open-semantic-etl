@@ -3,7 +3,9 @@ import shutil
 import sys
 import tempfile
 import subprocess
-import enhance_ocr
+
+import etl_plugin_core
+from tesseract_cache import tesseract_cache
 
 #
 # Optimize image with Scantailor before OCR
@@ -12,7 +14,7 @@ import enhance_ocr
 # because sometimes Scantailor results incomplete with fewer text parts than original images
 
 
-def optimized_image2text(filename, lang='eng', verbose=False):
+def optimized_image2text(filename, lang='eng', cache_dir=None, verbose=False):
 
     ocr_txt = False
 
@@ -39,8 +41,7 @@ def optimized_image2text(filename, lang='eng', verbose=False):
                 # ignore the cache directory of scantailor, only files in directory
                 if os.path.isfile(imagefilename):
 
-                    result = enhance_ocr.image2text(
-                        imagefilename, lang, verbose=verbose)
+                    result = tesseract_cache.get_ocr_text(filename=imagefilename, lang=lang, cache_dir=cache_dir, verbose=verbose)
 
                     os.remove(imagefilename)
 
@@ -70,7 +71,10 @@ def optimized_image2text(filename, lang='eng', verbose=False):
 # If image add ocr text from optimized image
 #
 
-class enhance_ocr_descew(object):
+class enhance_ocr_descew(etl_plugin_core.Plugin):
+
+    # process plugin, if one of the filters matches
+    filter_mimetype_prefixes = ['image']
 
     # how to find uris which are not enriched yet?
     # (if not enhanced on indexing but later)
@@ -88,38 +92,18 @@ class enhance_ocr_descew(object):
         if data is None:
             data = {}
 
-        verbose = False
-        if 'verbose' in parameters:
-            if parameters['verbose']:
-                verbose = True
+        verbose = parameters.get('verbose', False)
 
         filename = parameters['filename']
 
-        if 'content_type_ss' in data:
-            mimetype = data['content_type_ss']
-        else:
-            mimetype = parameters['content_type_ss']
+        lang = parameters.get('ocr_lang', 'eng')
 
-        # if connector returns a list, use only first value (which is the only entry of the list)
-        if isinstance(mimetype, list):
-            mimetype = mimetype[0]
+        if verbose:
+            print("Mimetype seems image, starting optimized OCR")
 
-        if 'ocr_lang' in parameters:
-            lang = parameters['ocr_lang']
-        else:
-            lang = 'eng'
+        ocr_txt = optimized_image2text(filename=filename, lang=lang, cache_dir=parameters.get("ocr_cache"), verbose=verbose)
 
-        if "image" in mimetype.lower():
-            if verbose:
-                print(
-                    "Mimetype seems image ({}), starting optimized OCR".format(mimetype))
-
-            ocr_txt = optimized_image2text(filename, lang, verbose)
-
-            if ocr_txt:
-                data['ocr_descew_t'] = ocr_txt
-
-            # mark the document to indicate, that it was analyzed by this plugin
-            data['enhance_ocr_descew_b'] = "true"
+        if ocr_txt:
+            data['ocr_descew_t'] = ocr_txt
 
         return parameters, data
