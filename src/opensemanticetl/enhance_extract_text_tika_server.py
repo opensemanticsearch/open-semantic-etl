@@ -48,10 +48,11 @@ class enhance_extract_text_tika_server(object):
         headers = {}
 
         do_ocr = parameters.get('ocr', False)
+
+        if 'ocr_lang' in parameters:
+            headers['X-Tika-OCRLanguage'] = parameters['ocr_lang']
         
         if do_ocr:
-            if 'ocr_lang' in parameters:
-                headers['X-Tika-OCRLanguage'] = parameters['ocr_lang']
 
             # if OCR cache dir enabled, use tesseract cli wrapper with OCR cache
             ocr_cache = parameters.get('ocr_cache')
@@ -64,9 +65,15 @@ class enhance_extract_text_tika_server(object):
 
             # set OCR status in indexed document
             data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
+        
         else:
-            # OCR disabled, so set Tikas Tesseract path to not existant dir, so it will not find / use Tesseract OCR
-            headers = {'X-Tika-OCRTesseractPath': '/False'}
+            # OCR (yet) disabled, so set Tikas Tesseract path to tesseract fake so we only get OCR results if in cache
+            # else we get OCR status [Image (No OCR yet)] in content, so we know that there are images to OCR for later steps
+            headers['X-Tika-PDFextractInlineImages'] = 'true'
+            headers['X-Tika-OCRTesseractPath'] = '/usr/lib/python3/dist-packages/tesseract_fake/'
+
+            # set OCR status in indexed document
+            data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = False
 
         #
         # Parse on Apache Tika Server by python-tika
@@ -102,6 +109,23 @@ class enhance_extract_text_tika_server(object):
         if parsed['content']:
             data['content_txt'] = parsed['content']
 
+            if do_ocr:
+                # OCR is enabled, so was done by this Tika call, no images left to OCR
+                data['etl_count_images_yet_no_ocr_i'] = 0
+            else:
+                count_images = data['content_txt'].count('[Image (no OCR yet)]')
+                
+                data['etl_count_images_yet_no_ocr_i'] = count_images
+
+                # no additional OCR tasks for later stage, since no images to OCR
+                if count_images == 0:
+                    # therefore set status like OCR related config and plugins
+                    # yet runned, so on next stage filter_file_not_modified
+                    # wont process document again only because of OCR
+                    data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
+                    data['etl_enhance_ocr_descew_b'] = True
+                    data['etl_enhance_pdf_ocr_b'] = True
+                    
         # copy Tika fields to (mapped) data fields
         for tika_field in parsed["metadata"]:
             if tika_field in self.mapping:
