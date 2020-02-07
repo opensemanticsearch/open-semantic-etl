@@ -43,7 +43,7 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
         self.assertTrue('TestOCRImage1Content2' in data['content_txt'])
 
 
-    def test_ocr_jgg(self):
+    def test_ocr_jpg(self):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 

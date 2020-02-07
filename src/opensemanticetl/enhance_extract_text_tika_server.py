@@ -46,20 +46,33 @@ class enhance_extract_text_tika_server(object):
             tika_server = 'http://localhost:9998'
 
         headers = {}
-        if 'ocr_lang' in parameters:
-            headers = {'X-Tika-OCRLanguage': parameters['ocr_lang']}
 
-        if 'ocr' in parameters:
-            if parameters['ocr']:
-                data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
-            else:
-                headers = {'X-Tika-OCRTesseractPath': '/False'}
+        do_ocr = parameters.get('ocr', False)
+        
+        if do_ocr:
+            if 'ocr_lang' in parameters:
+                headers['X-Tika-OCRLanguage'] = parameters['ocr_lang']
+
+            # if OCR cache dir enabled, use tesseract cli wrapper with OCR cache
+            ocr_cache = parameters.get('ocr_cache')
+            if ocr_cache:
+                headers['X-Tika-OCRTesseractPath'] = '/usr/lib/python3/dist-packages/tesseract_cache/'
+
+            tessdataPath = parameters.get('ocr_tessdataPath')
+            if tessdataPath:
+                headers['X-Tika-OCRtessdataPath'] = tessdataPath
+
+            # set OCR status in indexed document
+            data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
+        else:
+            # OCR disabled, so set Tikas Tesseract path to not existant dir, so it will not find / use Tesseract OCR
+            headers = {'X-Tika-OCRTesseractPath': '/False'}
 
         #
         # Parse on Apache Tika Server by python-tika
         #
         if verbose:
-            print("Parsing by Tika Server on {}".format(tika_server))
+            print("Parsing by Tika Server on {} with additional headers {}".format(tika_server, headers))
 
         retries = 0
         retrytime = 1

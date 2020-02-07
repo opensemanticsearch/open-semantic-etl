@@ -115,14 +115,20 @@ config['plugins'].append('enhance_rdf')
 
 
 #
-# Config for OCR (automatic textrecognition)
+# Config for OCR (automatic textrecognition of text in images)
 #
 
 # Disable OCR for image files (i.e for more performance and/or because you don't need the text within images or have only photos without photographed text)
 #config['ocr'] = False
 
-# OCR cache
+# Don't use OCR cache
+#config['ocr_cache'] = None
+
+# Use OCR cache
 config['ocr_cache'] = '/var/cache/tesseract'
+
+# Tesseract data / models
+config['ocr_tessdataPath'] = '/usr/share/tesseract-ocr/4.00/tessdata/'
 
 # Do OCR for images embedded in PDF documents (i.e. designed images or scanned or photographed documents)
 config['plugins'].append('enhance_pdf_ocr')
