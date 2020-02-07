@@ -1,17 +1,20 @@
 #!/bin/sh
 
 adduser --system --disabled-password opensemanticetl
-
-# install dependencies
-pip3 install -r /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
-
+groupadd -f tesseract_cache
+usermod -a -G tesseract_cache opensemanticetl
 
 # rights for OCR cache
-chown opensemanticetl /var/cache/tesseract
+chown opensemanticetl:tesseract_cache /var/cache/tesseract
 
 # rights for thumbnail dir
 chown opensemanticetl /var/opensemanticsearch/media/thumbnails
 chmod o+w /var/opensemanticsearch/media/thumbnails
+
+
+# install dependencies
+pip3 install -r /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
+
 
 # load our additional systemd service config
 systemctl daemon-reload
