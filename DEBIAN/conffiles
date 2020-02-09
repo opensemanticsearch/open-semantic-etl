@@ -3,6 +3,9 @@
 /etc/opensemanticsearch/connector-files
 /etc/opensemanticsearch/connector-web
 /etc/opensemanticsearch/enhancer-rdf
+/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname
+/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname-prefix
+/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname-suffix
 /etc/opensemanticsearch/blacklist/blacklist-url
 /etc/opensemanticsearch/blacklist/blacklist-url-prefix
 /etc/opensemanticsearch/blacklist/blacklist-url-suffix

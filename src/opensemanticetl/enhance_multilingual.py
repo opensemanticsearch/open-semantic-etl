@@ -20,214 +20,6 @@ class enhance_multilingual(object):
     languages_force = []
     languages_force_hunspell = []
 
-    #
-    # exclude fields like technical metadata
-    #
-
-    exclude_prefix = [
-        'etl_',
-        'X-TIKA',
-        'AF Point',
-        'Chroma ',
-        'Compression ',
-        'Component ',
-        'Date/Time',
-        'Measured EV ',
-        'Primary AF Point ',
-        'Self Timer ',
-        'Unknown Camera Setting ',
-        'Unknown tag ',
-        'White Balance',
-        'access_permission:',
-    ]
-
-    # suffixes of non-text fields like nubers
-    exclude_suffix = ['_i', '_is', '_l', '_ls', '_b', '_bs',
-                      '_f', '_fs', '_d', '_ds', '_f', '_fs', '_dt', '_dts']
-
-    exclude_fields = [
-        'language_s',
-        'content_type_ss',
-        'content_type_group_ss',
-        'AEB Bracket Value_ss',
-        'AE Setting_ss',
-        'AF Area Height_ss',
-        'AF Area Width_ss',
-        'AF Area X Positions_ss',
-        'AF Area Y Positions_ss',
-        'AF Image Height_ss',
-        'AF Image Width_ss',
-        'AF Point Count_ss',
-        'AF Point Selected_ss',
-        'AF Points in Focus_ss',
-        'Aperture Value_ss',
-        'Auto Exposure Bracketing_ss',
-        'Auto ISO_ss',
-        'Auto Rotate_ss',
-        'Base ISO_ss',
-        'Bulb Duration_ss',
-        'Camera Info Array_ss',
-        'Camera Serial Number_ss',
-        'Camera Temperature_ss',
-        'Camera Type_ss',
-        'Canon Model ID_ss',
-        'Contrast_ss',
-        'Components Configuration_ss',
-        'Compressed Bits Per Pixel_ss',
-        'Compression_ss',
-        'Color Balance Array_ss',
-        'Color Space_ss',
-        'Color Temperature_ss',
-        'Color Tone_ss',
-        'Content-Encoding_s',
-        'Continuous Drive Mode_ss',
-        'Control Mode_ss',
-        'Custom Functions_ss',
-        'Custom Rendered_ss',
-        'created_ss',
-        'Creation-Date_ss',
-        'Data BitsPerSample_ss',
-        'Data PlanarConfiguration_ss',
-        'Data Precision_ss',
-        'Data SampleFormat_ss',
-        'Data SignificantBitsPerSample_ss',
-        'date_ss',
-        'dc:format_ss',
-        'dcterms:created_ss',
-        'dcterms:modified_ss',
-        'Dimension ImageOrientation_ss',
-        'Dimension PixelAspectRatio_ss',
-        'Digital Zoom_ss',
-        'Display Aperture_ss',
-        'Easy Shooting Mode_ss',
-        'embeddedResourceType_ss',
-        'Exif Version_ss',
-        'exif:DateTimeOriginal_ss',
-        'exif:ExposureTime_ss',
-        'exif:Flash_ss',
-        'exif:FocalLength_ss',
-        'exif:FNumber_ss',
-        'Exif Image Height_ss',
-        'Exif Image Width_ss',
-        'exif:IsoSpeedRatings_ss',
-        'Exposure Bias Value_ss',
-        'Exposure Compensation_ss',
-        'Exposure Mode_ss',
-        'Exposure Time_ss',
-        'F-Number_ss',
-        'F Number_ss',
-        'File Length_ss',
-        'File Modified Date_ss',
-        'File Info Array_ss',
-        'File Size_ss',
-        'Firmware Version_ss',
-        'Flash_ss',
-        'FlashPix Version_ss',
-        'Flash Activity_ss',
-        'Flash Details_ss',
-        'Flash Exposure Compensation_ss',
-        'Flash Guide Number_ss',
-        'Focal Length_ss',
-        'Flash Mode_ss',
-        'Focal Plane Resolution Unit_ss',
-        'Focal Plane X Resolution_ss',
-        'Focal Plane Y Resolution_ss',
-        'Focal Units per mm_ss',
-        'Focus Continuous_ss',
-        'Focus Distance Lower_ss',
-        'Focus Distance Upper_ss',
-        'Focus Mode_ss',
-        'Focus Type_ss',
-        'height_ss',
-        'ISO Speed Ratings_ss',
-        'IHDR_ss',
-        'Image Height_ss',
-        'Image Number_ss',
-        'Image Size_ss',
-        'Image Width_ss',
-        'Image Type_ss',
-        'Interoperability Index_ss',
-        'Interoperability Version_ss',
-        'Iso_ss',
-        'Last-Modified_ss',
-        'Last-Save-Date_ss',
-        'Lens Type_ss',
-        'Long Focal Length_ss',
-        'Macro Mode_ss',
-        'Manual Flash Output_ss',
-        'Max Aperture_ss',
-        'Max Aperture Value_ss',
-        'Measured Color Array_ss',
-        'Measured EV_ss',
-        'meta:creation-date_ss',
-        'meta:save-date_ss',
-        'Metering Mode_ss',
-        'Min Aperture_ss',
-        'modified_ss',
-        'ND Filter_ss',
-        'Number of Components_ss',
-        'Number of Tables_ss',
-        'Orientation_ss',
-        'Optical Zoom Code_ss',
-        'pdf:PDFVersion_ss',
-        'pdf:docinfo:created_ss',
-        'pdf:docinfo:creator_tool_ss',
-        'pdf:docinfo:modified_ss',
-        'pdf:docinfo:producer_ss',
-        'pdf:encrypted_ss',
-        'pdf:charsPerPage_ss',
-        'pdf:unmappedUnicodeCharsPerPage_ss',
-        'Photo Effect_ss',
-        'producer_ss',
-        'Record Mode_ss',
-        'Related Image Height_ss',
-        'Related Image Width_ss',
-        'Resolution Unit_ss',
-        'Resolution Units_ss',
-        'Saturation_ss',
-        'sBIT sBIT_RGBAlpha_ss',
-        'Scene Capture Type_ss',
-        'Sensing Method_ss',
-        'Sequence Number_ss',
-        'Serial Number Format_ss',
-        'Slow Shutter_ss',
-        'Sharpness_ss',
-        'Short Focal Length_ss',
-        'Shutter Speed Value_ss',
-        'Spot Metering Mode_ss',
-        'SRAW Quality_ss',
-        'Target Aperture_ss',
-        'Target Exposure Time_ss',
-        'tiff:BitsPerSample_ss',
-        'tiff:ImageLength_ss',
-        'tiff:ImageWidth_ss',
-        'tiff:Make_ss',
-        'tiff:Model_ss',
-        'tiff:Orientation_ss',
-        'tiff:ResolutionUnit_ss',
-        'tiff:XResolution_ss',
-        'tiff:YResolution_ss',
-        'Thumbnail Height Pixels_ss',
-        'Thumbnail Width Pixels_ss',
-        'Thumbnail Image Valid Area_ss',
-        'Thumbnail Length_ss',
-        'Thumbnail Offset_ss',
-        'Transparency Alpha_ss',
-        'Valid AF Point Count_ss',
-        'width_ss',
-        'X-Parsed-By_ss',
-        'X-TIKA:parse_time_millis_ss',
-        'X Resolution_ss',
-        'xmpTPg:NPages_ss',
-        'xmp:CreatorTool_ss',
-        'YCbCr Positioning_ss',
-        'Y Resolution_ss',
-        'Zoom Source Width_ss',
-        'Zoom Target Width_ss',
-    ]
-
-    exclude_fields_map = {}
-
     def process(self, parameters=None, data=None):
         if parameters is None:
             parameters = {}
@@ -255,9 +47,41 @@ class enhance_multilingual(object):
         if 'languages_exclude_fields_map' in parameters:
             self.exclude_fields_map = parameters['languages_exclude_fields_map']
 
-        language = None
-        if "language_s" in data:
-            language = data['language_s']
+        language = data.get('language_s', None)
+
+        #
+        # exclude fields like technical metadata
+        #
+    
+        exclude_prefix = []
+    
+        listfile = open('/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname-prefix')
+        for line in listfile:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                exclude_prefix.append(line)
+        listfile.close()
+    
+        # suffixes of non-text fields like nubers
+        exclude_suffix = []
+    
+        listfile = open('/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname-suffix')
+        for line in listfile:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                exclude_suffix.append(line)
+        listfile.close()
+    
+        # full fieldnames
+        exclude_fields = []
+        listfile = open('/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname')
+        for line in listfile:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                exclude_fields.append(line)
+        listfile.close()
+    
+        exclude_fields_map = {}
 
         language_fields = ['_text_']
         language_specific_data = {}
@@ -291,15 +115,15 @@ class enhance_multilingual(object):
             exclude = False
 
             # do not copy excluded fields
-            for exclude_field in self.exclude_fields:
+            for exclude_field in exclude_fields:
                 if fieldname == exclude_field:
                     exclude = True
 
-            for prefix in self.exclude_prefix:
+            for prefix in exclude_prefix:
                 if fieldname.startswith(prefix):
                     exclude = True
 
-            for suffix in self.exclude_suffix:
+            for suffix in exclude_suffix:
                 if fieldname.endswith(suffix):
                     exclude = True
 
@@ -310,8 +134,8 @@ class enhance_multilingual(object):
 
                     excluded_by_mapping = False
 
-                    if language_field in self.exclude_fields_map:
-                        if fieldname in self.exclude_fields_map[language_field]:
+                    if language_field in exclude_fields_map:
+                        if fieldname in exclude_fields_map[language_field]:
                             excluded_by_mapping = True
                             if self.verbose:
                                 print("Multilinguality: Excluding field {} to be copied to {} by config of exclude_field_map".format(
