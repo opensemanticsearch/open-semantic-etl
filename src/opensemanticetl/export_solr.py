@@ -52,6 +52,9 @@ class export_solr(object):
         if 'verbose' in parameters:
             self.verbose = parameters['verbose']
 
+        if self.verbose:            
+            print ('Starting Exporter: Solr')
+
         if 'solr' in parameters:
             self.solr = parameters['solr']
             if not self.solr.endswith('/'):
@@ -60,28 +63,39 @@ class export_solr(object):
         if 'index' in parameters:
             self.core = parameters['index']
 
-        add = False
-        if 'add' in parameters:
-            add = parameters['add']
+        add = parameters.get('add', False)
 
-        fields_set = []
-        if 'fields_set' in parameters:
-            fields_set = parameters['fields_set']
+        fields_set = parameters.get('fields_set', [])
+
+        commit = parameters.get('commit', None)
 
         if not 'id' in data:
             data['id'] = parameters['id']
 
         # post data to Solr
+        do_export = True
 
-        # do not post, if only id (which will contain no add or set commands for fields and will be seen as overwrite for whole document)
-        if len(data) > 1:
-            self.update(data=data, add=add, fields_set=fields_set)
+        # but do not post, if only id (which will contain no add or set commands for fields and will be seen as overwrite for whole document)
+        if len(data) < 2:
+            if self.verbose:
+                print('Not exported to Solr because no data or only the ID.')
+            do_export = False
+
+        # and do not post, if yet posted before (exporter not exporter, but in plugin queue, f.e. in multi stage processing before adding task to queue)
+        if 'etl_export_solr_b' in data:
+            if self.verbose:
+                print('Not exported to Solr because no data or yet exported in this ETL run, because exporter was runned as plugin.')
+                do_export = False
+
+        if do_export:
+            self.update(data=data, add=add, fields_set=fields_set, commit=commit)
+
 
         return parameters, data
 
     # update document in index, set fields in data to updated or new values or add new/additional values
     # if no document yet, it will be added
-    def update(self, data, add=False, fields_set=()):
+    def update(self, data, add=False, fields_set=(), commit=None):
 
         update_fields = {}
 
@@ -98,7 +112,7 @@ class export_solr(object):
                     # if document there with values for this fields, the existing values will be overwritten with new values
                     update_fields[fieldname]['set'] = data[fieldname]
 
-        self.post(data=update_fields)
+        self.post(data=update_fields, commit=commit)
 
     def post(self, data=None, docid=None, commit=None):
         if data is None:
@@ -112,6 +126,7 @@ class export_solr(object):
         datajson = '[' + json.dumps(data) + ']'
 
         params = {}
+
         if commit:
             params['commit'] = 'true'
 

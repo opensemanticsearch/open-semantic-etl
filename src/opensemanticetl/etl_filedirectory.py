@@ -19,6 +19,11 @@ class Connector_Filedirectory(Connector_File):
         # apply filters before adding to queue, so filtered or yet indexed files not added to queue
         # adding to queue by plugin export_queue_files
 
+        # exporter to index filenames before text extraction and other later tasks
+        # will run before adding tasks to queue by export_queue_files
+        # so reseted plugin status will be in index before started ETL tasks apply not modified filter
+        export_to_index = self.config['export']
+
         self.config['plugins'] = [
             'enhance_mapping_id',
             'filter_blacklist',
@@ -27,6 +32,7 @@ class Connector_Filedirectory(Connector_File):
             'enhance_path',
             'enhance_entity_linking',
             'enhance_multilingual',
+            export_to_index,
             'export_queue_files',
         ]
 

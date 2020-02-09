@@ -192,9 +192,6 @@ class ETL(object):
 
         for plugin in plugins:
 
-            # mark plugin as runned
-            data['etl_' + plugin + '_b'] = True
-
             data['etl_error_' + plugin + '_txt'] = []
 
             # if content_type / plugin combination blacklisted, continue with next plugin
@@ -253,23 +250,22 @@ class ETL(object):
             time_plugin_delta = time_plugin_end - time_plugin_start
             data['etl_' + plugin + '_time_millis_i'] = int(time_plugin_delta.total_seconds() * 1000)
 
+            # mark plugin as runned
+            data['etl_' + plugin + '_b'] = True
 
             # Abort plugin chain if plugin set parameters['break'] to True
             # (used for example by blacklist or exclusion plugins)
-            if 'break' in parameters:
-                if parameters['break']:
-                    break
+            abort = parameters.get('break', False)
+
+            if abort:
+                break
 
         time_end = datetime.datetime.now()
         time_delta = time_end - time_start
         data['etl_time_millis_i'] = int(time_delta.total_seconds() * 1000)
 
         # if processing aborted (f.e. by blacklist filter or file modification time did not change)
-        abort = False
-        if 'break' in parameters:
-            if parameters['break']:
-                abort = True
-
+        abort = parameters.get('break', False)
         if not abort:
 
             if 'export' in parameters:

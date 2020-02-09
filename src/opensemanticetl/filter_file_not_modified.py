@@ -60,6 +60,7 @@ class filter_file_not_modified(object):
         indexed_doc_mtime = None
         plugins_failed = []
         critical_plugins_failed = []
+        plugins_runned = []
         plugins_not_runned = []
         additional_plugins_later_not_runned = []
         do_not_reindex_because_plugin_yet_not_processed = []
@@ -76,7 +77,7 @@ class filter_file_not_modified(object):
 
             # get plugin status fields
             for configured_plugin in parameters['plugins']:
-                if not configured_plugin == 'export_queue_files':
+                if not configured_plugin == 'export_queue_files' and not configured_plugin == parameters['export']:
                     metadatafields.append('etl_' + configured_plugin + '_b')
             if 'additional_plugins_later' in parameters:
                 for configured_plugin in parameters['additional_plugins_later']:
@@ -120,29 +121,43 @@ class filter_file_not_modified(object):
 
             # all now configured plugins processed in former ETL/their analysis is in index?
             for configured_plugin in parameters['plugins']:
-                if not configured_plugin == 'export_queue_files':
-                    if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
+                if not configured_plugin == 'export_queue_files' and not configured_plugin == parameters['export']:
+                    plugin_runned = indexed_metadata.get('etl_' + configured_plugin + '_b', False)
+                    if plugin_runned:
+                        plugins_runned.append(configured_plugin)
+                    else:
                         if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
                             plugins_not_runned.append(configured_plugin)
+
             if 'additional_plugins_later' in parameters:
                 for configured_plugin in parameters['additional_plugins_later']:
-                    if not 'etl_' + configured_plugin + '_b' in indexed_metadata:
+                    plugin_runned = indexed_metadata.get('etl_' + configured_plugin + '_b', False)
+                    if plugin_runned:
+                        plugins_runned.append(configured_plugin)
+                    else:
                         if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
-                            additional_plugins_later_not_runned.append(
-                                configured_plugin)
+                            plugins_not_runned.append(configured_plugin)
+
 
             # Tika OCR was enabled in former ETL/their analysis is in index?
             if 'ocr' in parameters:
                 if parameters['ocr']:
-                    if not 'etl_enhance_extract_text_tika_server_ocr_enabled_b' in indexed_metadata:
-                        plugins_not_runned.append(
-                            'etl_enhance_extract_text_tika_server_ocr_enabled_b')
+                    plugin_runned = indexed_metadata.get('etl_enhance_extract_text_tika_server_ocr_enabled_b', False)
+                    if plugin_runned:
+                        plugins_runned.append(configured_plugin)
+                    else:
+                        if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
+                            plugins_not_runned.append(configured_plugin)
+
             if 'additional_plugins_later_config' in parameters:
                 if 'ocr' in parameters['additional_plugins_later_config']:
                     if parameters['additional_plugins_later_config']['ocr']:
-                        if not 'etl_enhance_extract_text_tika_server_ocr_enabled_b' in indexed_metadata:
-                            additional_plugins_later_not_runned.append(
-                                'etl_enhance_extract_text_tika_server_ocr_enabled_b')
+                        plugin_runned = indexed_metadata.get('etl_enhance_extract_text_tika_server_ocr_enabled_b', False)
+                        if plugin_runned:
+                            plugins_runned.append(configured_plugin)
+                        else:
+                            if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
+                                plugins_not_runned.append(configured_plugin)
 
             for critical_plugin in self.force_reindex_if_former_etl_plugin_errors:
                 if critical_plugin in plugins_failed:
@@ -227,5 +242,22 @@ class filter_file_not_modified(object):
         # if not modifed and no critical ETL errors, stop ETL process, because all done on last run
         if not doindex:
             parameters['break'] = True
+        else:
+            # reset plugin status of plugins of next stage
+            # so reprocessing of updated data works by tasks in later stages,
+            # which else would have plugin status processed
+            # from first/last processing of old version of content
+
+            commit = False
+            if len(plugins_runned) > 0:
+                
+                for runned_plugin in plugins_runned:
+                    if not runned_plugin in [parameters['export'], 'enhance_mapping_id', 'filter_blacklist', 'filter_file_not_modified']:
+                        data['etl_' + runned_plugin + '_b'] = False
+                        commit = True
+
+            # immediatelly commit (else Solr autocommit after some time) of etl status reset(s) in exporter before adding new ETL tasks which need the status for plugin filter_file_not_modified
+            if commit:
+                parameters['commit'] = True
 
         return parameters, data

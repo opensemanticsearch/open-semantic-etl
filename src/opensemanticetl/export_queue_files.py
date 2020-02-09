@@ -18,8 +18,8 @@ class export_queue_files(object):
         if data is None:
             data = {}
 
-        # add file to ETL queue with standard priorizazion
-        # but don't if only plugins not runned that should be runned later with lower priority (which will be added to queue in step below)
+        # add file to ETL queue with standard prioritizazion
+        # but don't if only plugins not runned that should be runned later (which will be added to queue in step below)
         if not 'only_additional_plugins_later' in parameters:
             index_file.apply_async(
                 kwargs={'filename': parameters['filename']}, queue='tasks', priority=5)

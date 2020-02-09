@@ -22,10 +22,7 @@ class enhance_ocr(object):
         if data is None:
             data = {}
 
-        verbose = False
-        if 'verbose' in parameters:
-            if parameters['verbose']:
-                verbose = True
+        verbose = parameters.get('verbose', False)
 
         filename = parameters['filename']
 
@@ -39,10 +36,7 @@ class enhance_ocr(object):
         if isinstance(mimetype, list):
             mimetype = mimetype[0]
 
-        if 'ocr_lang' in parameters:
-            lang = parameters['ocr_lang']
-        else:
-            lang = 'eng'
+        lang = parameters.get('ocr_lang', 'eng')
 
         if "image" in mimetype.lower():
             if verbose:
@@ -53,9 +47,5 @@ class enhance_ocr(object):
 
             if ocr_txt:
                 data['ocr_t'] = ocr_txt
-
-            # mark the document to indicate
-            # that it was analyzed by this plugin
-            data['enhance_ocr_b'] = "true"
 
         return parameters, data
