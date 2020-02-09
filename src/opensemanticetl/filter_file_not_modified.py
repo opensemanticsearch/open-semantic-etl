@@ -129,16 +129,6 @@ class filter_file_not_modified(object):
                         if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
                             plugins_not_runned.append(configured_plugin)
 
-            if 'additional_plugins_later' in parameters:
-                for configured_plugin in parameters['additional_plugins_later']:
-                    plugin_runned = indexed_metadata.get('etl_' + configured_plugin + '_b', False)
-                    if plugin_runned:
-                        plugins_runned.append(configured_plugin)
-                    else:
-                        if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
-                            plugins_not_runned.append(configured_plugin)
-
-
             # Tika OCR was enabled in former ETL/their analysis is in index?
             if 'ocr' in parameters:
                 if parameters['ocr']:
@@ -149,6 +139,15 @@ class filter_file_not_modified(object):
                         if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
                             plugins_not_runned.append(configured_plugin)
 
+            if 'additional_plugins_later' in parameters:
+                for configured_plugin in parameters['additional_plugins_later']:
+                    plugin_runned = indexed_metadata.get('etl_' + configured_plugin + '_b', False)
+                    if plugin_runned:
+                        plugins_runned.append(configured_plugin)
+                    else:
+                        if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
+                            additional_plugins_later_not_runned.append(configured_plugin)
+
             if 'additional_plugins_later_config' in parameters:
                 if 'ocr' in parameters['additional_plugins_later_config']:
                     if parameters['additional_plugins_later_config']['ocr']:
@@ -157,7 +156,7 @@ class filter_file_not_modified(object):
                             plugins_runned.append(configured_plugin)
                         else:
                             if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
-                                plugins_not_runned.append(configured_plugin)
+                                additional_plugins_later_not_runned.append(configured_plugin)
 
             for critical_plugin in self.force_reindex_if_former_etl_plugin_errors:
                 if critical_plugin in plugins_failed:
