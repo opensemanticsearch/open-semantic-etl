@@ -83,9 +83,55 @@ class Plugin(object):
 def get_text(data):
     text = ''
 
+    #
+    # exclude fields like technical metadata
+    #
+
+    exclude_fields_prefix = []
+
+    listfile = open('/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname-prefix')
+    for line in listfile:
+        line = line.strip()
+        if line and not line.startswith("#"):
+            exclude_fields_prefix.append(line)
+    listfile.close()
+
+    # suffixes of non-text fields like nubers
+    exclude_fields_suffix = []
+
+    listfile = open('/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname-suffix')
+    for line in listfile:
+        line = line.strip()
+        if line and not line.startswith("#"):
+            exclude_fields_suffix.append(line)
+    listfile.close()
+
+    # full fieldnames
+    exclude_fields = []
+    listfile = open('/etc/opensemanticsearch/blacklist/textanalysis/blacklist-fieldname')
+    for line in listfile:
+        line = line.strip()
+        if line and not line.startswith("#"):
+            exclude_fields.append(line)
+    listfile.close()
+
+
     for field in data:
 
-        if not field.startswith('etl_'):
+        is_blacklisted = False
+
+        for blacklisted_prefix in exclude_fields_prefix:
+            if field.startswith(blacklisted_prefix):
+                is_blacklisted = True
+        
+        for blacklisted_suffix in exclude_fields_suffix:
+            if field.endswith(blacklisted_suffix):
+                is_blacklisted = True
+        
+        if field in exclude_fields:
+            is_blacklisted = True
+
+        if not is_blacklisted:
     
             values = data[field]
     
