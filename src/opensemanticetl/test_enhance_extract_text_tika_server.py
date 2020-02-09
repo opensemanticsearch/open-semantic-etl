@@ -17,7 +17,7 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
         parameters, data = enhancer.process(parameters=parameters)
 
         # check extracted content type
-        self.assertEqual(data['content_type_ss'], 'application/pdf')
+        self.assertTrue(data['content_type_ss'] == 'application/pdf' or data['content_type_ss'] == ['application/pdf', 'image/jpeg', 'image/png'])
 
         # check extracted title
         self.assertEqual(data['title_txt'], 'TestPDFtitle')
