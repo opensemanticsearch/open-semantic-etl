@@ -6,6 +6,7 @@ usermod -a -G tesseract_cache opensemanticetl
 
 # rights for OCR cache
 chown opensemanticetl:tesseract_cache /var/cache/tesseract
+chmod 770 /var/cache/tesseract
 
 # rights for thumbnail dir
 chown opensemanticetl /var/opensemanticsearch/media/thumbnails
