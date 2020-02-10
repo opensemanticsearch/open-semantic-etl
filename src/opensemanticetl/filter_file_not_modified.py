@@ -143,20 +143,20 @@ class filter_file_not_modified(object):
                 if parameters['ocr']:
                     plugin_runned = indexed_metadata.get('etl_enhance_extract_text_tika_server_ocr_enabled_b', False)
                     if plugin_runned:
-                        plugins_runned.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
+                        plugins_runned.append('enhance_extract_text_tika_server_ocr_enabled')
                     else:
                         if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
-                            plugins_not_runned.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
+                            plugins_not_runned.append('enhance_extract_text_tika_server_ocr_enabled')
 
             if 'additional_plugins_later_config' in parameters:
                 if 'ocr' in parameters['additional_plugins_later_config']:
                     if parameters['additional_plugins_later_config']['ocr']:
                         plugin_runned = indexed_metadata.get('etl_enhance_extract_text_tika_server_ocr_enabled_b', False)
                         if plugin_runned:
-                            plugins_runned.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
+                            plugins_runned.append('enhance_extract_text_tika_server_ocr_enabled')
                         else:
                             if not configured_plugin in do_not_reindex_because_plugin_yet_not_processed:
-                                additional_plugins_later_not_runned.append('etl_enhance_extract_text_tika_server_ocr_enabled_b')
+                                additional_plugins_later_not_runned.append('enhance_extract_text_tika_server_ocr_enabled')
 
             for critical_plugin in self.force_reindex_if_former_etl_plugin_errors:
                 if critical_plugin in plugins_failed:
