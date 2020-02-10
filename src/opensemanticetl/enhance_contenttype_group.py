@@ -63,12 +63,14 @@ class enhance_contenttype_group(object):
             # Contenttype to group
             for mapped_content_type, group in self.contenttype_groups.items():
                 if content_type.startswith(mapped_content_type):
-                    groups.append(group)
+                    if not group in groups:
+                        groups.append(group)
 
             # Suffix to group
             for suffix, group in self.suffix_groups.items():
                 if parameters['id'].upper().endswith(suffix.upper()):
-                    groups.append(group)
+                    if not group in groups:
+                        groups.append(group)
 
             if len(groups) > 0:
                 data[self.fieldname] = groups
