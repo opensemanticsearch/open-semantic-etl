@@ -128,10 +128,15 @@ class enhance_extract_text_tika_server(object):
 
         # copy Tika fields to (mapped) data fields
         for tika_field in parsed["metadata"]:
+
             if tika_field in self.mapping:
                 data[self.mapping[tika_field]] = parsed['metadata'][tika_field]
             else:
                 data[tika_field + '_ss'] = parsed['metadata'][tika_field]
+
+            # there is a field name with exceptions, so copy fieldname to failed plugins
+            if 'exception' in tika_field.lower():
+                data['etl_error_plugins_ss'].append(tika_field)
 
         #
         # anaylze and (re)set OCR status
