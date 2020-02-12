@@ -126,17 +126,19 @@ class enhance_extract_text_tika_server(object):
         if parsed['content']:
             data['content_txt'] = parsed['content']
 
-        # copy Tika fields to (mapped) data fields
+        tika_exceptions = False
         for tika_field in parsed["metadata"]:
 
+            # there is a field name with exceptions, so copy fieldname to failed plugins
+            if 'exception' in tika_field.lower():
+                tika_exceptions = True
+                data['etl_error_plugins_ss'].append(tika_field)
+
+            # copy Tika fields to (mapped) data fields
             if tika_field in self.mapping:
                 data[self.mapping[tika_field]] = parsed['metadata'][tika_field]
             else:
                 data[tika_field + '_ss'] = parsed['metadata'][tika_field]
-
-            # there is a field name with exceptions, so copy fieldname to failed plugins
-            if 'exception' in tika_field.lower():
-                data['etl_error_plugins_ss'].append(tika_field)
 
         #
         # anaylze and (re)set OCR status
@@ -155,8 +157,9 @@ class enhance_extract_text_tika_server(object):
             data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
             data['etl_count_images_yet_no_ocr_i'] = 0
 
-            data['etl_enhance_ocr_descew_b'] = True
-            data['etl_enhance_pdf_ocr_b'] = True
+            if not tika_exceptions:
+                data['etl_enhance_ocr_descew_b'] = True
+                data['etl_enhance_pdf_ocr_b'] = True
 
         else:
             # OCR parser used by Tika, so there was something to OCR
