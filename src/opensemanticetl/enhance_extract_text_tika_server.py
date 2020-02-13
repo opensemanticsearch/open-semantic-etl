@@ -66,6 +66,9 @@ class enhance_extract_text_tika_server(object):
         
         if do_ocr:
 
+            # increase Tikas Tesseract timeout
+            headers['X-Tika-OCRTimeout'] = '1000'
+
             # OCR embeded images in PDF
             headers['X-Tika-PDFextractInlineImages'] = 'true'
 
@@ -115,7 +118,11 @@ class enhance_extract_text_tika_server(object):
                         retrytime = retrytime_max
 
                 parsed = parser.from_file(
-                    filename=filename, serverEndpoint=tika_server, headers=headers)
+                    filename=filename,
+                    serverEndpoint=tika_server,
+                    headers=headers,
+                    requestOptions={'timeout': 60000})
+
                 no_connection = False
 
             except requests.exceptions.ConnectionError as e:
