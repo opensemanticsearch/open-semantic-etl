@@ -121,11 +121,16 @@ config['plugins'].append('enhance_rdf')
 # Disable OCR for image files (i.e for more performance and/or because you don't need the text within images or have only photos without photographed text)
 #config['ocr'] = False
 
-# Don't use OCR cache
-#config['ocr_cache'] = None
+# Option to disable OCR of embedded images in PDF by Tika
+# so (if alternate plugin is enabled) OCR will be done only by alternate
+# plugin enhance_pdf_ocr (which else works only as fallback, if Tika exceptions)
+#config['ocr_pdf_tika'] = False
 
 # Use OCR cache
 config['ocr_cache'] = '/var/cache/tesseract'
+
+# Option to disable OCR cache
+#config['ocr_cache'] = None
 
 # Tesseract data / models
 config['ocr_tessdataPath'] = '/usr/share/tesseract-ocr/4.00/tessdata/'

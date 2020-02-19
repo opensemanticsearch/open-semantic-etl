@@ -26,12 +26,18 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
         self.assertTrue('TestPDFContent1 on TestPDFPage1' in data['content_txt'])
         self.assertTrue('TestPDFContent2 on TestPDFPage2' in data['content_txt'])
 
+        # check disabled OCR of embedded images in PDF (result of plugin enhance_pdf_ocr.py)
+        self.assertFalse('TestPDFOCRImage1Content1' in data['content_txt'])
+        self.assertFalse('TestPDFOCRImage1Content2' in data['content_txt'])
+        self.assertFalse('TestPDFOCRImage2Content1' in data['content_txt'])
+        self.assertFalse('TestPDFOCRImage2Content2' in data['content_txt'])
+
 
     def test_text_extraction_pdf_ocr(self):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
-        parameters = {'ocr': True, 'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'}
+        parameters = {'ocr': True, 'plugins':['enhance_pdf_ocr'], 'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -84,7 +90,7 @@ class Test_enhance_extract_text_tika_server(unittest.TestCase):
         self.assertTrue('TestOCRImage2Content2' in data['content_txt'])
 
 
-    def test_disabled_ocr(self):
+    def test_disabled_ocr_png(self):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 

@@ -60,17 +60,36 @@ class enhance_extract_text_tika_server(object):
         headers = {}
 
         do_ocr = parameters.get('ocr', False)
+        
+        do_ocr_pdf_tika = parameters.get('ocr_pdf_tika', True)
+        do_ocr_pdf = False
+        if 'plugins' in parameters:
+            if 'enhance_pdf_ocr' in parameters['plugins'] and do_ocr_pdf_tika:
+                do_ocr_pdf = True
+
+        # if only OCR for PDF enabled (enhance_pdf_ocr as fallback and OCR by tika enabled) but not OCR for image files,
+        # run OCR only if file ending .pdf so disabled OCR for other file types
+        if do_ocr_pdf and not do_ocr:
+            contenttype = data.get('content_type_ss', None)
+            if isinstance(contenttype, list):
+                contenttype = contenttype[0]
+
+            if contenttype == 'application/pdf' or filename.lower().endswith('.pdf'):
+                do_ocr_pdf = True
+            else:
+                do_ocr_pdf = False
 
         if 'ocr_lang' in parameters:
             headers['X-Tika-OCRLanguage'] = parameters['ocr_lang']
         
-        if do_ocr:
+        if do_ocr or do_ocr_pdf:
 
             # increase Tikas Tesseract timeout
             headers['X-Tika-OCRTimeout'] = '1000'
 
-            # OCR embeded images in PDF
-            headers['X-Tika-PDFextractInlineImages'] = 'true'
+            # OCR embeded images in PDF, if not disabled or has to be done by other plugin
+            if do_ocr_pdf:
+                headers['X-Tika-PDFextractInlineImages'] = 'true'
 
             # if OCR cache dir enabled, use tesseract cli wrapper with OCR cache
             ocr_cache = parameters.get('ocr_cache')
@@ -133,12 +152,13 @@ class enhance_extract_text_tika_server(object):
         if parsed['content']:
             data['content_txt'] = parsed['content']
 
-        tika_exceptions = False
+        tika_exception = False
         for tika_field in parsed["metadata"]:
 
             # there is a field name with exceptions, so copy fieldname to failed plugins
             if 'exception' in tika_field.lower():
-                tika_exceptions = True
+                tika_exception = True
+                parameters['etl_tika_exception'] = True
                 data['etl_error_plugins_ss'].append(tika_field)
 
             # copy Tika fields to (mapped) data fields
@@ -148,54 +168,79 @@ class enhance_extract_text_tika_server(object):
                 data[tika_field + '_ss'] = parsed['metadata'][tika_field]
 
         #
-        # anaylze and (re)set OCR status
+        # anaylze and (re)set OCR status to prevent (re)process unnecessary tasks of later stage(s)
         #
 
-        # Tika made an tesseract OCR call (if OCR (yet) off, by fake Tesseract CLI wrapper) so there is really something to OCR?
-        if not in_parsers('org.apache.tika.parser.ocr.TesseractOCRParser', data['X-Parsed-By_ss']):
-            # since Tika did not call (fake or cached) tesseract (wrapper), nothing to OCR in this file,
+        ocr_status_known = False
 
-            if verbose:
-                print('Tika OCR parser not used, so nothing to OCR in later stages, too')
+        # file was PDF and OCR for PDF enabled, so we know status
+        if do_ocr_pdf:
+            ocr_status_known = True
+
+        # all OCR cases enabled, so we know status
+        if do_ocr and do_ocr_pdf:
+            ocr_status_known = True
+
+        # if no kind of OCR done now, we know status because fake tesseract wrapper
+        if not do_ocr and not do_ocr_pdf:
+            ocr_status_known = True
+        
+        # if OCR for images done but content type is PDF and OCR of PDF by Tika is disabled
+        # (because using other plugin for that) we do not know status for PDF, since Tika runned without inline OCR for PDF
+        if do_ocr and not do_ocr_pdf:
+            contenttype = data.get('content_type_ss', None)
+            if isinstance(contenttype, list):
+                contenttype = contenttype[0]
+            if not contenttype == 'application/pdf':
+                ocr_status_known = True
+
+        if ocr_status_known:
             
-            # so set all OCR plugin status and OCR configs to done,
-            # so filter_file_not_modifield in later stage task will prevent reprocessing
-            # because of only this yet not runned plugins or OCR configs
-            data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
-            data['etl_count_images_yet_no_ocr_i'] = 0
-
-            if not tika_exceptions:
-                data['etl_enhance_ocr_descew_b'] = True
-                data['etl_enhance_pdf_ocr_b'] = True
-
-        else:
-            # OCR parser used by Tika, so there was something to OCR
-
-            # If in this case the fake tesseract wrapper could get all results from cache,
-            # no additional Tika-Server run with OCR enabled needed
-            # So set Tika-Server OCR status of tika-server to done
-
-            if not do_ocr and 'content_txt' in data:
-
+            # Tika made an tesseract OCR call (if OCR (yet) off, by fake Tesseract CLI wrapper) so there is really something to OCR?
+            if not in_parsers('org.apache.tika.parser.ocr.TesseractOCRParser', data['X-Parsed-By_ss']):
+                # since Tika did not call (fake or cached) tesseract (wrapper), nothing to OCR in this file,
+    
                 if verbose:
-                    print ("Tika OCR parser was used, so there is something to OCR")
-
-                # how many images yet not OCRd because no result from cache so we got fake OCR result "[Image (no OCR yet)]"
-                count_images_yet_no_ocr = data['content_txt'].count('[Image (no OCR yet)]')
-                data['etl_count_images_yet_no_ocr_i'] = count_images_yet_no_ocr
-
-                # got all Tika-Server Tesseract OCR results from cache, so no additional OCR tasks for later stage
-                if count_images_yet_no_ocr == 0:
+                    print('Tika OCR parser not used, so nothing to OCR in later stages, too')
+                
+                # so set all OCR plugin status and OCR configs to done,
+                # so filter_file_not_modifield in later stage task will prevent reprocessing
+                # because of only this yet not runned plugins or OCR configs
+                data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
+                data['etl_count_images_yet_no_ocr_i'] = 0
+    
+                if not tika_exception:
+                    parameters['etl_nothing_for_ocr'] = True
+                    data['etl_enhance_ocr_descew_b'] = True
+                    data['etl_enhance_pdf_ocr_b'] = True
+    
+            else:
+                # OCR parser used by Tika, so there was something to OCR
+    
+                # If in this case the fake tesseract wrapper could get all results from cache,
+                # no additional Tika-Server run with OCR enabled needed
+                # So set Tika-Server OCR status of tika-server to done
+    
+                if not do_ocr and 'content_txt' in data:
+    
                     if verbose:
-                        print ('But could get all OCR results in this stage from OCR cache')
-                    # therefore set status like OCR related config
-                    # yet runned, so on next stage filter_file_not_modified
-                    # wont process document again only because of OCR
-                    # (but not reset status of other plugins,
-                    # since maybe additional image in changed file)
-                    data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
-                    data['etl_count_images_yet_no_ocr_i'] = 0
-
+                        print ("Tika OCR parser was used, so there is something to OCR")
+    
+                    # how many images yet not OCRd because no result from cache so we got fake OCR result "[Image (no OCR yet)]"
+                    count_images_yet_no_ocr = data['content_txt'].count('[Image (no OCR yet)]')
+                    data['etl_count_images_yet_no_ocr_i'] = count_images_yet_no_ocr
+    
+                    # got all Tika-Server Tesseract OCR results from cache, so no additional OCR tasks for later stage
+                    if count_images_yet_no_ocr == 0:
+                        if verbose:
+                            print ('But could get all OCR results in this stage from OCR cache')
+                        # therefore set status like OCR related config
+                        # yet runned, so on next stage filter_file_not_modified
+                        # wont process document again only because of OCR
+                        # (but not reset status of other plugins,
+                        # since maybe additional image in changed file)
+                        data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
+                        data['etl_count_images_yet_no_ocr_i'] = 0
 
         tika_log_file = tika_log_path + os.path.sep + 'tika.log'
         if os.path.isfile(tika_log_file):
