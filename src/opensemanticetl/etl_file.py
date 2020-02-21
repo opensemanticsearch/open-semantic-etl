@@ -274,3 +274,26 @@ if __name__ == "__main__":
 
     # commit changes, if not yet done automatically by index timer
     connector.commit()
+
+    # after file or files processed with basic/first stage config
+    # if plugins or config options configured for later stage, reprocess with additional config
+    additional_plugins_later = connector.config.get('additional_plugins_later', [])
+
+    additional_plugins_later_config = connector.config.get('additional_plugins_later_config', {})
+
+    if len(additional_plugins_later) > 0 or len(additional_plugins_later_config) > 0:
+
+        if connector.config['verbose']:
+            print ("There are options configured for later stage, so (re)processing with additional plugins {} and/or config {}".format(additional_plugins_later, additional_plugins_later_config))
+
+        for option in additional_plugins_later_config:
+            connector.config[option] = additional_plugins_later_config[option]
+
+            connector.config['plugins'].extend(additional_plugins_later)
+            
+        # index each filename
+        for filename in args:
+            connector.index(filename=filename)
+
+        # commit changes, if not yet done automatically by index timer
+        connector.commit()

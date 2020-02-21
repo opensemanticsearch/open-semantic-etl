@@ -28,13 +28,9 @@ class export_queue_files(object):
         # to run ETL of the file later again with additional plugins like OCR which need much time/resources while meantime all files are searchable by other plugins which need fewer resources
         if 'additional_plugins_later' in parameters or 'additional_plugins_later_config' in parameters:
 
-            additional_plugins_later = []
-            if 'additional_plugins_later' in parameters:
-                additional_plugins_later = parameters['additional_plugins_later']
+            additional_plugins_later = parameters.get('additional_plugins_later', [])
 
-            additional_plugins_later_config = {}
-            if 'additional_plugins_later_config' in parameters:
-                additional_plugins_later_config = parameters['additional_plugins_later_config']
+            additional_plugins_later_config = parameters.get('additional_plugins_later_config', {})
 
             if len(additional_plugins_later) > 0 or len(additional_plugins_later_config) > 0:
 
