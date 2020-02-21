@@ -170,6 +170,9 @@ class enhance_extract_text_tika_server(object):
         #
         # anaylze and (re)set OCR status to prevent (re)process unnecessary tasks of later stage(s)
         #
+        contenttype = data.get('content_type_ss', None)
+        if isinstance(contenttype, list):
+            contenttype = contenttype[0]
 
         ocr_status_known = False
 
@@ -188,9 +191,6 @@ class enhance_extract_text_tika_server(object):
         # if OCR for images done but content type is PDF and OCR of PDF by Tika is disabled
         # (because using other plugin for that) we do not know status for PDF, since Tika runned without inline OCR for PDF
         if do_ocr and not do_ocr_pdf:
-            contenttype = data.get('content_type_ss', None)
-            if isinstance(contenttype, list):
-                contenttype = contenttype[0]
             if not contenttype == 'application/pdf':
                 ocr_status_known = True
 
@@ -241,6 +241,10 @@ class enhance_extract_text_tika_server(object):
                         # since maybe additional image in changed file)
                         data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
                         data['etl_count_images_yet_no_ocr_i'] = 0
+
+                        # if not a (maybe changed) PDF, set enhance_pdf_ocr to done, too, so no reprocessing because this additional plugin on later stage
+                        if not contenttype == 'application/pdf':
+                            data['etl_enhance_pdf_ocr_b'] = True
 
         tika_log_file = tika_log_path + os.path.sep + 'tika.log'
         if os.path.isfile(tika_log_file):
