@@ -1,7 +1,7 @@
 #!/bin/sh
 
 adduser --system --disabled-password opensemanticetl
-groupadd -f tesseract_cache
+groupadd -r tesseract_cache
 usermod -a -G tesseract_cache opensemanticetl
 
 # rights for OCR cache
