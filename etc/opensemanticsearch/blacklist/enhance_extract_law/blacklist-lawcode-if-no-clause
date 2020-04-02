@@ -1,0 +1,18 @@
+# Preferred labels of Law codes will be only added to facet "Law code",
+# if the following configured (alternate) labels are directly before or after a
+# law clause (f.e. in text "abc § 123 CC xyz"), but not if such blacklisted
+# (alternate) label stands alone
+# (f.e. in text "abc CC xyz" or in "CC: mail@domain) because too ambiguous
+
+
+# too ambiguous alternate label from Wikidata entity Q206834 "Swiss Civil Code"
+CC
+
+# too ambiguous alternate label from Wikidata entity Q56045 "Basic Law for the Federal Republic of Germany"
+GG
+
+# too ambiguous alternate label from Wikidata entity Q187719 "Corpus Juris Civilis"
+Institutes
+
+# too ambiguous alternate label from Wikidata entity Q7101313 "Oregon Revised Statutes"
+ORS

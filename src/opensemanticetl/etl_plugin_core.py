@@ -144,6 +144,7 @@ def get_text(data):
         
     return text
 
+
 # append values (i.e. from an enhancer) to data structure
 def append(data, facet, values):
 
@@ -171,6 +172,7 @@ def append(data, facet, values):
     else:
         data[facet] = values
 
+
 #
 # Get preferred label(s) from field in format pref label and uri
 #
@@ -190,3 +192,26 @@ def get_preflabels(values):
             uri2preflabel_map[uri] = preflabel
 
     return uri2preflabel_map
+
+
+def get_all_matchtexts(values):
+    
+    results = {}
+
+    if not isinstance(values, list):
+        values = [values]
+
+    for value in values:
+
+        #get only matchtext (without ID/URI of matching entity)
+        value = value.split("\t")
+        matchid = value[0]
+        matchtext = value[1]
+        
+        if not matchid in results:
+            results[matchid] = []
+            
+        if not matchtext in results[matchid]:
+            results[matchid].append(matchtext)
+
+    return results
