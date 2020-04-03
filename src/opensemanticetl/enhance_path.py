@@ -1,7 +1,8 @@
+import os.path
+
 #
 # Build and add path facets from filename
 #
-
 
 class enhance_path(object):
 
@@ -12,6 +13,8 @@ class enhance_path(object):
             data = {}
 
         docid = parameters['id']
+
+        data['filename_extension_s'] = os.path.splitext(docid)[1][1:]
 
         if 'facet_path_strip_prefix' in parameters:
             facet_path_strip_prefix = parameters['facet_path_strip_prefix']
