@@ -14,7 +14,7 @@ class enhance_path(object):
 
         docid = parameters['id']
 
-        data['filename_extension_s'] = os.path.splitext(docid)[1][1:]
+        data['filename_extension_s'] = os.path.splitext(docid)[1][1:].lower()
 
         if 'facet_path_strip_prefix' in parameters:
             facet_path_strip_prefix = parameters['facet_path_strip_prefix']
