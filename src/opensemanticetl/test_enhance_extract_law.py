@@ -41,10 +41,10 @@ class Test_enhance_extract_law(unittest.TestCase):
         self.assertTrue('§ 153 Abs. 1 Satz 2' in data['law_clause_ss'])
         self.assertTrue('§ 52 Absatz 1 Nummer 2 Buchstabe c' in data['law_clause_ss'])
         
-        self.assertTrue('Strafgesetzbuch' in data['Code_of_law_ss'])
-        self.assertTrue('Bürgerliches Gesetzbuch' in data['Code_of_law_ss'])
+        self.assertTrue('Strafgesetzbuch' in data['law_code_ss'])
+        self.assertTrue('Bürgerliches Gesetzbuch' in data['law_code_ss'])
         
-        self.assertTrue('Swiss Civil Code' in data['Code_of_law_ss'])
+        self.assertTrue('Swiss Civil Code' in data['law_code_ss'])
 
 
     def test_blacklist(self):
@@ -59,7 +59,7 @@ class Test_enhance_extract_law(unittest.TestCase):
 
         parameters, data = etl.process(parameters={'id': 'test_enhance_extract_law'}, data=data)
         
-        self.assertFalse('Swiss Civil Code' in data['Code_of_law_ss'])
+        self.assertFalse('Swiss Civil Code' in data['law_code_ss'])
 
         data['content_txt'] = "\n".join([
             "No clause for blacklisted law code alias CC but not blacklisted label of this alias: Swiss Civil Code"
@@ -67,7 +67,7 @@ class Test_enhance_extract_law(unittest.TestCase):
 
         parameters, data = etl.process(parameters={'id': 'test_enhance_extract_law'}, data=data)
         
-        self.assertTrue('Swiss Civil Code' in data['Code_of_law_ss'])
+        self.assertTrue('Swiss Civil Code' in data['law_code_ss'])
 
 
 if __name__ == '__main__':

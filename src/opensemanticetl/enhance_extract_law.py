@@ -4,6 +4,27 @@
 import re
 import etl_plugin_core
 
+
+#
+# get taxonomy for aggregated facets / filters
+#
+
+# example: '§ 153 Abs. 1 Satz 2' -> ['§ 153', '§ 153 Absatz 1', '§ 153 Absatz 1 Satz 2']
+
+# todo:
+
+def get_taxonomy(law_clause, law_code = None):
+
+    law_clauses = [law_clause]
+    
+    return law_clauses
+
+
+#1.a
+#1(2)
+#1 (2)
+
+
 #
 # extract law codes
 #
@@ -59,12 +80,12 @@ class enhance_extract_law(etl_plugin_core.Plugin):
 
             etl_plugin_core.append(data, 'law_clause_ss', clause)
 
-        code_matchtexts = etl_plugin_core.get_all_matchtexts(data.get('Code_of_law_ss_matchtext_ss', []))
+        code_matchtexts = etl_plugin_core.get_all_matchtexts(data.get('law_code_ss_matchtext_ss', []))
         code_matchtexts_with_clause = []
 
         preflabels = {}
-        if 'Code_of_law_ss_preflabel_and_uri_ss' in data:
-            preflabels = etl_plugin_core.get_preflabels(data['Code_of_law_ss_preflabel_and_uri_ss'])
+        if 'law_code_ss_preflabel_and_uri_ss' in data:
+            preflabels = etl_plugin_core.get_preflabels(data['law_code_ss_preflabel_and_uri_ss'])
 
         if len(clauses)>0 and len(code_matchtexts)>0:
 
@@ -102,8 +123,8 @@ class enhance_extract_law(etl_plugin_core.Plugin):
                     blacklist.append(line)
             listfile.close()
 
-            if not isinstance(data['Code_of_law_ss_matchtext_ss'], list):
-                data['Code_of_law_ss_matchtext_ss'] = [data['Code_of_law_ss_matchtext_ss']]
+            if not isinstance(data['law_code_ss_matchtext_ss'], list):
+                data['law_code_ss_matchtext_ss'] = [data['law_code_ss_matchtext_ss']]
 
             blacklisted_code_ids = []
             for code_match_id in code_matchtexts:
@@ -111,18 +132,18 @@ class enhance_extract_law(etl_plugin_core.Plugin):
                     if code_matchtext in blacklist:
                         if code_matchtext not in code_matchtexts_with_clause:
                             blacklisted_code_ids.append(code_match_id)
-                            data['Code_of_law_ss_matchtext_ss'].remove(code_match_id + "\t" + code_matchtext)
+                            data['law_code_ss_matchtext_ss'].remove(code_match_id + "\t" + code_matchtext)
 
-            code_matchtexts = etl_plugin_core.get_all_matchtexts(data.get('Code_of_law_ss_matchtext_ss', []))
+            code_matchtexts = etl_plugin_core.get_all_matchtexts(data.get('law_code_ss_matchtext_ss', []))
 
-            if not isinstance(data['Code_of_law_ss'], list):
-                data['Code_of_law_ss'] = [data['Code_of_law_ss']]
-            if not isinstance(data['Code_of_law_ss_preflabel_and_uri_ss'], list):
-                data['Code_of_law_ss_preflabel_and_uri_ss'] = [data['Code_of_law_ss_preflabel_and_uri_ss']]
+            if not isinstance(data['law_code_ss'], list):
+                data['law_code_ss'] = [data['law_code_ss']]
+            if not isinstance(data['law_code_ss_preflabel_and_uri_ss'], list):
+                data['law_code_ss_preflabel_and_uri_ss'] = [data['law_code_ss_preflabel_and_uri_ss']]
 
             for blacklisted_code_id in blacklisted_code_ids:
                 if blacklisted_code_id not in code_matchtexts:
-                    data['Code_of_law_ss'].remove(preflabels[blacklisted_code_id])
-                    data['Code_of_law_ss_preflabel_and_uri_ss'].remove(preflabels[blacklisted_code_id] + ' <' + blacklisted_code_id + '>')
+                    data['law_code_ss'].remove(preflabels[blacklisted_code_id])
+                    data['law_code_ss_preflabel_and_uri_ss'].remove(preflabels[blacklisted_code_id] + ' <' + blacklisted_code_id + '>')
 
         return parameters, data
