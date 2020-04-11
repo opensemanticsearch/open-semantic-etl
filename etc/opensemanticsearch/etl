@@ -257,6 +257,13 @@ config['stanford_ner_java_options'] = '-mx1000m'
 
 
 #
+# Law clauses extraction
+#
+
+config['plugins'].append('enhance_extract_law')
+
+
+#
 # Neo4j graph database
 #
 
