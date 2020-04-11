@@ -139,7 +139,4 @@ class enhance_ner_spacy(object):
                 if verbose:
                     print("Since Named Entity Recognition (NER) class {} not mapped to a field/facet, ignore entity/word(s): {}".format(entity_class, entity))
 
-        # mark the document, that it was analyzed by this plugin yet
-        data['enhance_ner_spacy_b'] = "true"
-
         return parameters, data
