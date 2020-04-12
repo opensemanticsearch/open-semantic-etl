@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import datetime
-import time
 import twint
 import sys
 from etl import ETL
@@ -52,7 +50,7 @@ def index_tweet(obj, config):
     if config.Index_Linked_Webpages:
         if data['urls_ss']:
             for url in data['urls_ss']:
-                index_web.apply_async(kwargs={'uri': url}, queue='tasks', priority=5)
+                index_web.apply_async(kwargs={'uri': url}, queue='open_semantic_etl_tasks', priority=5)
 
     try:
         etl.process(parameters, data)

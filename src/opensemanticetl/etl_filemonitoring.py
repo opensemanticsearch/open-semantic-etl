@@ -68,7 +68,7 @@ class EventHandler(pyinotify.ProcessEvent):
             print("Indexing file {}".format(filename))
 
         index_file.apply_async(
-            kwargs={'filename': filename}, queue='tasks', priority=5)
+            kwargs={'filename': filename}, queue='open_semantic_etl_tasks', priority=5)
 
     def delete_file(self, filename):
         uri = filename
@@ -79,7 +79,7 @@ class EventHandler(pyinotify.ProcessEvent):
             print("Deleting from index filename {} with URL {}".format(
                 filename, uri))
 
-        delete.apply_async(kwargs={'uri': uri}, queue='tasks', priority=6)
+        delete.apply_async(kwargs={'uri': uri}, queue='open_semantic_etl_tasks', priority=6)
 
 
 class Filemonitor(ETL):

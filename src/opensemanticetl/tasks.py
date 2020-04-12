@@ -27,8 +27,8 @@ if os.getenv('OPEN_SEMANTIC_ETL_MQ_BROKER'):
 
 app = Celery('etl.tasks', broker=broker)
 
-app.conf.CELERY_QUEUES = [Queue('tasks', Exchange(
-    'tasks'), routing_key='tasks', queue_arguments={'x-max-priority': 70})]
+app.conf.CELERY_QUEUES = [Queue('open_semantic_etl_tasks', Exchange(
+    'open_semantic_etl_tasks'), routing_key='open_semantic_etl_tasks', queue_arguments={'x-max-priority': 100})]
 
 app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
 app.conf.CELERYD_PREFETCH_MULTIPLIER = 1
