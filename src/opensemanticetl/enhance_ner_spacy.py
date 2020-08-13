@@ -31,10 +31,13 @@ class enhance_ner_spacy(object):
             mapping = {
                 'ORG': 'organization_ss',
                 'NORP': 'organization_ss',
+                'orgName': 'organization_ss',
                 'PER': 'person_ss',
                 'PERSON': 'person_ss',
+                'persName': 'person_ss',
                 'GPE': 'location_ss',
                 'LOC': 'location_ss',
+                'placeName': 'location_ss',
                 'FACILITY': 'location_ss',
                 'PRODUCT': 'product_ss',
                 'EVENT': 'event_ss',
