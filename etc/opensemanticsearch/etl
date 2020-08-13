@@ -213,15 +213,16 @@ config['spacy_ner_classifier_default'] = None
 # ...
 
 config['spacy_ner_classifiers'] = {
-    'en': 'en_core_web_sm',
     'de': 'de_core_news_sm',
+    'en': 'en_core_web_sm',
     'es': 'es_core_news_sm',
-    'pt': 'pt_core_news_sm',
     'fr': 'fr_core_news_sm',
     'it': 'it_core_news_sm',
-    'nl': 'nl_core_news_sm',
-    'nb': 'nb_core_news_sm',
     'lt': 'lt_core_news_sm',
+    'nb': 'nb_core_news_sm',
+    'nl': 'nl_core_news_sm',
+    'pl': 'pl_core_news_sm',
+    'pt': 'pt_core_news_sm',
 }
 
 
