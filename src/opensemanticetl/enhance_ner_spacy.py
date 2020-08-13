@@ -32,6 +32,7 @@ class enhance_ner_spacy(object):
                 'ORG': 'organization_ss',
                 'NORP': 'organization_ss',
                 'orgName': 'organization_ss',
+                'ORGANIZATION': 'organization_ss',
                 'PER': 'person_ss',
                 'PERSON': 'person_ss',
                 'persName': 'person_ss',
