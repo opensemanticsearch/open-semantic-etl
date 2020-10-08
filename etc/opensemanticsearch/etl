@@ -224,6 +224,7 @@ config['spacy_ner_classifiers'] = {
     'nl': 'nl_core_news_sm',
     'pl': 'pl_core_news_sm',
     'pt': 'pt_core_news_sm',
+    'ro': 'ro_core_news_sm',
 }
 
 
