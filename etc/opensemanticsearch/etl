@@ -213,6 +213,7 @@ config['spacy_ner_classifier_default'] = None
 # ...
 
 config['spacy_ner_classifiers'] = {
+    'da': 'da_core_news_sm',
     'de': 'de_core_news_sm',
     'en': 'en_core_web_sm',
     'es': 'es_core_news_sm',
