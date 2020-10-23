@@ -1,10 +1,12 @@
-FROM debian:buster
+ARG FROM=debian:buster
+FROM ${FROM}
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install --no-install-recommends --yes \
     curl \
     file \
+    build-essential \
     libssl-dev \
     libffi-dev \
     librabbitmq4 \
@@ -28,14 +30,14 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
 #    tesseract-ocr-all \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+COPY ./src/opensemanticetl/requirements.txt /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
+# install Python PIP dependecies
+RUN pip3 install -r /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
 
 COPY ./src/opensemanticetl /usr/lib/python3/dist-packages/opensemanticetl
 COPY ./src/open-semantic-entity-search-api/src/entity_linking /usr/lib/python3/dist-packages/entity_linking
 
-COPY ./etc/opensemanticsearch /etc/
-
-# install Python PIP dependecies
-RUN pip3 install -r /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
+COPY ./etc/opensemanticsearch /etc/opensemanticsearch
 
 # add user
 RUN adduser --system --disabled-password opensemanticetl
