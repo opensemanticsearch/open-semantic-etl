@@ -30,6 +30,12 @@ For example to test only the Tika plugin for text extraction ("enhance_extract_t
 python3 -m unittest test_enhance_extract_text_tika_server
 
 
+CI/CD
+=====
+
+The script run_tests.sh is called for automated tests within a Docker container configured by docker-compose.test.yml in the root directory of this Git repository.
+
+
 Testdata
 ========
 
