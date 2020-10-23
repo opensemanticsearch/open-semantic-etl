@@ -1,0 +1,8 @@
+version: '3'
+services:
+  sut:
+    build:
+      context: .
+      args:
+        FROM: ubuntu:focal
+    command: /usr/lib/python3/dist-packages/opensemanticetl/test/run_tests.sh
