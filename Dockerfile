@@ -35,12 +35,17 @@ COPY ./src/opensemanticetl/requirements.txt /usr/lib/python3/dist-packages/opens
 RUN pip3 install -r /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
 
 COPY ./src/opensemanticetl /usr/lib/python3/dist-packages/opensemanticetl
+COPY ./src/tesseract-ocr-cache/tesseract_cache /usr/lib/python3/dist-packages/tesseract_cache
+COPY ./src/tesseract-ocr-cache/tesseract_fake /usr/lib/python3/dist-packages/tesseract_fake
 COPY ./src/open-semantic-entity-search-api/src/entity_linking /usr/lib/python3/dist-packages/entity_linking
 
 COPY ./etc/opensemanticsearch /etc/opensemanticsearch
 
 # add user
 RUN adduser --system --disabled-password opensemanticetl
+
+RUN mkdir /var/cache/tesseract
+RUN chown opensemanticetl /var/cache/tesseract
 
 USER opensemanticetl
 
