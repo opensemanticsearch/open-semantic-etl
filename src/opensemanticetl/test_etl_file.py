@@ -23,10 +23,10 @@ class Test_ETL_file(unittest.TestCase):
         etl_delete.delete(filename)
 
         # check extracted content type
-        self.assertTrue(data['content_type_ss'] == 'application/pdf' or data['content_type_ss'] == ['application/pdf', 'image/jpeg', 'image/png'])
+        self.assertTrue(data['content_type_ss'] == 'application/pdf' or sorted(data['content_type_ss']) == ['application/pdf', 'image/jpeg', 'image/png'])
 
         # check content type group which is mapped to this content type (result of plugin enhance_contenttype_group.py)
-        self.assertTrue(data['content_type_group_ss'] == ['Text document'] or data['content_type_group_ss'] == ['Text document', 'Image', 'Image'])
+        self.assertTrue(data['content_type_group_ss'] == ['Text document'] or sorted(data['content_type_group_ss']) == ['Image', 'Text document'])
 
         # check extracted title (result of plugin enhance_extract_text_tika_server.py)
         self.assertEqual(data['title_txt'], 'TestPDFtitle')
