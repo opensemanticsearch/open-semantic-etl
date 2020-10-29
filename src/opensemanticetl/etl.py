@@ -63,38 +63,6 @@ class ETL(object):
 
             result = True
 
-        #
-        # sort added plugins because of dependencies
-        #
-
-        # OCR has to be done before language detection, since content maybe only scanned text within images
-        if "enhance_detect_language_tika_server" in self.config['plugins'] and "enhance_pdf_ocr" in self.config['plugins']:
-            if self.config['plugins'].index("enhance_pdf_ocr") > self.config['plugins'].index("enhance_detect_language_tika_server"):
-                # remove after
-                self.config['plugins'].remove("enhance_pdf_ocr")
-                # add before
-                self.config['plugins'].insert(self.config['plugins'].index(
-                    "enhance_detect_language_tika_server"), "enhance_pdf_ocr")
-
-        if "enhance_detect_language_tika_server" in self.config['plugins'] and "enhance_ocr_descew" in self.config['plugins']:
-            if self.config['plugins'].index("enhance_ocr_descew") > self.config['plugins'].index("enhance_detect_language_tika_server"):
-                # remove after
-                self.config['plugins'].remove("enhance_ocr_descew")
-                # add before
-                self.config['plugins'].insert(self.config['plugins'].index(
-                    "enhance_detect_language_tika_server"), "enhance_ocr_descew")
-
-        # manual annotations should be found by by fulltext search too (automatic entity linking does by including the text or synonym)
-        # so read before generating the default search fields like _text_ or text_txt_languageX by enhance_multilingual
-        if "enhance_rdf_annotations_by_http_request" in self.config['plugins'] and "enhance_multilingual" in self.config['plugins']:
-            if self.config['plugins'].index("enhance_rdf_annotations_by_http_request") > self.config['plugins'].index("enhance_multilingual"):
-                # remove after
-                self.config['plugins'].remove(
-                    "enhance_rdf_annotations_by_http_request")
-                # add before
-                self.config['plugins'].insert(self.config['plugins'].index(
-                    "enhance_multilingual"), "enhance_rdf_annotations_by_http_request")
-
         # if another exporter
         self.init_exporter()
 
@@ -183,9 +151,9 @@ class ETL(object):
         time_start = datetime.datetime.now()
 
         if 'plugins' in parameters:
-            plugins = parameters['plugins']
+            plugins = sort_plugins(parameters['plugins'])
         else:
-            plugins = self.config['plugins']
+            plugins = sort_plugins(self.config['plugins'])
 
         data['etl_error_plugins_ss'] = []
         data['etl_error_txt'] = []
@@ -360,3 +328,41 @@ def error_message(docid, data, plugin, e):
 
         sys.stderr.write(
             "Exception while generating error message for exception while processing plugin {} for file {}\n".format(plugin, docid))
+
+
+#
+# sort added plugins because of dependencies
+#
+
+def sort_plugins(plugins):
+
+    # OCR has to be done before language detection, since content maybe only scanned text within images
+    if "enhance_detect_language_tika_server" in plugins and "enhance_pdf_ocr" in plugins:
+        if plugins.index("enhance_pdf_ocr") > plugins.index("enhance_detect_language_tika_server"):
+            # remove after
+            plugins.remove("enhance_pdf_ocr")
+            # add before
+            plugins.insert(plugins.index(
+                "enhance_detect_language_tika_server"), "enhance_pdf_ocr")
+
+    if "enhance_detect_language_tika_server" in plugins and "enhance_ocr_descew" in plugins:
+        if plugins.index("enhance_ocr_descew") > plugins.index("enhance_detect_language_tika_server"):
+            # remove after
+            plugins.remove("enhance_ocr_descew")
+            # add before
+            plugins.insert(plugins.index(
+                "enhance_detect_language_tika_server"), "enhance_ocr_descew")
+
+    # manual annotations should be found by by fulltext search too (automatic entity linking does by including the text or synonym)
+    # so read before generating the default search fields like _text_ or text_txt_languageX by enhance_multilingual
+    if "enhance_rdf_annotations_by_http_request" in plugins and "enhance_multilingual" in plugins:
+        if plugins.index("enhance_rdf_annotations_by_http_request") > plugins.index("enhance_multilingual"):
+            # remove after
+            plugins.remove(
+                "enhance_rdf_annotations_by_http_request")
+            # add before
+            plugins.insert(plugins.index(
+                "enhance_multilingual"), "enhance_rdf_annotations_by_http_request")
+
+    return plugins
+
