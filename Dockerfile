@@ -1,7 +1,8 @@
 ARG FROM=debian:buster
 FROM ${FROM}
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
 RUN apt-get update && apt-get install --no-install-recommends --yes \
     curl \
