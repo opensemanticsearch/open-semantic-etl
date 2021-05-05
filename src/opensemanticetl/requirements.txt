@@ -1,4 +1,4 @@
-py2neo==3.1.2
+py2neo
 scrapy
 warcio
 tika
