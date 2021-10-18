@@ -1,4 +1,4 @@
-ARG FROM=debian:buster
+ARG FROM=debian:bullseye
 FROM ${FROM}
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -28,7 +28,6 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
     python3-setuptools \
     python3-sparqlwrapper \
     python3-wheel \
-    scantailor \
     tesseract-ocr \
 #    tesseract-ocr-all \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
