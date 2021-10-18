@@ -5,27 +5,29 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
 RUN apt-get update && apt-get install --no-install-recommends --yes \
+    build-essential \
     curl \
     file \
-    build-essential \
-    libssl-dev \
     libffi-dev \
     librabbitmq4 \
+    libssl-dev \
     poppler-utils \
     pst-utils \
+    python3-celery \
+    python3-dateutil \
+    python3-dev \
+    python3-feedparser \
+    python3-lxml \
+    python3-pip \
     python3-pycurl \
+    python3-pyinotify \
+    python3-pysolr \
     python3-rdflib \
     python3-requests \
-    python3-pysolr \
-    python3-dateutil \
-    python3-lxml \
-    python3-feedparser \
-    python3-celery \
-    python3-pyinotify \
-    python3-pip \
+    python3-scrapy \
     python3-setuptools \
+    python3-sparqlwrapper \
     python3-wheel \
-    python3-dev \
     scantailor \
     tesseract-ocr \
 #    tesseract-ocr-all \
