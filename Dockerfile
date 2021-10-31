@@ -2,7 +2,6 @@ ARG FROM=debian:bullseye
 FROM ${FROM}
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
 RUN apt-get update && apt-get install --no-install-recommends --yes \
     build-essential \
@@ -31,6 +30,11 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
     tesseract-ocr \
 #    tesseract-ocr-all \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install rust to build cryptography libraries
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
 
 COPY ./src/opensemanticetl/requirements.txt /usr/lib/python3/dist-packages/opensemanticetl/requirements.txt
 # install Python PIP dependecies
