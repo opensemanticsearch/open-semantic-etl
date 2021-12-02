@@ -265,6 +265,36 @@ config['stanford_ner_java_options'] = '-mx1000m'
 
 config['plugins'].append('enhance_extract_law')
 
+#
+# Default facet config if no facets are configured
+#
+config['facets'] = {
+    'author_ss': {'label': 'Author(s)', 'uri': 'http://schema.org/Author', 'facet_limit': '10', 'snippets_limit': '10'},
+    'tag_ss': {'label': 'Tags', 'uri': 'http://schema.org/keywords', 'facet_limit': '10', 'snippets_limit': '10'},
+    'annotation_tag_ss': {'label': 'Tags (Hypothesis)', 'uri': 'http://schema.org/keywords', 'facet_limit': '10', 'snippets_limit': '10'},
+    'person_ss': {'label': 'Persons', 'uri': 'http://schema.org/Person', 'facet_limit': '10', 'snippets_limit': '10'},
+    'organization_ss': {'label': 'Organizations', 'uri': 'http://schema.org/Organization', 'facet_limit': '10', 'snippets_limit': '10'},
+    'location_ss': {'label': 'Locations', 'uri': 'http://schema.org/Place', 'facet_limit': '10', 'snippets_limit': '10'},
+    'language_s': {'label': 'Language', 'uri': 'http://schema.org/inLanguage', 'facet_limit': '10', 'snippets_limit': '10'},
+    'email_ss': {'label': 'Email', 'uri': 'http://schema.org/email', 'facet_limit': '10', 'snippets_limit': '10'},
+    'Message-From_ss': {'label': 'Message from', 'uri': 'http://schema.org/sender', 'facet_limit': '10', 'snippets_limit': '10'},
+    'Message-To_ss': {'label': 'Message to', 'uri': 'http://schema.org/toRecipient', 'facet_limit': '10', 'snippets_limit': '10'},
+    'Message-CC_ss': {'label': 'Message CC', 'uri': 'http://schema.org/ccRecipient', 'facet_limit': '10', 'snippets_limit': '10'},
+    'Message-BCC_ss': {'label': 'Message BCC', 'uri': 'http://schema.org/bccRecipient', 'facet_limit': '10', 'snippets_limit': '10'},
+    'hashtag_ss': {'label': 'Hashtags', 'uri': 'http://schema.org/keywords', 'facet_limit': '10', 'snippets_limit': '10'},
+    'email_domain_ss': {'label': 'Email domain', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'phone_normalized_ss': {'label': 'Phone numbers', 'uri': 'https://schema.org/telephone', 'facet_limit': '10', 'snippets_limit': '10'},
+    'phone_ss': {'label': 'Phone numbers', 'uri': 'https://schema.org/telephone', 'facet_limit': '10', 'snippets_limit': '10'},
+    'money_ss': {'label': 'Money', 'uri': 'http://schema.org/MonetaryAmount', 'facet_limit': '10', 'snippets_limit': '10'},
+    'iban_ss': {'label': 'IBAN', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'law_clause_ss': {'label': 'Law clause', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'law_code_ss': {'label': 'Law code', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'law_code_clause_ss': {'label': 'Law code clause', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'filename_extension_s': {'label': 'Filename extension', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'content_type_group_ss': {'label': 'Content type group', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'content_type_ss': {'label': 'Content type', 'uri': '', 'facet_limit': '10', 'snippets_limit': '10'},
+    'law_codes_rdf_ss': {'label': '', 'uri': '', 'facet_limit': '0', 'snippets_limit': '0'},
+}
 
 #
 # Neo4j graph database
