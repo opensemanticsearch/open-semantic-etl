@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
     libssl-dev \
     poppler-utils \
     pst-utils \
-    python3-celery \
     python3-dateutil \
     python3-dev \
     python3-feedparser \
