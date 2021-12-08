@@ -31,7 +31,7 @@ class export_neo4j(object):
         if 'neo4j_host' in parameters:
             host = parameters['neo4j_host']
         if os.getenv('OPEN_SEMANTIC_ETL_NEO4J_HOST'):
-                host = os.getenv('OPEN_SEMANTIC_ETL_NEO4J_HOST')
+            host = os.getenv('OPEN_SEMANTIC_ETL_NEO4J_HOST')
 
         user = 'neo4j'
         if 'neo4j_user' in parameters:
@@ -40,6 +40,10 @@ class export_neo4j(object):
         password = 'neo4j'
         if 'neo4j_password' in parameters:
             password = parameters['neo4j_password']
+
+        neo4j_auth = os.getenv('NEO4J_AUTH', '')
+        if '/' in neo4j_auth:
+            user, _, password = neo4j_auth.partition('/')
 
         graph = Graph(host=host, user=user, password=password)
 
