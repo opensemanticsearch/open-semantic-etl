@@ -59,7 +59,7 @@ class export_neo4j(object):
 
                     document_node[entity_class_label] = data[entity_class]
 
-        graph.merge(document_node)
+        graph.merge(document_node, 'Document', 'name')
 
         # add / connect linked entities from facets
 
@@ -92,7 +92,7 @@ class export_neo4j(object):
 
                         # if not yet there, add the entity to graph
                         entity_node = Node(entity_class_label, name=entity)
-                        graph.merge(entity_node)
+                        graph.merge(entity_node, entity_class_label, 'name')
 
                         # if not yet there, add relationship to graph
                         relationship = Relationship(
