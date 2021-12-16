@@ -27,12 +27,12 @@ if os.getenv('OPEN_SEMANTIC_ETL_MQ_BROKER'):
 
 app = Celery('etl.tasks', broker=broker)
 
-app.conf.CELERY_QUEUES = [Queue('open_semantic_etl_tasks', Exchange(
+app.conf.task_queues = [Queue('open_semantic_etl_tasks', Exchange(
     'open_semantic_etl_tasks'), routing_key='open_semantic_etl_tasks', queue_arguments={'x-max-priority': 100})]
 
-app.conf.CELERYD_MAX_TASKS_PER_CHILD = 1
-app.conf.CELERYD_PREFETCH_MULTIPLIER = 1
-app.conf.CELERY_ACKS_LATE = True
+app.conf.worker_max_tasks_per_child = 1
+app.conf.worker_prefetch_multiplier = 1
+app.conf.task_acks_late = True
 
 
 # Max parallel tasks (Default: Use as many parallel ETL tasks as CPUs available).
@@ -225,4 +225,4 @@ if __name__ == "__main__":
     if options.quiet == False or options.quiet == True:
         quiet = options.quiet
 
-    app.worker_main()
+    app.worker_main(['worker'])
