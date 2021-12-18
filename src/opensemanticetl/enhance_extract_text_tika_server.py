@@ -159,6 +159,8 @@ class enhance_extract_text_tika_server(object):
             if 'exception' in tika_field.lower():
                 tika_exception = True
                 parameters['etl_tika_exception'] = True
+                if 'etl_error_plugins_ss' not in data:
+                    data['etl_error_plugins_ss'] = []
                 data['etl_error_plugins_ss'].append(tika_field)
 
             # copy Tika fields to (mapped) data fields
