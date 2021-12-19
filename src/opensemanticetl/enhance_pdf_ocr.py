@@ -6,7 +6,6 @@ import tempfile
 import json
 
 import etl_plugin_core
-import enhance_ocr_descew
 from tesseract_cache import tesseract_cache
 
 
@@ -14,13 +13,12 @@ from tesseract_cache import tesseract_cache
 # if splitpages is off, return one txt instead of page based list of texts
 
 def pdfimages2text(filename, lang='eng', verbose=False,
-                   pdf_ocr=True, pdf_ocr_descew=False,
+                   pdf_ocr=True,
                    cache=None):
     ocr_txt = {}
-    ocr_descew_txt = {}
     if cache is not None:
         try:
-            return load_cache(filename, cache, lang, pdf_ocr, pdf_ocr_descew)
+            return load_cache(filename, cache, lang, pdf_ocr)
         except (FileNotFoundError, KeyError):
             if verbose:
                 print('Not in PDF OCR cache, starting OCR for {}'.format(filename))
@@ -64,34 +62,14 @@ def pdfimages2text(filename, lang='eng', verbose=False,
                                  "maybe corrupt image: {} - exception: {}\n"
                                  .format(filename, imagefilename, e))
 
-        if pdf_ocr_descew:
-
-            try:
-                result = enhance_ocr_descew.optimized_image2text(
-                    filename=imagefilename, lang=lang, cache_dir=cache,
-                    verbose=verbose)
-
-                if result:
-                    # extract page number from extracted image
-                    # filename (image-pagenumber-imagenumber.jpg)
-                    pagenumber = int(image.split('-')[1])
-                    append_page(ocr_descew_txt, pagenumber, result)
-
-            except BaseException as e:
-
-                sys.stderr.write(
-                    "Exception while optimized ocr pdf: {} - "
-                    "maybe corrupt image: {} - exception: {}\n"
-                    .format(filename, imagefilename, e))
-
         os.remove(imagefilename)
 
     os.rmdir(ocr_temp_dirname)
-    return ocr_txt, ocr_descew_txt
+    return ocr_txt
 
 
 def load_cache(filename, cache, lang='eng',
-               pdf_ocr=True, pdf_ocr_descew=False):
+               pdf_ocr=True):
     pdffile = open(filename, 'rb')
     md5hash = hashlib.md5(pdffile.read()).hexdigest()
     pdffile.close()
@@ -100,12 +78,9 @@ def load_cache(filename, cache, lang='eng',
     with open(ocr_cache_filename) as f:
         dct = json.load(f)
         ocr_txt = None
-        ocr_descew_txt = None
         if pdf_ocr:
             ocr_txt = dict(enumerate(dct["ocr_txt"], 1))
-        if pdf_ocr_descew:
-            ocr_descew_txt = dict(enumerate(dct["ocr_descew_txt"], 1))
-        return ocr_txt, ocr_descew_txt
+        return ocr_txt
 
 
 def append_page(dct, n, page):
@@ -152,8 +127,6 @@ class enhance_pdf_ocr(etl_plugin_core.Plugin):
     
         filename = parameters['filename']
 
-        pdf_ocr_descew = ('enhance_ocr_descew' in parameters['plugins'])
-    
         # is OCR of embedded images by Tika enabled or disabled by config?
         ocr_pdf_tika = parameters.get('ocr_pdf_tika', True)
 
@@ -164,7 +137,7 @@ class enhance_pdf_ocr(etl_plugin_core.Plugin):
                 tika_exception = True
 
 
-        # OCR (without optional descewing) is done by Apache Tika plugin
+        # OCR is done by Apache Tika plugin
         # If standard OCR by Tika is disabled or Tika Exception, do it here
         pdf_ocr = False
 
@@ -177,14 +150,11 @@ class enhance_pdf_ocr(etl_plugin_core.Plugin):
                 print('Not running OCR for PDF, since no image(s) detected by Apache Tika')
             
             pdf_ocr = False
-            pdf_ocr_descew = False
-        
+
         elif tika_exception or ocr_pdf_tika == False:
             pdf_ocr = True
-        elif not pdf_ocr_descew:
-            print ('Not running OCR for PDF by plugin enhance_pdf_ocr, since OCR of embedded images in PDF done by Apache Tika plugin')
 
-        if pdf_ocr or pdf_ocr_descew:
+        if pdf_ocr:
     
             if verbose:
                 print('Mimetype is PDF or file ending is .pdf, running OCR of embedded images')
@@ -193,34 +163,24 @@ class enhance_pdf_ocr(etl_plugin_core.Plugin):
                     print ('OCR of embedded images in PDF by Apache Tika is disabled, so doing OCR for PDF by plugin enhance_pdf_ocr')
                 elif tika_exception:
                     print ('Because of Apache Tika exception, adding / trying fallback OCR for PDF by plugin enhance_pdf_ocr')
-                elif not pdf_ocr:
-                    print ('Standard OCR of embedded images in PDF was done by Apache Tika, so plugin enhance_pdf_ocr will run OCR only for additionally descewed images')
 
             lang = parameters.get('ocr_lang', 'eng')
     
             ocr_txt = {}
-            ocr_optimized_txt = {}
-        
+
             try:
-                ocr_txt, ocr_optimized_txt = pdfimages2text(
+                ocr_txt = pdfimages2text(
                     filename=filename, lang=lang, verbose=verbose,
-                    pdf_ocr=pdf_ocr, pdf_ocr_descew=pdf_ocr_descew,
+                    pdf_ocr=pdf_ocr,
                     cache=parameters.get("ocr_cache"))
             except BaseException as e:
                 sys.stderr.write(
                     "Exception while OCR the PDF {} - {}\n".format(filename, e))
         
             parameters['enhance_pdf_ocr'] = ocr_txt
-            parameters['enhance_pdf_ocr_descew'] = ocr_optimized_txt
-        
+
             # create text field ocr_t with all OCR results of all pages
             pages_content = [value for (key, value) in sorted(ocr_txt.items())]
             data['ocr_t'] = "\n".join(pages_content)
-        
-        
-            if pdf_ocr_descew:
-                pages_content = [value for (key, value) in sorted(
-                    ocr_optimized_txt.items())]
-                data['ocr_descew_t'] = "\n".join(pages_content)
-        
+
         return parameters, data
