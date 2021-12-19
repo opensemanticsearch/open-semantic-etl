@@ -24,9 +24,10 @@ class enhance_extract_text_tika_server(object):
 
     mapping = {
         'Content-Type': 'content_type_ss',
-        'Author': 'author_ss',
+        'dc:creator': 'author_ss',
         'Content-Encoding': 'Content-Encoding_ss',
-        'title': 'title_txt',
+        'dc:title': 'title_txt',
+        'dc:subject': 'subject_ss',
     }
 
     def process(self, parameters=None, data=None):
@@ -205,7 +206,7 @@ class enhance_extract_text_tika_server(object):
             
             # Tika made an tesseract OCR call (if OCR (yet) off, by fake Tesseract CLI wrapper)
             # so there is really something to OCR?
-            if not in_parsers('org.apache.tika.parser.ocr.TesseractOCRParser', data['X-Parsed-By_ss']):
+            if not in_parsers('org.apache.tika.parser.ocr.TesseractOCRParser', data['X-TIKA:Parsed-By_ss']):
                 # since Tika did not call (fake or cached) tesseract (wrapper), nothing to OCR in this file,
     
                 if verbose:
