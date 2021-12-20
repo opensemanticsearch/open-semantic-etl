@@ -103,10 +103,6 @@ class enhance_extract_text_tika_server(object):
                 elif 'tika_server_cache' in parameters:
                     tika_server = parameters['tika_server_cache']
 
-            tessdataPath = parameters.get('ocr_tessdataPath')
-            if tessdataPath:
-                headers['X-Tika-OCRtessdataPath'] = tessdataPath
-
             # set OCR status in indexed document
             data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
             # OCR is enabled, so was done by this Tika call, no images left to OCR
