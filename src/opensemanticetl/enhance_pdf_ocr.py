@@ -49,7 +49,7 @@ def pdfimages2text(filename, lang='eng', verbose=False,
         if pdf_ocr:
 
             try:
-                result = tesseract_cache.get_ocr_text(filename=imagefilename, lang=lang, cache_dir=cache, verbose=verbose)
+                result = tesseract_cache.get_ocr_text(filename=imagefilename, lang=lang, cache_dir=cache)
 
                 if result:
                     # extract page number from extracted image
