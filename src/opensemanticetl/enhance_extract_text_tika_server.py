@@ -26,6 +26,7 @@ class enhance_extract_text_tika_server(object):
         'Content-Type': 'content_type_ss',
         'dc:creator': 'author_ss',
         'Content-Encoding': 'Content-Encoding_ss',
+        'X-TIKA:Parsed-By': 'X-Parsed-By_ss',
         'dc:title': 'title_txt',
         'dc:subject': 'subject_ss',
     }
@@ -97,7 +98,10 @@ class enhance_extract_text_tika_server(object):
             # if OCR cache dir enabled, use tesseract cli wrapper with OCR cache
             ocr_cache = parameters.get('ocr_cache')
             if ocr_cache:
-                headers['X-Tika-OCRTesseractPath'] = '/usr/lib/python3/dist-packages/tesseract_cache/'
+                if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_CACHE'):
+                    tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_CACHE')
+                elif 'tika_server_cache' in parameters:
+                    tika_server = parameters['tika_server_cache']
 
             tessdataPath = parameters.get('ocr_tessdataPath')
             if tessdataPath:
@@ -109,12 +113,15 @@ class enhance_extract_text_tika_server(object):
             data['etl_count_images_yet_no_ocr_i'] = 0
         
         else:
-            # OCR (yet) disabled, so set Tikas Tesseract path to tesseract fake
-            # so we only get OCR results if in cache
-            # else we get OCR status [Image (No OCR yet)] in content,
-            # so we know that there are images to OCR for later steps
+            # OCR (yet) disabled, so use the Tika instance using the fake tesseract so we only get OCR results if in cache
+            # else we get OCR status [Image (No OCR yet)] in content, so we know that there are images to OCR for later steps
+
+            if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_FAKECACHE'):
+                tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_FAKECACHE')
+            elif 'tika_server_fakecache' in parameters:
+                tika_server = parameters['tika_server_fakecache']
+
             headers['X-Tika-PDFextractInlineImages'] = 'true'
-            headers['X-Tika-OCRTesseractPath'] = '/usr/lib/python3/dist-packages/tesseract_fake/'
 
             # set OCR status in indexed document, so next stage knows that yet no OCR
             data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = False
