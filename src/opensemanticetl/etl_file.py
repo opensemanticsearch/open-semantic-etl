@@ -284,7 +284,7 @@ if __name__ == "__main__":
     if len(additional_plugins_later) > 0 or len(additional_plugins_later_config) > 0:
 
         if connector.config['verbose']:
-            print ("There are options configured for later stage, so (re)processing with additional plugins {} and/or config {}".format(additional_plugins_later, additional_plugins_later_config))
+            print("There are options configured for later stage, so (re)processing with additional plugins {} and/or config {}".format(additional_plugins_later, additional_plugins_later_config))
 
         for option in additional_plugins_later_config:
             connector.config[option] = additional_plugins_later_config[option]

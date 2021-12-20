@@ -138,12 +138,6 @@ config['ocr_tessdataPath'] = '/usr/share/tesseract-ocr/4.00/tessdata/'
 # Do OCR for images embedded in PDF documents (i.e. designed images or scanned or photographed documents)
 config['plugins'].append('enhance_pdf_ocr')
 
-# additionally descew before OCR (deskewing of low quality scans)
-# needs more CPU time, so OCR needs more than double time but sometimes you get more / better results
-
-#config['plugins'].append('enhance_ocr_descew')
-
-
 #OCR language
 
 #If other than english you have to install package tesseract-XXX (tesseract language support) for your language

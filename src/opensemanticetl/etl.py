@@ -184,7 +184,8 @@ class ETL(object):
 
                 objectreference = getattr(module, plugin, False)
 
-                if objectreference:  # if object oriented programming, run instance of object and call its "process" function
+                # if object oriented programming, run instance of object and call its "process" function
+                if objectreference:
                     enhancer = objectreference()
 
                     parameters, data = enhancer.process(
@@ -205,7 +206,9 @@ class ETL(object):
             except KeyboardInterrupt:
                 raise KeyboardInterrupt
 
-            # else dont break because fail of a plugin (maybe other plugins or data extraction will success), only error message
+            # else dont break because fail of a plugin
+            # (maybe other plugins or data extraction will success),
+            # only error message
             except BaseException as e:
 
                 error_message(
@@ -273,10 +276,10 @@ class ETL(object):
 # append values (i.e. from an enhancer) to data structure
 def append(data, facet, values):
 
-        # if facet there yet, append/extend the values, else set values to facet
+    # if facet there yet, append/extend the values, else set values to facet
     if facet in data:
 
-            # if new value(s) single value instead of list convert to list
+        # if new value(s) single value instead of list convert to list
         if not isinstance(values, list):
             values = [values]
 
@@ -327,7 +330,8 @@ def error_message(docid, data, plugin, e):
     except:
 
         sys.stderr.write(
-            "Exception while generating error message for exception while processing plugin {} for file {}\n".format(plugin, docid))
+            "Exception while generating error message for exception while processing plugin {} for file {}\n".format(
+                plugin, docid))
 
 
 #
@@ -353,7 +357,8 @@ def sort_plugins(plugins):
             plugins.insert(plugins.index(
                 "enhance_detect_language_tika_server"), "enhance_ocr_descew")
 
-    # manual annotations should be found by by fulltext search too (automatic entity linking does by including the text or synonym)
+    # manual annotations should be found by fulltext search too
+    # (automatic entity linking does by including the text or synonym)
     # so read before generating the default search fields like _text_ or text_txt_languageX by enhance_multilingual
     if "enhance_rdf_annotations_by_http_request" in plugins and "enhance_multilingual" in plugins:
         if plugins.index("enhance_rdf_annotations_by_http_request") > plugins.index("enhance_multilingual"):
@@ -365,4 +370,3 @@ def sort_plugins(plugins):
                 "enhance_multilingual"), "enhance_rdf_annotations_by_http_request")
 
     return plugins
-

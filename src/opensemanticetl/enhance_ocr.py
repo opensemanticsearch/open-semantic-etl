@@ -1,5 +1,6 @@
 from tesseract_cache import tesseract_cache
 
+
 #
 # If image add ocr text
 #
@@ -43,7 +44,8 @@ class enhance_ocr(object):
                 print("Mimetype seems image ({}), starting OCR"
                       .format(mimetype))
 
-            ocr_txt = tesseract_cache.get_ocr_text(filename=filename, lang=lang, cache_dir=parameters.get("ocr_cache"), verbose=verbose)
+            ocr_txt = tesseract_cache.get_ocr_text(filename=filename, lang=lang, cache_dir=parameters.get("ocr_cache"),
+                                                   verbose=verbose)
 
             if ocr_txt:
                 data['ocr_t'] = ocr_txt
