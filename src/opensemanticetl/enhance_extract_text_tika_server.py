@@ -88,9 +88,6 @@ class enhance_extract_text_tika_server(object):
         
         if do_ocr or do_ocr_pdf:
 
-            # increase Tikas Tesseract timeout
-            headers['X-Tika-OCRTimeout'] = '1000'
-
             # OCR embeded images in PDF, if not disabled or has to be done by other plugin
             if do_ocr_pdf:
                 headers['X-Tika-PDFextractInlineImages'] = 'true'
