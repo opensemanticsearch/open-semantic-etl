@@ -26,7 +26,6 @@ class enhance_extract_text_tika_server(object):
         'Content-Type': 'content_type_ss',
         'dc:creator': 'author_ss',
         'Content-Encoding': 'Content-Encoding_ss',
-        'X-TIKA:Parsed-By': 'X-Parsed-By_ss',
         'dc:title': 'title_txt',
         'dc:subject': 'subject_ss',
     }
@@ -153,6 +152,9 @@ class enhance_extract_text_tika_server(object):
                 retries += 1
                 sys.stderr.write(
                     "Connection to Tika server (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e))
+
+        print("tika parsed:")
+        print(parsed)
 
         if parsed['content']:
             data['content_txt'] = parsed['content']
