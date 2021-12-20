@@ -153,9 +153,6 @@ class enhance_extract_text_tika_server(object):
                 sys.stderr.write(
                     "Connection to Tika server (will retry in {} seconds) failed. Exception: {}\n".format(retrytime, e))
 
-        print("tika parsed:")
-        print(parsed)
-
         if parsed['content']:
             data['content_txt'] = parsed['content']
 
