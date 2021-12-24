@@ -58,7 +58,9 @@ class ETL(object):
 
         if os.path.isfile(configfile):
             config = self.config
-            exec(open(configfile).read(), locals())
+            file = open(configfile, "r")
+            exec(file.read(), locals())
+            file.close()
             self.config = config
 
             result = True
