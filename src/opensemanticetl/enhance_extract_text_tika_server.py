@@ -53,13 +53,6 @@ class enhance_extract_text_tika_server(object):
 
         tika.TikaClientOnly = True
 
-        if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER'):
-            tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER')
-        elif 'tika_server' in parameters:
-            tika_server = parameters['tika_server']
-        else:
-            tika_server = 'http://localhost:9998'
-
         headers = {}
 
         do_ocr = parameters.get('ocr', False)
@@ -87,17 +80,18 @@ class enhance_extract_text_tika_server(object):
         
         if do_ocr or do_ocr_pdf:
 
-            # OCR embeded images in PDF, if not disabled or has to be done by other plugin
+            if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER'):
+                tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER')
+            elif 'tika_server' in parameters:
+                tika_server = parameters['tika_server']
+            else:
+                tika_server = 'http://localhost:9998'
+
+            # OCR embedded images in PDF, if not disabled or has to be done by other plugin
             if do_ocr_pdf:
                 headers['X-Tika-PDFextractInlineImages'] = 'true'
-
-            # if OCR cache dir enabled, use tesseract cli wrapper with OCR cache
-            ocr_cache = parameters.get('ocr_cache')
-            if ocr_cache:
-                if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_CACHE'):
-                    tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_CACHE')
-                elif 'tika_server_cache' in parameters:
-                    tika_server = parameters['tika_server_cache']
+            else:
+                headers['X-Tika-PDFextractInlineImages'] = 'false'
 
             # set OCR status in indexed document
             data['etl_enhance_extract_text_tika_server_ocr_enabled_b'] = True
@@ -110,8 +104,10 @@ class enhance_extract_text_tika_server(object):
 
             if os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_FAKECACHE'):
                 tika_server = os.getenv('OPEN_SEMANTIC_ETL_TIKA_SERVER_FAKECACHE')
-            elif 'tika_server_fakecache' in parameters:
-                tika_server = parameters['tika_server_fakecache']
+            elif 'tika_server_fake_ocr' in parameters:
+                tika_server = parameters['tika_server_fake_ocr']
+            else:
+                tika_server = 'http://localhost:9999'
 
             headers['X-Tika-PDFextractInlineImages'] = 'true'
 
