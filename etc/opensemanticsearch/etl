@@ -92,10 +92,15 @@ config['index'] = 'opensemanticsearch'
 # Tika for text and metadata extraction
 #
 
-# Tika server
+# Tika server (with tesseract-ocr-cache)
 # default: http://localhost:9998
 
 #config['tika_server'] = 'http://localhost:9998'
+
+# Tika server with fake OCR cache of tesseract-ocr-cache used if OCR in later ETL tasks
+# default: http://localhost:9999
+
+#config['tika_server_fake_ocr'] = 'http://localhost:9999'
 
 
 #
