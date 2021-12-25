@@ -11,7 +11,7 @@
 #
 # Languages for language specific index
 #
-# Each document is analyzed without grammr rules in the index fields like content, additionally it can be added/copied to language specific index fields/analyzers
+# Each document is analyzed without grammar rules in the index fields like content, additionally it can be added/copied to language specific index fields/analyzers
 # Document language is autodetected by default plugin enhance_detect_language_tika_server
 
 # If index support enhanced analytics for specific languages, we can add/copy data to language specific fields/analyzers
@@ -66,7 +66,7 @@
 #
 
 #
-# Solr uri and port
+# Solr URL and port
 #
 
 config['export'] = 'export_solr'
@@ -120,7 +120,7 @@ config['plugins'].append('enhance_rdf')
 
 
 #
-# Config for OCR (automatic textrecognition of text in images)
+# Config for OCR (automatic text recognition of text in images)
 #
 
 # Disable OCR for image files (i.e for more performance and/or because you don't need the text within images or have only photos without photographed text)
@@ -266,7 +266,7 @@ config['plugins'].append('enhance_extract_law')
 # Neo4j graph database
 #
 
-# exports named entities and relations to Neo4j graphdatabase
+# exports named entities and relations to Neo4j graph database
 
 # Enable plugin to export entities and connections to Neo4j graph database
 config['plugins'].append('export_neo4j')
