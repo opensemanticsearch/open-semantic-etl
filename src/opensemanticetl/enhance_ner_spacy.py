@@ -6,11 +6,10 @@ import sys
 import time
 
 #
-# SpaCy Named Entitiy Recognizer (NER)
+# SpaCy Named Entity Recognizer (NER)
 #
 
 # Appends classified (Persons, Locations, Organizations) entities (names/words) to mapped facets/fields
-
 
 class enhance_ner_spacy(object):
 
@@ -50,7 +49,7 @@ class enhance_ner_spacy(object):
             }
 
         # default classifier
-        classifier = 'en_core_web_sm'
+        classifier = 'en_core_web_lg'
 
         if 'spacy_ner_classifier_default' in parameters:
             classifier = parameters['spacy_ner_classifier_default']
@@ -63,7 +62,6 @@ class enhance_ner_spacy(object):
 
         # if standard classifier configured to None and no classifier for detected language, exit the plugin
         if not classifier:
-
             return parameters, data
 
         if verbose:
