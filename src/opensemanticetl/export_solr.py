@@ -181,13 +181,17 @@ class export_solr(object):
 
                     sys.stderr.write('Error while posting data to Solr: {}'.format(e))
 
+                    raise(e)
+
             except BaseException as e:
                 no_connection = False
 
                 sys.stderr.write('Error while posting data to Solr: {}'.format(e))
 
+                raise(e)
 
-    # tag a document by adding new value to field
+
+# tag a document by adding new value to field
     def tag(self, docid=None, field=None, value=None, data=None):
         if data is None:
             data = {}
