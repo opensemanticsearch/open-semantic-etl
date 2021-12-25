@@ -5,14 +5,24 @@ import unittest
 
 import enhance_ner_spacy
 
+config = {
+    'spacy_ner_classifiers': {
+        'de': 'de_core_news_sm',
+        'en': 'en_core_web_md'
+    }
+}
+
 class Test_enhance_ner_spacy(unittest.TestCase):
 
     def test_en(self):
 
         enhancer = enhance_ner_spacy.enhance_ner_spacy()
 
-        parameters = {'language_s': 'en'}
-        data = { 'content_txt': "Some years ago, Mr. Barack Obama, a member of Democratic Party, was president of the USA." }
+        parameters = config.copy()
+        data = {
+            'language_s': 'en',
+            'content_txt': "Some years ago, Mr. Barack Obama, a member of Democratic Party, was president of the USA."
+        }
 
         parameters, data = enhancer.process(parameters=parameters, data=data)
 
@@ -25,8 +35,11 @@ class Test_enhance_ner_spacy(unittest.TestCase):
 
         enhancer = enhance_ner_spacy.enhance_ner_spacy()
 
-        parameters = {'language_s': 'de'}
-        data = { 'content_txt': "Frau Dr. Angela Merkel, Mitglied der CDU, wurde Kanzlerin in Deutschland." }
+        parameters = config.copy()
+        data = {
+            'language_s': 'de',
+            'content_txt': "Der Text ist über Frau Dr. Angela Merkel. Sie ist Mitglied in der CDU. Sie lebt in Deutschland."
+        }
 
         parameters, data = enhancer.process(parameters=parameters, data=data)
 
