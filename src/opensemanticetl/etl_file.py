@@ -134,7 +134,7 @@ class Connector_File(ETL):
 
         return result
 
-    # walk trough all sub directories and call index_file for each file
+    # walk through all sub-directories and call index_file for each file
     def index_dir(self, rootDir, followlinks=False):
 
         for dirName, subdirList, fileList in os.walk(rootDir,
@@ -191,7 +191,7 @@ class Connector_File(ETL):
         # add this connector name to ETL status
         data['etl_file_b'] = True
 
-        if not 'id' in parameters:
+        if 'id' not in parameters:
             parameters['id'] = filename
 
         parameters['filename'] = filename
@@ -284,7 +284,8 @@ if __name__ == "__main__":
     if len(additional_plugins_later) > 0 or len(additional_plugins_later_config) > 0:
 
         if connector.config['verbose']:
-            print("There are options configured for later stage, so (re)processing with additional plugins {} and/or config {}".format(additional_plugins_later, additional_plugins_later_config))
+            print("There are options configured for later stage, so (re)processing with additional plugins {} and/or config {}"
+                  .format(additional_plugins_later, additional_plugins_later_config))
 
         for option in additional_plugins_later_config:
             connector.config[option] = additional_plugins_later_config[option]
