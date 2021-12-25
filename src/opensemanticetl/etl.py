@@ -223,7 +223,7 @@ class ETL(object):
             time_plugin_delta = time_plugin_end - time_plugin_start
             data['etl_' + plugin + '_time_millis_i'] = int(time_plugin_delta.total_seconds() * 1000)
 
-            # mark plugin as runned
+            # mark plugin as run
             data['etl_' + plugin + '_b'] = True
 
             # Abort plugin chain if plugin set parameters['break'] to True
