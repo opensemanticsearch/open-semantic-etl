@@ -191,7 +191,7 @@ class export_solr(object):
                 raise(e)
 
 
-# tag a document by adding new value to field
+    # tag a document by adding new value to field
     def tag(self, docid=None, field=None, value=None, data=None):
         if data is None:
             data = {}
