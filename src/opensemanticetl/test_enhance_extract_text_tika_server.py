@@ -29,7 +29,7 @@ class TestEnhanceExtractTextTikaServer(unittest.TestCase):
 
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
-        parameters = {'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'}
+        parameters = {'filename': os.path.dirname(os.path.realpath(__file__)) + '/testdata/test.pdf'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -55,7 +55,7 @@ class TestEnhanceExtractTextTikaServer(unittest.TestCase):
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
         parameters = {'ocr': True, 'plugins': ['enhance_pdf_ocr'],
-                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'}
+                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/testdata/test.pdf'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -89,7 +89,7 @@ class TestEnhanceExtractTextTikaServer(unittest.TestCase):
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
         parameters = {'ocr': True, 'plugins': ['enhance_pdf_ocr'],
-                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'}
+                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/testdata/test.pdf'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -114,7 +114,7 @@ class TestEnhanceExtractTextTikaServer(unittest.TestCase):
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
         parameters = {'ocr': True,
-                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/Test_OCR_Image1.png'}
+                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/testdata/Test_OCR_Image1.png'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -130,7 +130,7 @@ class TestEnhanceExtractTextTikaServer(unittest.TestCase):
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
         parameters = {'ocr': True,
-                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/Test_OCR_Image2.jpg'}
+                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/testdata/Test_OCR_Image2.jpg'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
@@ -146,7 +146,7 @@ class TestEnhanceExtractTextTikaServer(unittest.TestCase):
         enhancer = enhance_extract_text_tika_server.enhance_extract_text_tika_server()
 
         parameters = {'ocr': False,
-                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/Test_OCR_Image1.png'}
+                      'filename': os.path.dirname(os.path.realpath(__file__)) + '/testdata/Test_OCR_Image1.png'}
 
         parameters, data = enhancer.process(parameters=parameters)
 
