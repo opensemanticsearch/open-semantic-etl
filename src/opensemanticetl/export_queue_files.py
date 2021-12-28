@@ -18,13 +18,13 @@ class export_queue_files(object):
         if data is None:
             data = {}
 
-        # add file to ETL queue with standard prioritizazion
-        # but don't if only plugins not runned that should be runned later (which will be added to queue in step below)
+        # add file to ETL queue with standard prioritization
+        # but don't if only plugins not ran that should run later (which will be added to queue in step below)
         if not 'only_additional_plugins_later' in parameters:
             index_file.apply_async(
                 kwargs={'filename': parameters['filename']}, queue='open_semantic_etl_tasks', priority=5)
 
-        # add file to (lower priorized) ETL queue with additional plugins or options which should be runned later after all files tasks of standard priorized queue done
+        # add file to (lower prioritized) ETL queue with additional plugins or options which should run later after all files tasks of standard priorized queue done
         # to run ETL of the file later again with additional plugins like OCR which need much time/resources while meantime all files are searchable by other plugins which need fewer resources
         if 'additional_plugins_later' in parameters or 'additional_plugins_later_config' in parameters:
 
