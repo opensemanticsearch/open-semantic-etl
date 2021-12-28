@@ -43,7 +43,7 @@ class filter_file_not_modified(object):
             force = parameters['force']
 
         # check if file size and file date are the same in DB
-        # if exist delete protocoll prefix file://
+        # if exist delete protocol prefix file://
         if filename.startswith("file://"):
             filename = filename.replace("file://", '', 1)
 
@@ -169,7 +169,7 @@ class filter_file_not_modified(object):
                 # print status
                 if self.verbose or self.quiet == False:
                     try:
-                        print('Repeating indexing of unchanged file because (additional configured) plugin(s) or options {} not runned yet: {}'.format(
+                        print('Repeating indexing of unchanged file because (additional configured) plugin(s) or options {} not ran yet: {}'.format(
                             plugins_not_runned + additional_plugins_later_not_runned, filename))
                     except:
                         sys.stderr.write(
@@ -238,7 +238,7 @@ class filter_file_not_modified(object):
                         sys.stderr.write(
                             "Indexing modified file. Exception while printing filename (problem with encoding of filename or console?)\n")
 
-        # if not modifed and no critical ETL errors, stop ETL process, because all done on last run
+        # if not modified and no critical ETL errors, stop ETL process, because all done on last run
         if not doindex:
             parameters['break'] = True
         else:
@@ -255,7 +255,7 @@ class filter_file_not_modified(object):
                         data['etl_' + runned_plugin + '_b'] = False
                         commit = True
 
-            # immediatelly commit (else Solr autocommit after some time) of etl status reset(s) in exporter before adding new ETL tasks which need the status for plugin filter_file_not_modified
+            # immediately commit (else Solr autocommit after some time) of etl status reset(s) in exporter before adding new ETL tasks which need the status for plugin filter_file_not_modified
             if commit:
                 parameters['commit'] = True
 
