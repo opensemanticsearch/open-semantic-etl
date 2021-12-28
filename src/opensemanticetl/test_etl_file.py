@@ -50,8 +50,8 @@ class Test_ETL_file(unittest.TestCase):
         self.assertTrue('TestPDFOCRImage2Content1' in default_search_field_data)
         self.assertTrue('TestPDFOCRImage2Content2' in default_search_field_data)
 
-        # check if a plugin threw an exception
-        self.assertEqual(len(data['etl_error_plugins_ss']), 0)
+        # check if a Open Semantic ETL plugin threw an exception
+        self.assertEqual(data['etl_error_plugins_ss'], [])
 
 
     def test_ocr_by_plugin_enhance_pdf_ocr(self):
@@ -81,8 +81,8 @@ class Test_ETL_file(unittest.TestCase):
         self.assertTrue('TestPDFOCRImage2Content1' in default_search_field_data)
         self.assertTrue('TestPDFOCRImage2Content2' in default_search_field_data)
 
-        # check if a plugin threw an exception
-        self.assertEqual(len(data['etl_error_plugins_ss']), 0)
+        # check if a Open Semantic ETL plugin threw an exception
+        self.assertEqual(data['etl_error_plugins_ss'], [])
 
 if __name__ == '__main__':
     unittest.main()
