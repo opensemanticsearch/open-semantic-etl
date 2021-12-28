@@ -91,7 +91,6 @@ class Connector_File(ETL):
         self.read_configfile('/etc/opensemanticsearch/etl-custom')
         self.read_configfile('/etc/opensemanticsearch/enhancer-rdf')
         self.read_configfile('/etc/opensemanticsearch/connector-files')
-        self.read_configfile('/etc/opensemanticsearch/facets')
         self.read_configfile('/etc/opensemanticsearch/connector-files-custom')
 
     # clean filename (convert filename given as URI to filesystem)
@@ -134,7 +133,7 @@ class Connector_File(ETL):
 
         return result
 
-    # walk through all sub-directories and call index_file for each file
+    # walk through all subdirectories and call index_file for each file
     def index_dir(self, rootDir, followlinks=False):
 
         for dirName, subdirList, fileList in os.walk(rootDir,

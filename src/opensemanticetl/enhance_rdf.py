@@ -22,6 +22,9 @@ class enhance_rdf(object):
         self.labelProperties = (rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#prefLabel'), rdflib.term.URIRef(u'http://www.w3.org/2000/01/rdf-schema#label'),
                                 rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#altLabel'), rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#hiddenLabel'))
 
+        self.read_configfile('/etc/opensemanticsearch/facets')
+
+
     #
     # get all labels, alternate labels / synonyms for the URI/subject, if not there, use subject (=URI) as default
     #
