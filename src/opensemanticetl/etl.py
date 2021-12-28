@@ -204,7 +204,7 @@ class ETL(object):
                         sys.stderr.write(
                             "Exception while data enrichment with plugin {}: Module implements wether object \"{}\" nor function \"process\"\n".format(plugin, plugin))
 
-            # if exception because user interrupted processing by keyboard, respect this and abbort
+            # if exception because user interrupted processing by keyboard, respect this and abort
             except KeyboardInterrupt:
                 raise KeyboardInterrupt
 
@@ -270,7 +270,7 @@ class ETL(object):
     def commit(self):
 
         if self.verbose:
-            print("Commiting cached or open transactions to index")
+            print("Committing cached or open transactions to index")
 
         self.exporter.commit()
 
@@ -351,14 +351,6 @@ def sort_plugins(plugins):
             plugins.insert(plugins.index(
                 "enhance_detect_language_tika_server"), "enhance_pdf_ocr")
 
-    if "enhance_detect_language_tika_server" in plugins and "enhance_ocr_descew" in plugins:
-        if plugins.index("enhance_ocr_descew") > plugins.index("enhance_detect_language_tika_server"):
-            # remove after
-            plugins.remove("enhance_ocr_descew")
-            # add before
-            plugins.insert(plugins.index(
-                "enhance_detect_language_tika_server"), "enhance_ocr_descew")
-
     # manual annotations should be found by fulltext search too
     # (automatic entity linking does by including the text or synonym)
     # so read before generating the default search fields like _text_ or text_txt_languageX by enhance_multilingual
@@ -370,5 +362,14 @@ def sort_plugins(plugins):
             # add before
             plugins.insert(plugins.index(
                 "enhance_multilingual"), "enhance_rdf_annotations_by_http_request")
+
+    if "enhance_annotations" in plugins and "enhance_multilingual" in plugins:
+        if plugins.index("enhance_annotations") > plugins.index("enhance_multilingual"):
+            # remove after
+            plugins.remove(
+                "enhance_annotations")
+            # add before
+            plugins.insert(plugins.index(
+                "enhance_multilingual"), "enhance_annotations")
 
     return plugins
