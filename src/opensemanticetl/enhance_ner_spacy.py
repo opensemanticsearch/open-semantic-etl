@@ -49,7 +49,7 @@ class enhance_ner_spacy(object):
             }
 
         # default classifier
-        classifier = 'en_core_web_lg'
+        classifier = 'en_core_web_sm'
 
         if 'spacy_ner_classifier_default' in parameters:
             classifier = parameters['spacy_ner_classifier_default']
