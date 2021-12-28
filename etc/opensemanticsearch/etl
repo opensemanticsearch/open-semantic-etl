@@ -104,11 +104,14 @@ config['index'] = 'opensemanticsearch'
 
 
 #
-# RDF metadata/annotations from metadata server
+# Annotations
 #
 
-# add plugin for annotation/tagging/enrichment of documents with RDF metadata by http request
-config['plugins'].append('enhance_rdf_annotations_by_http_request')
+# add plugin for annotation/tagging/enrichment of documents
+config['plugins'].append('enhance_annotations')
+
+# set alternate URL of annotation server
+#config['metadata_server'] = 'http://localhost/search-apps/annotate/json'
 
 
 #
@@ -299,7 +302,7 @@ config['facets'] = {
 # exports named entities and relations to Neo4j graph database
 
 # Enable plugin to export entities and connections to Neo4j graph database
-config['plugins'].append('export_neo4j')
+#config['plugins'].append('export_neo4j')
 
 # Neo4j server
 #config['neo4j_host'] = 'localhost'
