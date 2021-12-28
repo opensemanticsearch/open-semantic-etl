@@ -2,6 +2,8 @@ import sys
 import logging
 import rdflib
 
+import etl_plugin_core
+
 # define used ontologies / standards / properties
 skos = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
 owl = rdflib.Namespace('http://www.w3.org/2002/07/owl#')
@@ -13,7 +15,7 @@ from etl import ETL
 # Import RDF graph file granular, not only as a whole single file:
 # for every entity (subject) own document with properties (predicates) as facets and its objects as values
 
-class enhance_rdf(object):
+class enhance_rdf(etl_plugin_core.Plugin):
 
     def __init__(self, verbose=False):
 
@@ -21,8 +23,6 @@ class enhance_rdf(object):
 
         self.labelProperties = (rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#prefLabel'), rdflib.term.URIRef(u'http://www.w3.org/2000/01/rdf-schema#label'),
                                 rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#altLabel'), rdflib.term.URIRef(u'http://www.w3.org/2004/02/skos/core#hiddenLabel'))
-
-        self.read_configfile('/etc/opensemanticsearch/facets')
 
 
     #
