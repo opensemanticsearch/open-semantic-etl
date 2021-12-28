@@ -13,7 +13,7 @@ class Test_enhance_pdf_ocr(unittest.TestCase):
         
         enhancer = enhance_pdf_ocr.enhance_pdf_ocr()
 
-        parameters = {'ocr_pdf_tika': False, 'filename': os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf', 'ocr_cache': '/var/cache/tesseract', 'content_type_ss': 'application/pdf', 'plugins':[]}
+        parameters = {'ocr_pdf_tika': False, 'filename': os.path.dirname(os.path.realpath(__file__)) + '/testdata/test.pdf', 'ocr_cache': '/var/cache/tesseract', 'content_type_ss': 'application/pdf', 'plugins':[]}
 
         parameters, data = enhancer.process(parameters=parameters)
 

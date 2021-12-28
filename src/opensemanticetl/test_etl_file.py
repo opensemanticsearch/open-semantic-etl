@@ -12,7 +12,7 @@ class Test_ETL_file(unittest.TestCase):
     def test_pdf_and_ocr_by_tika(self):
 
         etl_file = Connector_File()
-        filename = os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'
+        filename = os.path.dirname(os.path.realpath(__file__)) + '/testdata/test.pdf'
 
         # run ETL of test.pdf with configured plugins and PDF OCR (result of etl_file.py)
         parameters, data = etl_file.index_file(filename = filename, additional_plugins=['enhance_pdf_ocr'])
@@ -57,7 +57,7 @@ class Test_ETL_file(unittest.TestCase):
     def test_ocr_by_plugin_enhance_pdf_ocr(self):
 
         etl_file = Connector_File()
-        filename = os.path.dirname(os.path.realpath(__file__)) + '/test/test.pdf'
+        filename = os.path.dirname(os.path.realpath(__file__)) + '/testdata/test.pdf'
 
         etl_file.config['ocr_pdf_tika'] = False
 

@@ -10,12 +10,13 @@ from export_solr import export_solr
 
 class Test_enhance_warc(unittest.TestCase):
 
+    @unittest.expectedFailure # Test fails on deleting in Solr index until next release of pysolr (https://github.com/opensemanticsearch/open-semantic-etl/issues/154)
     def test_warc(self):
 
         etl_file = Connector_File()
         exporter = export_solr()
 
-        filename = os.path.dirname(os.path.realpath(__file__)) + '/test/example.warc'
+        filename = os.path.dirname(os.path.realpath(__file__)) + '/testdata/example.warc'
 
         # run ETL of example.warc with configured plugins and warc extractor
         parameters, data = etl_file.index_file(filename = filename)
