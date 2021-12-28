@@ -1,5 +1,7 @@
 import os
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 import etl_plugin_core
 
@@ -23,10 +25,15 @@ class enhance_annotations(etl_plugin_core.Plugin):
         else:
             server = 'http://localhost/search-apps/annotate/json'
 
-        r = requests.get(server, params = {'uri': docid})
-        r.raise_for_status()
+        adapter = HTTPAdapter(max_retries=Retry(total=10, backoff_factor=1))
+        http = requests.Session()
+        http.mount("https://", adapter)
+        http.mount("http://", adapter)
 
-        annotations = r.json()
+        response = http.get(server, params={'uri': docid})
+        response.raise_for_status()
+
+        annotations = response.json()
 
         for facet in annotations:
             etl_plugin_core.append(data, facet, annotations[facet])
