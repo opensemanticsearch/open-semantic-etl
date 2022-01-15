@@ -36,7 +36,7 @@ class enhance_extract_money(etl_plugin_core.Plugin):
             for matchtext in matched_currency_labels[currency_id]:
                 currencies_escaped.append(re.escape(matchtext))
 
-        regex_part_number = '\d+((\.|\,)\d+)?'
+        regex_part_number = '\d+((\.|\,)\d+)*'
         regex_part_currencies = '(' + '|'.join(currencies_escaped) + ')'
         rule = '(' + regex_part_number + '\s?' + regex_part_currencies + ')|(' + regex_part_currencies + '\s?' + regex_part_number + ')'
 
