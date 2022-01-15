@@ -38,8 +38,12 @@ class enhance_extract_money(etl_plugin_core.Plugin):
 
         regex_part_number = '\d+((\.|\,)\d+)*'
         regex_part_currencies = '(' + '|'.join(currencies_escaped) + ')'
-        rule = '(' + regex_part_number + '\s?' + regex_part_currencies + ')|(' + regex_part_currencies + '\s?' + regex_part_number + ')'
 
+        rule = regex_part_number + '\s?' + regex_part_currencies
+        for match in re.finditer(rule, text, re.IGNORECASE):
+            etl_plugin_core.append(data, 'money_ss', match.group(0))
+
+        rule = regex_part_currencies + '\s?' + regex_part_number
         for match in re.finditer(rule, text, re.IGNORECASE):
             etl_plugin_core.append(data, 'money_ss', match.group(0))
 

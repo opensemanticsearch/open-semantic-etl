@@ -30,6 +30,7 @@ class Test_enhance_extract_money(unittest.TestCase):
             "46.000 EUR",
             "47.000,99 EUR",
             "44,22 EURO",
+            "if ambiguous like $ 77 € for more completeness we want to extract both possible variants",
         ])
 
 
@@ -52,6 +53,8 @@ class Test_enhance_extract_money(unittest.TestCase):
         self.assertTrue('46.000 EUR' in data['money_ss'])
         self.assertTrue('47.000,99 EUR' in data['money_ss'])
         self.assertTrue('44,22 EURO' in data['money_ss'])
+        self.assertTrue('$ 77' in data['money_ss'])
+        self.assertTrue('77 €' in data['money_ss'])
 
 
 if __name__ == '__main__':
