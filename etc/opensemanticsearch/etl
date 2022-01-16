@@ -266,6 +266,13 @@ config['plugins'].append('enhance_extract_law')
 
 
 #
+# Money extraction
+#
+
+config['plugins'].append('enhance_extract_money')
+
+
+#
 # Neo4j graph database
 #
 
