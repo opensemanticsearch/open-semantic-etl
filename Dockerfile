@@ -39,6 +39,7 @@ COPY ./src/opensemanticetl /usr/lib/python3/dist-packages/opensemanticetl
 COPY ./src/tesseract-ocr-cache/tesseract_cache /usr/lib/python3/dist-packages/tesseract_cache
 COPY ./src/tesseract-ocr-cache/tesseract_fake /usr/lib/python3/dist-packages/tesseract_fake
 COPY ./src/open-semantic-entity-search-api/src/entity_linking /usr/lib/python3/dist-packages/entity_linking
+COPY ./src/open-semantic-entity-search-api/src/entity_manager /usr/lib/python3/dist-packages/entity_manager
 
 COPY ./etc/opensemanticsearch /etc/opensemanticsearch
 
