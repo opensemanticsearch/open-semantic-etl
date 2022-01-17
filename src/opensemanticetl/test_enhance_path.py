@@ -24,7 +24,7 @@ class Test_enhance_path(unittest.TestCase):
         docid = '/home/user/test_without_filename_extension'
         parameters, data = enhancer.process(parameters={'id': docid})
 
-        self.assertEqual(data['filename_extension_s'], '')
+        self.assertFalse('filename_extension_s' in data)
 
 
         docid = '/home/user/test.PDF'
