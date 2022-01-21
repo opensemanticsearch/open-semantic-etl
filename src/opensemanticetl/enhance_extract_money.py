@@ -3,6 +3,7 @@
 
 import re
 import etl_plugin_core
+from numerizer import numerize
 
 #
 # extract money
@@ -22,6 +23,9 @@ class enhance_extract_money(etl_plugin_core.Plugin):
 
         text = etl_plugin_core.get_text(data)
         text = text.replace("\n", " ")
+
+        # convert written numbers like "one" and "two million" to integer like "1" and "2000000"
+        text = numerize(text)
 
         currencies_escaped = []
 

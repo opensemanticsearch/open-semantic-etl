@@ -34,7 +34,6 @@ class Test_enhance_extract_money(unittest.TestCase):
         ])
 
 
-        # run ETL of test.pdf with configured plugins and PDF OCR (result of etl_file.py)
         parameters, data = etl.process(parameters={'id': 'test_enhance_extract_money'}, data=data)
 
         self.assertTrue('$ 123' in data['money_ss'])
@@ -56,6 +55,21 @@ class Test_enhance_extract_money(unittest.TestCase):
         self.assertTrue('$ 77' in data['money_ss'])
         self.assertTrue('77 €' in data['money_ss'])
 
+    def test_numerizer(self):
+
+        etl = ETL()
+        etl.config['plugins'] = ['enhance_entity_linking', 'enhance_extract_money']
+        etl.config['raise_pluginexception'] = True
+        data = {}
+        data['content_txt'] = "\n".join([
+            "So two million two hundred and fifty thousand and seven $ were given to them",
+            "We got twenty one thousand four hundred and seventy three dollars from someone",
+        ])
+
+        parameters, data = etl.process(parameters={'id': 'test_enhance_extract_money_numerize'}, data=data)
+
+        self.assertTrue('2250007 $' in data['money_ss'])
+        self.assertTrue('21473 dollars' in data['money_ss'])
 
 if __name__ == '__main__':
     unittest.main()
