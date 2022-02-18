@@ -56,7 +56,7 @@ class enhance_ner_spacy(object):
 
         # set language specific classifier, if configured and document language detected
         if 'spacy_ner_classifiers' in parameters and 'language_s' in data:
-            # is a language speciic cassifier there for the detected language?
+            # is a language specific classifier there for the detected language?
             if data['language_s'] in parameters['spacy_ner_classifiers']:
                 classifier = parameters['spacy_ner_classifiers'][data['language_s']]
 
@@ -68,7 +68,7 @@ class enhance_ner_spacy(object):
             print("Using SpaCY NER language / classifier: {}".format(classifier))
 
         analyse_fields = ['title_txt', 'content_txt',
-                          'description_txt', 'ocr_t', 'ocr_descew_t']
+                          'description_txt', 'ocr_t']
 
         text = ''
         for field in analyse_fields:
