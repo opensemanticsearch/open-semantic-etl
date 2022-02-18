@@ -36,20 +36,20 @@ class enhance_path(object):
         # replace # (i.e. uri) with unix path seperator
         docid = docid.replace("#", '/')
 
-        # if more then one /
+        # if more than one /
         docid = docid.replace("//", '/')
 
         # split paths
         path = docid.split('/')
 
-        # its only a domain
+        # it's only a domain
         if (len(path) == 1) or (len(path) == 2 and docid.endswith('/')):
             data['path0_s'] = path[0]
 
         else:
-            # its a path
+            # it's a path
 
-            # if leeding / on unix paths, split leads to first element empty, so delete it
+            # if leading / on unix paths, split leads to first element empty, so delete it
             if not path[0]:
                 del path[0]
 
