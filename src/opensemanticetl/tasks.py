@@ -40,7 +40,7 @@ app.conf.task_acks_late = True
 # so used CPUs/threads can be more than that setting!
 
 if os.getenv('OPEN_SEMANTIC_ETL_CONCURRENCY'):
-    app.conf.CELERYD_CONCURRENCY = os.getenv('OPEN_SEMANTIC_ETL_CONCURRENCY')
+    app.conf.worker_concurrency = int(os.getenv('OPEN_SEMANTIC_ETL_CONCURRENCY'))
 
 
 etl_delete = Delete()
