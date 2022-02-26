@@ -60,7 +60,7 @@ class Test_enhance_extract_money(unittest.TestCase):
         etl = ETL()
         etl.config['plugins'] = ['enhance_entity_linking', 'enhance_extract_money']
         etl.config['raise_pluginexception'] = True
-        data = {}
+        data = { 'language_s': 'en' }
         data['content_txt'] = "\n".join([
             "So two million two hundred and fifty thousand and seven $ were given to them",
             "We got twenty one thousand four hundred and seventy three dollars from someone",

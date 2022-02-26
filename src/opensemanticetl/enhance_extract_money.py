@@ -25,7 +25,9 @@ class enhance_extract_money(etl_plugin_core.Plugin):
         text = text.replace("\n", " ")
 
         # convert written numbers like "one" and "two million" to integer like "1" and "2000000"
-        text = numerize(text)
+        if 'language_s' in data:
+            if data['language_s'] == "en":
+                text = numerize(text)
 
         currencies_escaped = []
 
