@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import itertools
+
 #
 # Core functions used by multiple plugins, so they can be inherit from this class
 #
@@ -81,7 +83,7 @@ class Plugin(object):
 
 
 def get_text(data):
-    text = ''
+    values_list = []
 
     #
     # exclude fields like technical metadata
@@ -137,12 +139,27 @@ def get_text(data):
     
             if not isinstance(values, list):
                 values = [values]
-    
-            for value in values:
-                if value:
-                    text = "{}{}\n".format(text, value)
-        
-    return text
+
+            values_list.append(values)
+
+
+    # Flatten:
+    values = itertools.chain.from_iterable(values_list)
+
+    # Remove empty values:
+    values = filter(None, values)
+
+    # Make sure everything is a string:
+    values = (
+        value if isinstance(value, str) else "{}".format(value)
+        for value in values
+    )
+
+    # Ensure a trailing newline:
+    values = itertools.chain(values, [""])
+
+    # Concatenate:
+    return "\n".join(values)
 
 
 # append values (i.e. from an enhancer) to data structure
