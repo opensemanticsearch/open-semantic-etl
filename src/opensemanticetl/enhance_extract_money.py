@@ -21,6 +21,8 @@ class enhance_extract_money(etl_plugin_core.Plugin):
         if data is None:
             data = {}
 
+        moneys = set(data.get('money_ss', []))
+
         text = etl_plugin_core.get_text(data)
         text = text.replace("\n", " ")
 
@@ -47,10 +49,12 @@ class enhance_extract_money(etl_plugin_core.Plugin):
 
         rule = regex_part_number + '\s?' + regex_part_currencies
         for match in re.finditer(rule, text, re.IGNORECASE):
-            etl_plugin_core.append(data, 'money_ss', match.group(0))
+            moneys.add(match.group(0))
 
         rule = regex_part_currencies + '\s?' + regex_part_number
         for match in re.finditer(rule, text, re.IGNORECASE):
-            etl_plugin_core.append(data, 'money_ss', match.group(0))
+            moneys.add(match.group(0))
+
+        data['money_ss'] = list(moneys)
 
         return parameters, data
