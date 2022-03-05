@@ -1,0 +1,85 @@
+# Priorities of document processing in task queue
+
+# The higher the additional priority is, the earlier the document will be processed by task queue.
+
+
+#
+# Priorities in task queue by filename extension
+#
+
+# the higher the additional priority, the earlier file with this file name extension will be processed
+# the lower the additional priority, the later files with this file name extension will be processed
+
+config['priorities_filename_extension] = {
+
+  '.pdf': 5,
+  '.doc': 5,
+  '.docx': 5,
+  '.xls': 5,
+  '.xlsx': 5,
+  '.odp': 5,
+  '.ppt': 5,
+  '.pptx': 5,
+  '.eml': 5,
+  '.pst': 4,
+  '.csv': 4,
+  '.tsv': 4,
+  '.txt': 4,
+  '.htm': 3,
+  '.html': 3,
+  '.md': 3,
+  '.jpg': 1,
+  '.jpeg': 1,
+  '.gif': 1,
+  '.png': 1,
+  '.tif': 1,
+  '.mp3': 1,
+  '.mp4': 1,
+  '.wav': 1,
+  '.ini': -3,
+  '.bat': -4,
+  '.apk': -5,
+  '.bin': -5,
+  '.com': -5,
+  '.deb': -5,
+  '.exe': -5,
+  '.msi': -5,
+  '.php': -5,
+  '.cache': -5,
+  '.h': -5,
+  '.pl': -5,
+  '.py': -5,
+  '.pyc': -5,
+  '.js': -5,
+  '.css': -5,
+  '.ova': -5,
+  '.iso': -5,
+
+}
+
+
+#
+# Priorities on parts of filenames
+#
+
+# If a configures string is part of the filename, additional priority is set
+
+config['priorities_filename] = {
+
+  'corrupt': 5,
+  'illegal': 5,
+  'important': 5,
+  'relevant': 5,
+  'problem': 5,
+  'urgent': 5,
+  'passwor': 5,
+  'account': 4,
+  'agreement': 4,
+  'bank': 4,
+  'complian': 4,
+  'cost': 4,
+  'contract': 4,
+  'legal': 4,
+  'treaty': 4,
+
+}
