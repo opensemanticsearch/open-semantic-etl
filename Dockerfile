@@ -41,7 +41,7 @@ COPY ./src/tesseract-ocr-cache/tesseract_fake /usr/lib/python3/dist-packages/tes
 COPY ./src/open-semantic-entity-search-api/src/entity_linking /usr/lib/python3/dist-packages/entity_linking
 COPY ./src/open-semantic-entity-search-api/src/entity_manager /usr/lib/python3/dist-packages/entity_manager
 
-COPY ./etc/opensemanticsearch /etc/opensemanticsearch
+COPY docker-entrypoint.sh /
 
 # add user
 RUN adduser --system --disabled-password opensemanticetl
@@ -52,4 +52,4 @@ RUN chown opensemanticetl /var/cache/tesseract
 USER opensemanticetl
 
 # start Open Semantic ETL celery workers (reading and executing ETL tasks from message queue)
-CMD ["/usr/bin/python3", "/usr/lib/python3/dist-packages/opensemanticetl/tasks.py"]
+CMD ["/docker-entrypoint.sh"]
