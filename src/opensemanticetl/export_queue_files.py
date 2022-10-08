@@ -24,7 +24,7 @@ class export_queue_files(object):
             index_file.apply_async(
                 kwargs={'filename': parameters['filename']}, queue='open_semantic_etl_tasks', priority=5)
 
-        # add file to (lower prioritized) ETL queue with additional plugins or options which should run later after all files tasks of standard priorized queue done
+        # add file to (lower prioritized) ETL queue with additional plugins or options which should run later after all files tasks of standard prioritized queue done
         # to run ETL of the file later again with additional plugins like OCR which need much time/resources while meantime all files are searchable by other plugins which need fewer resources
         if 'additional_plugins_later' in parameters or 'additional_plugins_later_config' in parameters:
 
