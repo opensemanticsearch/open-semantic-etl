@@ -16,7 +16,7 @@
 #
 
 # if the users have other path (mountpoint with other path then the servers full path)
-# or protocoll (http:// instead of file://)
+# or protocol (http:// instead of file://)
 # you can map the servers path to the users path
 
 # default: user can access the file system, so /fullpath/filename will be mapped to file:///fullpath/filename
