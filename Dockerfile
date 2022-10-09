@@ -42,6 +42,7 @@ COPY ./src/open-semantic-entity-search-api/src/entity_linking /usr/lib/python3/d
 COPY ./src/open-semantic-entity-search-api/src/entity_manager /usr/lib/python3/dist-packages/entity_manager
 
 COPY docker-entrypoint.sh /
+RUN chmod 755 /docker-entrypoint.sh
 
 # add user
 RUN adduser --system --disabled-password opensemanticetl
